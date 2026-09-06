@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Помощник</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #08090d;
+    color: white;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 25px 18px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 70px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.badge {
+    padding: 8px 13px;
+    border: 1px solid #30343f;
+    border-radius: 20px;
+    color: #9da4b5;
+    font-size: 13px;
+}
+
+.hero {
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 10vw, 72px);
+    line-height: 1.05;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #ffffff, #7c8cff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    color: #9298a8;
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.card {
+    background: #11131a;
+    border: 1px solid #292d38;
+    border-radius: 22px;
+    padding: 18px;
+    text-align: left;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+textarea {
+    width: 100%;
+    height: 180px;
+    resize: none;
+    background: #0b0d12;
+    border: 1px solid #292d38;
+    border-radius: 15px;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: #6875ff;
+}
+
+.options {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+select {
+    flex: 1;
+    min-width: 180px;
+    padding: 14px;
+    background: #0b0d12;
+    color: white;
+    border: 1px solid #292d38;
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+button {
+    flex: 1;
+    min-width: 150px;
+    border: none;
+    border-radius: 12px;
+    background: #6875ff;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 14px;
+}
+
+button:active {
+    transform: scale(.98);
+}
+
+.result {
+    display: none;
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 15px;
+    background: #0b0d12;
+    border: 1px solid #292d38;
+    color: #d9dce5;
+    line-height: 1.6;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 35px;
+}
+
+.feature {
+    padding: 18px;
+    background: #11131a;
+    border: 1px solid #292d38;
+    border-radius: 16px;
+}
+
+.feature span {
+    font-size: 25px;
+}
+
+.feature h3 {
+    margin-top: 12px;
+    font-size: 15px;
+}
+
+.feature p {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #858b9b;
+}
+
+footer {
+    text-align: center;
+    color: #555b6b;
+    margin-top: 60px;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        margin-bottom: 50px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="logo">✦ AI Помощник</div>
+    <div class="badge">AI POWERED</div>
+</header>
+
+<section class="hero">
+
+<h1>Твой текст.<br>Улучшенный ИИ.</h1>
+
+<p>
+Напиши что угодно — AI поможет улучшить,
+перевести или полностью переработать текст.
+</p>
+
+<div class="card">
+
+<textarea id="text" placeholder="Напиши здесь свой текст..."></textarea>
+
+<div class="options">
+
+<select id="action">
+    <option>Улучшить текст</option>
+    <option>Перевести на польский</option>
+    <option>Перевести на английский</option>
+    <option>Сделать текст для TikTok</option>
+    <option>Сократить текст</option>
+</select>
+
+<button onclick="processText()">✨ Обработать</button>
+
+</div>
+
+<div class="result" id="result"></div>
+
+</div>
+
+</section>
+
+<div class="features">
+
+<div class="feature">
+<span>⚡</span>
+<h3>Быстро</h3>
+<p>Получай результат за считанные секунды.</p>
+</div>
+
+<div class="feature">
+<span>🧠</span>
+<h3>Умно</h3>
+<p>AI понимает смысл твоего текста.</p>
+</div>
+
+<div class="feature">
+<span>🌍</span>
+<h3>Много языков</h3>
+<p>Перевод и работа с текстом на разных языках.</p>
+</div>
+
+</div>
+
+<footer>
+AI Помощник © 2026
+</footer>
+
+</div>
+
+<script>
+
+function processText() {
+
+    const text = document.getElementById("text").value;
+    const action = document.getElementById("action").value;
+    const result = document.getElementById("result");
+
+    if (!text.trim()) {
+        result.style.display = "block";
+        result.innerText = "Сначала введи текст 🙂";
+        return;
+    }
+
+    result.style.display = "block";
+
+    result.innerText =
+        "Запрос принят.\n\n" +
+        "Действие: " + action +
+        "\n\n" +
+        "На следующем этапе подключим настоящий AI, " +
+        "который будет обрабатывать твой текст.";
+
+}
+
+</script>
+
+</body>
+</html>
