@@ -258,26 +258,50 @@ AI Помощник © 2026
 
 <script>
 
-function processText() {
+<!DOCTYPE html>
 
-    const text = document.getElementById("text").value;
-    const action = document.getElementById("action").value;
-    const result = document.getElementById("result");
+<html lang="ru">
 
-    if (!text.trim()) {
-        result.style.display = "block";
-        result.innerText = "Сначала введи текст 🙂";
-        return;
-    }
+<head>
 
-    result.style.display = "block";
+<meta charset="UTF-8">
 
-    result.innerText =
-        "Запрос принят.\n\n" +
-        "Действие: " + action +
-        "\n\n" +
-        "На следующем этапе подключим настоящий AI, " +
-        "который будет обрабатывать твой текст.";
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Помощник</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+body {
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    background: #08090d;
+
+    color: white;
+
+    min-height: 100vh;
+
+}
+
+.container {
+
+    max-width: 900px;
+
+    margin: auto;
+
+    padding: 25px 18px;
+    
 
 }
 
