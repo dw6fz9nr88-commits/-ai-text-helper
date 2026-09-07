@@ -41,10 +41,23 @@ export default async function handler(req, res) {
       });
     }
     let answer = "";
-    if (data.output_text) {
+    /*
+      Основной вариант ответа
+    */
+    if (
+      typeof data.output_text === "string" &&
+      data.output_text.trim()
+    ) {
       answer = data.output_text;
     }
-    if (!answer && Array.isArray(data.steps)) {
+    /*
+      Запасной вариант:
+      steps → model_output → content → text
+    */
+    if (
+      !answer &&
+      Array.isArray(data.steps)
+    ) {
       for (const step of data.steps) {
         if (
           step.type === "model_output" &&
@@ -53,7 +66,7 @@ export default async function handler(req, res) {
           for (const item of step.content) {
             if (
               item.type === "text" &&
-              item.text
+              typeof item.text === "string"
             ) {
               answer += item.text;
             }
@@ -61,20 +74,22 @@ export default async function handler(req, res) {
         }
       }
     }
-    if (!answer) {
+    if (!answer.trim()) {
       return res.status(500).json({
-        error: "Gemini не вернул текстовый ответ",
-        response: data
+        error: "Gemini не вернул текстовый ответ"
       });
     }
     return res.status(200).json({
-      answer: answer
+      answer: answer.trim()
     });
   } catch (error) {
     return res.status(500).json({
       error:
         "Ошибка сервера: " +
-        (error?.message || "неизвестная ошибка")
+        (
+          error?.message ||
+          "неизвестная ошибка"
+        )
     });
   }
 }
