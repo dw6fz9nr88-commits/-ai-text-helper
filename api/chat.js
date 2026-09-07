@@ -23,25 +23,19 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" +
-      encodeURIComponent(apiKey),
+      "https://generativelanguage.googleapis.com/v1beta/interactions",
       {
         method: "POST",
 
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey
         },
 
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: message
-                }
-              ]
-            }
-          ]
+          model: "gemini-3.7-flash",
+          input: message,
+          store: false
         })
       }
     );
@@ -57,16 +51,20 @@ export default async function handler(req, res) {
     }
 
     const answer =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      data?.output_text ||
+      data?.steps
+        ?.filter(step => step.type === "text")
+        ?.map(step => step.text)
+        ?.join("\n");
 
     if (!answer) {
       return res.status(500).json({
-        error: "Gemini не вернул ответ"
+        error: "Gemini не вернул текстовый ответ"
       });
     }
 
     return res.status(200).json({
-      answer: answer
+      answer
     });
 
   } catch (error) {
