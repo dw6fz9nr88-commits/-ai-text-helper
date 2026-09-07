@@ -14,37 +14,34 @@ export default async function handler(req, res) {
       });
     }
 
-    const apiKey = process.env.DEEPSEEK_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({
-        error: "DEEPSEEK_API_KEY не найден в настройках Vercel"
+        error: "GEMINI_API_KEY не найден в Vercel"
       });
     }
 
     const response = await fetch(
-      "https://api.deepseek.com/chat/completions",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
+      encodeURIComponent(apiKey),
       {
         method: "POST",
 
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + apiKey
+          "Content-Type": "application/json"
         },
 
         body: JSON.stringify({
-          model: "deepseek-v4-flash",
-
-          messages: [
+          contents: [
             {
-              role: "user",
-              content: message
+              parts: [
+                {
+                  text: message
+                }
+              ]
             }
-          ],
-
-          thinking: {
-            type: "disabled"
-          }
+          ]
         })
       }
     );
@@ -55,21 +52,21 @@ export default async function handler(req, res) {
       return res.status(response.status).json({
         error:
           data?.error?.message ||
-          "DeepSeek вернул ошибку"
+          "Gemini API вернул ошибку"
       });
     }
 
     const answer =
-      data?.choices?.[0]?.message?.content;
+      data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!answer) {
       return res.status(500).json({
-        error: "DeepSeek не вернул текст ответа"
+        error: "Gemini не вернул ответ"
       });
     }
 
     return res.status(200).json({
-      answer
+      answer: answer
     });
 
   } catch (error) {
