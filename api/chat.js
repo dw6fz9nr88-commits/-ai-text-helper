@@ -26,12 +26,10 @@ export default async function handler(req, res) {
       "https://generativelanguage.googleapis.com/v1beta/interactions",
       {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
           "x-goog-api-key": apiKey
         },
-
         body: JSON.stringify({
           model: "gemini-3.7-flash",
           input: message,
@@ -44,22 +42,39 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error:
-          data?.error?.message ||
-          "Gemini API вернул ошибку"
+        error: data?.error?.message || "Ошибка Gemini API",
+        details: data
       });
     }
 
-    const answer =
-      data?.output_text ||
-      data?.steps
-        ?.filter(step => step.type === "text")
-        ?.map(step => step.text)
-        ?.join("\n");
+    // Пытаемся получить готовый текст
+    if (data.output_text) {
+      return res.status(200).json({
+        answer: data.output_text
+      });
+    }
+
+    // Новый формат Gemini: steps → model_output → content → text
+    const texts = [];
+
+    if (Array.isArray(data.steps)) {
+      for (const step of data.steps) {
+        if (step.type === "model_output" && Array.isArray(step.content)) {
+          for (const item of step.content) {
+            if (item.type === "text" && item.text) {
+              texts.push(item.text);
+            }
+          }
+        }
+      }
+    }
+
+    const answer = texts.join("\n");
 
     if (!answer) {
       return res.status(500).json({
-        error: "Gemini не вернул текстовый ответ"
+        error: "Gemini не вернул текст",
+        gemini_response: data
       });
     }
 
@@ -68,11 +83,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-
     return res.status(500).json({
-      error:
-        "Ошибка сервера: " +
-        (error?.message || "неизвестная ошибка")
+      error: "Ошибка сервера: " + (error?.message || "неизвестная ошибка")
     });
   }
 }
