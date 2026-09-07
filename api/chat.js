@@ -26,14 +26,10 @@ export default async function handler(req, res) {
 
     if (message.length > 10000) {
       return res.status(413).json({
-        error: "Текст слишком длинный. Максимум — 10 000 символов."
+        error:
+          "Текст слишком длинный. Максимум — 10 000 символов."
       });
     }
-
-    /*
-      Поддерживаем все варианты названий,
-      которые может отправить интерфейс.
-    */
 
     const modeAliases = {
       improve: "improve",
@@ -69,122 +65,266 @@ export default async function handler(req, res) {
         "Сократи этот текст. Сохрани главную мысль, важные детали и факты. Удали повторы, лишние слова и ненужные предложения. Верни только сокращённую версию."
     };
 
-    const apiKey =
+    const instruction =
+      instructions[normalizedMode];
+
+    const geminiKey =
       process.env.GEMINI_API_KEY;
 
-    if (!apiKey) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY не найден в Vercel"
-      });
-    }
+    const groqKey =
+      process.env.GROQ_API_KEY;
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/interactions",
-      {
-        method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
-        },
+    /*
+     * =====================================================
+     * 1. СНАЧАЛА GEMINI
+     * =====================================================
+     */
 
-        body: JSON.stringify({
-          model: "gemini-3.7-flash",
-          system_instruction:
-            instructions[normalizedMode],
-          input: message,
-          store: false
-        })
-      }
-    );
+    if (geminiKey) {
 
-    const data =
-      await response.json();
+      try {
 
-    if (!response.ok) {
-      const errorMessage =
-        data?.error?.message ||
-        "Ошибка Gemini API";
+        const geminiResponse =
+          await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/interactions",
+            {
+              method: "POST",
 
-      if (response.status === 429) {
-        const match =
-          errorMessage.match(
-            /retry in ([0-9.]+)s/i
+              headers: {
+                "Content-Type": "application/json",
+                "x-goog-api-key": geminiKey
+              },
+
+              body: JSON.stringify({
+                model: "gemini-3.7-flash",
+
+                system_instruction:
+                  instruction,
+
+                input:
+                  message,
+
+                store: false
+              })
+            }
           );
 
-        const retryAfter =
-          match
-            ? Math.ceil(Number(match[1]))
-            : 60;
+        const geminiData =
+          await geminiResponse.json();
 
-        return res.status(429).json({
-          error:
-            "Лимит AI временно исчерпан. Попробуйте снова позже.",
-          retryAfter
-        });
-      }
 
-      if (
-        response.status === 401 ||
-        response.status === 403
-      ) {
-        return res.status(response.status).json({
-          error:
-            "Ошибка доступа к Gemini API. Проверь API-ключ."
-        });
-      }
+        if (geminiResponse.ok) {
 
-      return res.status(response.status).json({
-        error: errorMessage
-      });
-    }
+          let answer = "";
 
-    let answer = "";
 
-    if (
-      typeof data.output_text === "string"
-    ) {
-      answer =
-        data.output_text.trim();
-    }
+          if (
+            typeof geminiData.output_text ===
+            "string"
+          ) {
 
-    if (
-      !answer &&
-      Array.isArray(data.steps)
-    ) {
-      for (const step of data.steps) {
+            answer =
+              geminiData.output_text.trim();
+          }
 
-        if (
-          step.type === "model_output" &&
-          Array.isArray(step.content)
-        ) {
-          for (const item of step.content) {
 
-            if (
-              item.type === "text" &&
-              typeof item.text === "string"
+          if (
+            !answer &&
+            Array.isArray(geminiData.steps)
+          ) {
+
+            for (
+              const step of geminiData.steps
             ) {
-              answer += item.text;
-            }
 
+              if (
+                step.type === "model_output" &&
+                Array.isArray(step.content)
+              ) {
+
+                for (
+                  const item of step.content
+                ) {
+
+                  if (
+                    item.type === "text" &&
+                    typeof item.text === "string"
+                  ) {
+
+                    answer += item.text;
+                  }
+                }
+              }
+            }
+          }
+
+
+          answer =
+            answer.trim();
+
+
+          if (answer) {
+
+            return res.status(200).json({
+              answer,
+              provider: "gemini"
+            });
           }
         }
+
+
+        /*
+         * Если Gemini вернул ошибку,
+         * не ломаем сайт.
+         *
+         * Переходим к Groq.
+         */
+
+        console.log(
+          "Gemini unavailable:",
+          geminiResponse.status
+        );
+
+      } catch (error) {
+
+        console.log(
+          "Gemini request failed:",
+          error?.message
+        );
       }
     }
 
-    answer =
-      answer.trim();
 
-    if (!answer) {
-      return res.status(502).json({
+    /*
+     * =====================================================
+     * 2. РЕЗЕРВНЫЙ ПРОВАЙДЕР — GROQ
+     * =====================================================
+     */
+
+    if (!groqKey) {
+
+      return res.status(500).json({
         error:
-          "Gemini не вернул текстовый ответ"
+          "AI-провайдеры временно недоступны."
       });
     }
 
-    return res.status(200).json({
-      answer
-    });
+
+    try {
+
+      const groqResponse =
+        await fetch(
+          "https://api.groq.com/openai/v1/chat/completions",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${groqKey}`
+            },
+
+            body: JSON.stringify({
+
+              model:
+                "openai/gpt-oss-20b",
+
+              messages: [
+
+                {
+                  role: "system",
+
+                  content:
+                    instruction
+                },
+
+                {
+                  role: "user",
+
+                  content:
+                    message
+                }
+
+              ],
+
+              temperature: 0.7,
+
+              max_completion_tokens: 2048,
+
+              stream: false
+            })
+          }
+        );
+
+
+      const groqData =
+        await groqResponse.json();
+
+
+      if (!groqResponse.ok) {
+
+        console.log(
+          "Groq error:",
+          groqResponse.status,
+          groqData
+        );
+
+        if (
+          groqResponse.status === 429
+        ) {
+
+          return res.status(429).json({
+            error:
+              "Лимит AI временно исчерпан. Попробуйте позже."
+          });
+        }
+
+        return res.status(502).json({
+          error:
+            "Резервный AI-провайдер временно недоступен."
+        });
+      }
+
+
+      const answer =
+        groqData
+          ?.choices?.[0]
+          ?.message
+          ?.content
+          ?.trim();
+
+
+      if (!answer) {
+
+        return res.status(502).json({
+          error:
+            "AI не вернул текстовый ответ."
+        });
+      }
+
+
+      return res.status(200).json({
+        answer,
+        provider: "groq"
+      });
+
+
+    } catch (error) {
+
+      console.error(
+        "Groq request failed:",
+        error
+      );
+
+      return res.status(502).json({
+        error:
+          "Резервный AI-провайдер недоступен."
+      });
+    }
+
 
   } catch (error) {
 
@@ -195,7 +335,7 @@ export default async function handler(req, res) {
 
     return res.status(500).json({
       error:
-        "Внутренняя ошибка сервера. Попробуйте ещё раз."
+        "Внутренняя ошибка сервера."
     });
   }
 }
