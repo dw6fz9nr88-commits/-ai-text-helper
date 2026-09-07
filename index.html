@@ -2,773 +2,368 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
-<meta
-  name="theme-color"
-  content="#07080c"
->
-<meta
-  name="description"
-  content="AI Помощник — улучшай, переводи и создавай тексты с помощью искусственного интеллекта."
->
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#08090d">
 <title>AI Помощник</title>
 <style>
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-html {
-  scroll-behavior: smooth;
 }
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(
-      circle at 50% -15%,
-      rgba(105, 117, 255, .20),
-      transparent 38%
-    ),
-    #07080c;
-  color: #f5f6fb;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "Segoe UI",
-    sans-serif;
-}
-button,
-textarea,
-select {
-  font: inherit;
-}
-button {
-  -webkit-appearance: none;
+  background: #08090d;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 .container {
-  width: min(760px, calc(100% - 24px));
-  margin: 0 auto;
+  width: min(720px, calc(100% - 24px));
+  margin: auto;
+  padding-bottom: 40px;
 }
-/* HEADER */
-.header {
+header {
   text-align: center;
-  padding: 42px 0 26px;
+  padding: 50px 10px 30px;
 }
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-block;
   padding: 7px 12px;
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1px solid #292d39;
   border-radius: 999px;
-  background: rgba(255,255,255,.035);
-  color: #aeb6ff;
+  color: #9da7ff;
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .10em;
-}
-.badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #7c88ff;
-  box-shadow:
-    0 0 12px #7c88ff;
+  font-weight: 700;
+  letter-spacing: .08em;
 }
 h1 {
-  margin: 18px 0 10px;
-  font-size:
-    clamp(38px, 9vw, 58px);
-  line-height: .98;
-  letter-spacing: -.055em;
+  margin: 20px 0 10px;
+  font-size: clamp(38px, 10vw, 58px);
+  letter-spacing: -.05em;
 }
 .subtitle {
-  max-width: 520px;
-  margin: auto;
-  color: #858b9e;
-  font-size: 15px;
+  color: #858a9a;
   line-height: 1.6;
 }
-/* APP */
 .app {
   padding: 16px;
-  border:
-    1px solid rgba(255,255,255,.08);
-  border-radius: 24px;
-  background:
-    rgba(15,17,24,.88);
-  box-shadow:
-    0 30px 90px rgba(0,0,0,.40),
-    inset 0 1px rgba(255,255,255,.035);
-  backdrop-filter: blur(22px);
+  border: 1px solid #242833;
+  border-radius: 22px;
+  background: #11131a;
 }
-/* LABEL */
-.label {
+label {
   display: block;
-  margin:
-    2px 0 8px 3px;
-  color: #777e92;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  margin: 0 0 8px 2px;
+  color: #777d90;
+  font-size: 12px;
+  font-weight: 700;
 }
-/* SELECT */
-.select-wrap {
-  position: relative;
-}
-select {
+select,
+textarea {
   width: 100%;
-  height: 54px;
-  padding: 0 45px 0 15px;
-  border:
-    1px solid #292d39;
+  border: 1px solid #292d39;
   border-radius: 14px;
   outline: none;
-  background: #0b0d13;
-  color: #f4f5fa;
-  appearance: none;
-  cursor: pointer;
+  background: #0b0d12;
+  color: white;
 }
-.select-wrap::after {
-  content: "⌄";
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-55%);
-  color: #73798b;
-  pointer-events: none;
-}
-/* TEXT */
-.text-wrap {
-  position: relative;
-  margin-top: 14px;
+select {
+  height: 52px;
+  padding: 0 14px;
+  font-size: 15px;
 }
 textarea {
-  display: block;
-  width: 100%;
-  min-height: 190px;
-  max-height: 440px;
-  padding:
-    17px
-    17px
-    42px;
-  resize: none;
-  border:
-    1px solid #292d39;
-  border-radius: 16px;
-  outline: none;
-  background: #0b0d13;
-  color: #f4f5fa;
+  margin-top: 14px;
+  min-height: 180px;
+  padding: 16px;
+  resize: vertical;
   font-size: 16px;
   line-height: 1.6;
-  transition:
-    border-color .2s,
-    box-shadow .2s;
 }
-textarea::placeholder {
-  color: #555b6d;
+textarea:focus,
+select:focus {
+  border-color: #6875ff;
 }
-textarea:focus {
-  border-color: #6976ff;
-  box-shadow:
-    0 0 0 3px
-    rgba(105,118,255,.10);
-}
-.counter {
-  position: absolute;
-  right: 14px;
-  bottom: 13px;
-  color: #555b6d;
-  font-size: 11px;
-}
-/* BUTTON */
-.main-button {
+button {
   width: 100%;
-  min-height: 56px;
-  margin-top: 12px;
+  min-height: 55px;
+  margin-top: 13px;
   border: 0;
-  border-radius: 15px;
-  background:
-    linear-gradient(
-      135deg,
-      #6876ff,
-      #886bff
-    );
+  border-radius: 14px;
+  background: linear-gradient(135deg,#6875ff,#886cff);
   color: white;
   font-size: 16px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow:
-    0 14px 34px
-    rgba(104,118,255,.22);
-  transition:
-    transform .15s,
-    filter .15s,
-    opacity .15s;
 }
-.main-button:hover {
-  filter: brightness(1.08);
+button:disabled {
+  opacity: .6;
 }
-.main-button:active {
-  transform: scale(.985);
-}
-.main-button:disabled {
-  opacity: .65;
-  cursor: wait;
-}
-/* RESULT */
 .result {
   display: none;
-  margin-top: 14px;
-  overflow: hidden;
-  border:
-    1px solid #292d39;
-  border-radius: 16px;
-  background: #0b0d13;
+  margin-top: 15px;
+  padding: 18px;
+  border: 1px solid #292d39;
+  border-radius: 14px;
+  background: #0b0d12;
 }
-.result.visible {
+.result.show {
   display: block;
 }
-.result-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px;
-  border-bottom:
-    1px solid #222630;
-}
 .result-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #aeb6ff;
+  margin-bottom: 12px;
+  color: #9da7ff;
   font-size: 12px;
   font-weight: 800;
 }
-.result-title-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #7c88ff;
-  box-shadow:
-    0 0 10px #7c88ff;
-}
-.copy-button {
-  padding: 7px 10px;
-  border:
-    1px solid #292d39;
-  border-radius: 9px;
-  background: #11141b;
-  color: #a0a5b6;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.copy-button:active {
-  transform: scale(.96);
-}
-.result-content {
-  min-height: 70px;
-  padding:
-    17px
-    16px
-    20px;
-  color: #e4e6ed;
+.result-text {
   white-space: pre-wrap;
   word-break: break-word;
-  font-size: 15px;
-  line-height: 1.72;
+  line-height: 1.7;
+  color: #e5e6eb;
 }
-/* LOADING */
-.loading {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #aeb6ff;
+.copy {
+  min-height: 40px;
+  margin-top: 14px;
+  background: #171a23;
+  border: 1px solid #292d39;
+  color: #aeb3c2;
+  font-size: 13px;
 }
-.dots {
-  display: inline-flex;
-  gap: 4px;
-}
-.dots span {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  animation:
-    dot 1s infinite ease-in-out;
-}
-.dots span:nth-child(2) {
-  animation-delay: .15s;
-}
-.dots span:nth-child(3) {
-  animation-delay: .30s;
-}
-@keyframes dot {
-  0%, 70%, 100% {
-    opacity: .3;
-    transform: translateY(0);
-  }
-  35% {
-    opacity: 1;
-    transform: translateY(-3px);
-  }
-}
-/* FEATURES */
 .features {
   display: grid;
-  grid-template-columns:
-    repeat(3, 1fr);
+  grid-template-columns: repeat(3,1fr);
   gap: 8px;
   margin-top: 10px;
 }
 .feature {
-  padding: 15px 7px;
-  border:
-    1px solid rgba(255,255,255,.055);
+  padding: 14px 6px;
+  border: 1px solid #1e212a;
   border-radius: 14px;
-  background:
-    rgba(255,255,255,.022);
+  background: #0e1016;
   text-align: center;
 }
-.feature-icon {
-  font-size: 18px;
-  margin-bottom: 6px;
+.icon {
+  font-size: 19px;
 }
-.feature-title {
-  color: #d7d9e2;
+.feature strong {
+  display: block;
+  margin-top: 6px;
   font-size: 11px;
-  font-weight: 800;
 }
-.feature-description {
+.feature span {
+  display: block;
   margin-top: 3px;
   color: #626879;
   font-size: 9px;
 }
-/* FOOTER */
-.footer {
-  padding:
-    26px
-    0
-    42px;
+footer {
+  padding-top: 28px;
   text-align: center;
-  color: #4f5566;
+  color: #4f5462;
   font-size: 11px;
 }
-/* MOBILE */
-@media (max-width: 600px) {
+@media(max-width:600px) {
   .container {
-    width:
-      calc(100% - 18px);
+    width: calc(100% - 18px);
   }
-  .header {
-    padding-top: 30px;
+  header {
+    padding-top: 35px;
   }
   .app {
     padding: 12px;
-    border-radius: 21px;
-  }
-  h1 {
-    font-size: 40px;
-  }
-  .subtitle {
-    font-size: 14px;
-  }
-  textarea {
-    min-height: 175px;
-  }
-  .features {
-    gap: 6px;
-  }
-  .feature {
-    padding:
-      13px
-      5px;
   }
 }
 </style>
 </head>
 <body>
 <div class="container">
-<header class="header">
+<header>
   <div class="badge">
-    <span class="badge-dot"></span>
-    AI POWERED
+    ● AI POWERED
   </div>
   <h1>✦ AI Помощник</h1>
   <p class="subtitle">
-    Улучшай, переводи и создавай тексты
-    с помощью искусственного интеллекта.
+    Напиши текст — AI поможет его улучшить,
+    перевести или переработать.
   </p>
 </header>
 <main class="app">
-  <label class="label">
-    Инструмент
+  <label for="action">
+    ДЕЙСТВИЕ
   </label>
-  <div class="select-wrap">
-    <select id="action">
-      <option value="improve">
-        ✨ Улучшить текст
-      </option>
-      <option value="polish">
-        🇵🇱 Перевести на польский
-      </option>
-      <option value="english">
-        🇬🇧 Перевести на английский
-      </option>
-      <option value="tiktok">
-        🎵 Создать текст для TikTok
-      </option>
-      <option value="shorten">
-        ✂️ Сократить текст
-      </option>
-    </select>
-  </div>
-  <div class="text-wrap">
-    <textarea
-      id="text"
-      maxlength="10000"
-      placeholder="Напиши здесь свой текст..."
-    ></textarea>
-    <div class="counter">
-      <span id="count">0</span> / 10000
-    </div>
-  </div>
+  <select id="action">
+    <option value="improve">
+      ✨ Улучшить текст
+    </option>
+    <option value="polish">
+      🇵🇱 Перевести на польский
+    </option>
+    <option value="english">
+      🇬🇧 Перевести на английский
+    </option>
+    <option value="tiktok">
+      🎵 Создать текст для TikTok
+    </option>
+    <option value="shorten">
+      ✂️ Сократить текст
+    </option>
+  </select>
+  <textarea
+    id="text"
+    placeholder="Напиши здесь свой текст..."
+  ></textarea>
   <button
-    class="main-button"
-    id="processButton"
+    id="process"
+    onclick="processText()"
   >
-    ✨ Обработать текст
+    ✨ Обработать
   </button>
-  <section
+  <div
     class="result"
     id="resultBox"
   >
-    <div class="result-header">
-      <div class="result-title">
-        <span class="result-title-dot"></span>
-        Результат AI
-      </div>
-      <button
-        class="copy-button"
-        id="copyButton"
-      >
-        Скопировать
-      </button>
+    <div class="result-title">
+      ✦ РЕЗУЛЬТАТ AI
     </div>
     <div
-      class="result-content"
-      id="resultContent"
+      class="result-text"
+      id="resultText"
     ></div>
-  </section>
+    <button
+      class="copy"
+      onclick="copyResult()"
+    >
+      📋 Скопировать
+    </button>
+  </div>
 </main>
 <section class="features">
   <div class="feature">
-    <div class="feature-icon">
-      ⚡
-    </div>
-    <div class="feature-title">
-      Быстро
-    </div>
-    <div class="feature-description">
-      Ответ в реальном времени
-    </div>
+    <div class="icon">⚡</div>
+    <strong>Быстро</strong>
+    <span>За считанные секунды</span>
   </div>
   <div class="feature">
-    <div class="feature-icon">
-      🧠
-    </div>
-    <div class="feature-title">
-      Умно
-    </div>
-    <div class="feature-description">
-      Powered by Gemini
-    </div>
+    <div class="icon">🧠</div>
+    <strong>Умно</strong>
+    <span>Powered by Gemini</span>
   </div>
   <div class="feature">
-    <div class="feature-icon">
-      🌍
-    </div>
-    <div class="feature-title">
-      Языки
-    </div>
-    <div class="feature-description">
-      Перевод и редактура
-    </div>
+    <div class="icon">🌍</div>
+    <strong>Много языков</strong>
+    <span>Перевод и редактура</span>
   </div>
 </section>
-<footer class="footer">
+<footer>
   AI Помощник · Powered by Gemini
 </footer>
 </div>
 <script>
-const textArea =
-  document.getElementById("text");
-const counter =
-  document.getElementById("count");
-const action =
-  document.getElementById("action");
-const processButton =
-  document.getElementById("processButton");
-const resultBox =
-  document.getElementById("resultBox");
-const resultContent =
-  document.getElementById("resultContent");
-const copyButton =
-  document.getElementById("copyButton");
-/* CHARACTER COUNTER */
-textArea.addEventListener(
-  "input",
-  function () {
-    counter.textContent =
-      this.value.length;
-    this.style.height = "auto";
-    this.style.height =
-      Math.min(
-        this.scrollHeight,
-        440
-      ) + "px";
-  }
-);
-/* BUILD PROMPT */
-function buildPrompt(text) {
-  const mode =
-    action.value;
-  const instructions = {
-    improve:
-      `Улучши текст пользователя.
-Сохрани исходный смысл и факты.
-Исправь ошибки.
-Сделай текст естественным, грамотным и убедительным.
-Не добавляй вымышленных фактов.
-Не объясняй, что ты изменил — сразу дай готовый текст.`,
-    polish:
-      `Переведи текст пользователя на польский язык.
-Сохрани смысл.
-Используй естественный современный польский язык.
-Не переводи механически слово в слово.
-Сохрани исходный стиль.
-Верни только готовый перевод.`,
-    english:
-      `Переведи текст пользователя на английский язык.
-Сохрани смысл и стиль.
-Используй естественный современный английский.
-Не переводи механически слово в слово.
-Верни только готовый перевод.`,
-    tiktok:
-      `Преврати текст пользователя в сильный текст для TikTok.
-Создай мощный первый хук.
-Используй короткие динамичные фразы.
-Сделай текст удерживающим внимание.
-Не выдумывай факты.
-Сохрани главную идею исходного текста.
-Верни только готовый текст.`,
-    shorten:
-      `Сократи текст пользователя.
-Сохрани главную мысль и важные факты.
-Удали повторения и лишние слова.
-Сделай текст максимально понятным и лаконичным.
-Верни только готовую сокращённую версию.`
-  };
-  return (
-    instructions[mode] +
-    "\n\nТЕКСТ ПОЛЬЗОВАТЕЛЯ:\n" +
-    text
-  );
-}
-/* PROCESS */
 async function processText() {
   const text =
-    textArea.value.trim();
+    document.getElementById("text").value.trim();
+  const action =
+    document.getElementById("action").value;
+  const button =
+    document.getElementById("process");
+  const resultBox =
+    document.getElementById("resultBox");
+  const resultText =
+    document.getElementById("resultText");
   if (!text) {
-    resultBox.classList.add("visible");
-    resultContent.textContent =
-      "⚠️ Напиши текст, который нужно обработать.";
+    resultBox.classList.add("show");
+    resultText.textContent =
+      "⚠️ Сначала напиши текст.";
     return;
   }
-  processButton.disabled = true;
-  processButton.innerHTML = `
-    <span class="loading">
-      AI работает
-      <span class="dots">
-        <span></span>
-        <span></span>
-        <span></span>
-      </span>
-    </span>
-  `;
-  resultBox.classList.add("visible");
-  resultContent.textContent = "";
+  let instruction = "";
+  if (action === "improve") {
+    instruction =
+      "Улучши этот текст. Исправь ошибки, сделай его грамотным, естественным и понятным. Сохрани смысл. Верни только готовый текст.";
+  }
+  if (action === "polish") {
+    instruction =
+      "Переведи этот текст на польский язык. Сделай перевод естественным для носителя польского языка. Сохрани смысл. Верни только перевод.";
+  }
+  if (action === "english") {
+    instruction =
+      "Переведи этот текст на английский язык. Сделай перевод естественным для носителя английского языка. Сохрани смысл. Верни только перевод.";
+  }
+  if (action === "tiktok") {
+    instruction =
+      "Переделай этот текст в цепляющий текст для TikTok. Сделай сильный первый хук, динамичную подачу и короткие фразы. Не выдумывай факты. Верни готовый текст.";
+  }
+  if (action === "shorten") {
+    instruction =
+      "Сократи этот текст. Сохрани главную мысль и важные факты. Удали повторения и лишние слова. Верни только сокращённую версию.";
+  }
+  button.disabled = true;
+  button.textContent =
+    "⏳ AI обрабатывает...";
+  resultBox.classList.add("show");
+  resultText.textContent =
+    "AI готовит ответ...";
   try {
     const response =
-      await fetch(
-        "/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body: JSON.stringify({
-            message:
-              buildPrompt(text)
-          })
-        }
-      );
+      await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message:
+            instruction +
+            "\n\nТекст пользователя:\n" +
+            text
+        })
+      });
+    const data =
+      await response.json();
     if (!response.ok) {
-      let errorMessage =
-        "Ошибка сервера.";
-      try {
-        const errorData =
-          await response.json();
-        errorMessage =
-          errorData.error ||
-          errorMessage;
-      } catch {}
       throw new Error(
-        errorMessage
+        data.error ||
+        "Ошибка сервера"
       );
     }
-    if (!response.body) {
+    if (!data.answer) {
       throw new Error(
-        "Сервер не вернул поток данных."
+        "AI не вернул ответ"
       );
     }
-    const reader =
-      response.body.getReader();
-    const decoder =
-      new TextDecoder();
-    let buffer = "";
-    let answer = "";
-    while (true) {
-      const { value, done } =
-        await reader.read();
-      if (done) break;
-      buffer +=
-        decoder.decode(
-          value,
-          { stream: true }
-        );
-      const events =
-        buffer.split("\n\n");
-      buffer =
-        events.pop() || "";
-      for (const event of events) {
-        const lines =
-          event.split("\n");
-        let dataLine = "";
-        for (const line of lines) {
-          if (
-            line.startsWith("data:")
-          ) {
-            dataLine +=
-              line.slice(5).trim();
-          }
-        }
-        if (
-          !dataLine ||
-          dataLine === "[DONE]"
-        ) {
-          continue;
-        }
-        try {
-          const data =
-            JSON.parse(
-              dataLine
-            );
-          if (
-            data.type === "text" &&
-            data.text
-          ) {
-            answer +=
-              data.text;
-            resultContent.textContent =
-              answer;
-          }
-          if (
-            data.type === "done"
-          ) {
-            break;
-          }
-        } catch {
-          // Пропускаем некорректное событие
-        }
-      }
-    }
-    if (!answer.trim()) {
-      throw new Error(
-        "Gemini не вернул текстовый ответ."
-      );
-    }
+    resultText.textContent =
+      data.answer;
   } catch (error) {
-    resultContent.textContent =
-      "❌ " +
-      (
-        error.message ||
-        "Не удалось получить ответ."
-      );
+    resultText.textContent =
+      "❌ Ошибка:\n\n" +
+      error.message;
   } finally {
-    processButton.disabled =
-      false;
-    processButton.innerHTML =
-      "✨ Обработать текст";
+    button.disabled = false;
+    button.textContent =
+      "✨ Обработать";
   }
 }
-/* COPY */
-copyButton.addEventListener(
-  "click",
-  async function () {
-    const text =
-      resultContent.textContent.trim();
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(
-        text
-      );
-      const oldText =
-        copyButton.textContent;
-      copyButton.textContent =
-        "✓ Скопировано";
-      setTimeout(
-        () => {
-          copyButton.textContent =
-            oldText;
-        },
-        1800
-      );
-    } catch {
-      copyButton.textContent =
-        "Не удалось";
-      setTimeout(
-        () => {
-          copyButton.textContent =
-            "Скопировать";
-        },
-        1800
-      );
-    }
+async function copyResult() {
+  const text =
+    document
+      .getElementById("resultText")
+      .textContent;
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    const button =
+      document.querySelector(".copy");
+    button.textContent =
+      "✓ Скопировано";
+    setTimeout(() => {
+      button.textContent =
+        "📋 Скопировать";
+    }, 1800);
+  } catch {
+    alert(
+      "Не удалось скопировать текст."
+    );
   }
-);
-/* CMD + ENTER / CTRL + ENTER */
-textArea.addEventListener(
-  "keydown",
-  function (event) {
-    if (
-      (event.metaKey ||
-       event.ctrlKey) &&
-      event.key === "Enter"
-    ) {
-      event.preventDefault();
-      processText();
-    }
-  }
-);
+}
 </script>
 </body>
 </html>
