@@ -1,369 +1,886 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#08090d">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+  name="theme-color"
+  content="#08090d"
+>
+
 <title>AI Помощник</title>
+
 <style>
+
 * {
   box-sizing: border-box;
 }
+
 body {
+
   margin: 0;
+
   min-height: 100vh;
+
   background: #08090d;
+
   color: #f5f5f7;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
+
 .container {
-  width: min(720px, calc(100% - 24px));
+
+  width:
+    min(720px, calc(100% - 20px));
+
   margin: auto;
+
   padding-bottom: 40px;
 }
+
 header {
+
   text-align: center;
-  padding: 50px 10px 30px;
+
+  padding:
+    45px 10px 30px;
 }
+
 .badge {
+
   display: inline-block;
-  padding: 7px 12px;
-  border: 1px solid #292d39;
+
+  padding:
+    7px 12px;
+
+  border:
+    1px solid #292d39;
+
   border-radius: 999px;
+
   color: #9da7ff;
+
   font-size: 11px;
+
   font-weight: 700;
+
   letter-spacing: .08em;
 }
+
 h1 {
-  margin: 20px 0 10px;
-  font-size: clamp(38px, 10vw, 58px);
+
+  margin:
+    20px 0 10px;
+
+  font-size:
+    clamp(38px, 10vw, 58px);
+
   letter-spacing: -.05em;
 }
+
 .subtitle {
+
   color: #858a9a;
+
   line-height: 1.6;
+
+  max-width: 560px;
+
+  margin: auto;
 }
+
 .app {
+
   padding: 16px;
-  border: 1px solid #242833;
+
+  border:
+    1px solid #242833;
+
   border-radius: 22px;
+
   background: #11131a;
 }
+
 label {
+
   display: block;
-  margin: 0 0 8px 2px;
+
+  margin:
+    0 0 8px 2px;
+
   color: #777d90;
+
   font-size: 12px;
+
   font-weight: 700;
 }
+
 select,
 textarea {
+
   width: 100%;
-  border: 1px solid #292d39;
+
+  border:
+    1px solid #292d39;
+
   border-radius: 14px;
+
   outline: none;
+
   background: #0b0d12;
+
   color: white;
 }
+
 select {
+
   height: 52px;
-  padding: 0 14px;
+
+  padding:
+    0 14px;
+
   font-size: 15px;
 }
+
 textarea {
+
   margin-top: 14px;
+
   min-height: 180px;
+
   padding: 16px;
+
   resize: vertical;
+
   font-size: 16px;
+
   line-height: 1.6;
 }
+
 textarea:focus,
 select:focus {
+
   border-color: #6875ff;
 }
+
+.counter {
+
+  margin-top: 7px;
+
+  text-align: right;
+
+  color: #555b6b;
+
+  font-size: 11px;
+}
+
 button {
+
   width: 100%;
+
   min-height: 55px;
+
   margin-top: 13px;
+
   border: 0;
+
   border-radius: 14px;
-  background: linear-gradient(135deg,#6875ff,#886cff);
+
+  background:
+    linear-gradient(
+      135deg,
+      #6875ff,
+      #886cff
+    );
+
   color: white;
+
   font-size: 16px;
+
   font-weight: 800;
+
   cursor: pointer;
 }
+
 button:disabled {
-  opacity: .6;
+
+  opacity: .55;
+
+  cursor: not-allowed;
 }
+
 .result {
+
   display: none;
+
   margin-top: 15px;
+
   padding: 18px;
-  border: 1px solid #292d39;
+
+  border:
+    1px solid #292d39;
+
   border-radius: 14px;
+
   background: #0b0d12;
 }
+
 .result.show {
+
   display: block;
 }
+
 .result-title {
+
   margin-bottom: 12px;
+
   color: #9da7ff;
+
   font-size: 12px;
+
   font-weight: 800;
 }
+
 .result-text {
+
   white-space: pre-wrap;
+
   word-break: break-word;
+
   line-height: 1.7;
+
   color: #e5e6eb;
 }
+
 .copy {
+
   min-height: 40px;
+
   margin-top: 14px;
+
   background: #171a23;
-  border: 1px solid #292d39;
+
+  border:
+    1px solid #292d39;
+
   color: #aeb3c2;
+
   font-size: 13px;
 }
+
+.retry {
+
+  display: none;
+
+  margin-top: 10px;
+
+  min-height: 44px;
+
+  background: #171a23;
+
+  border:
+    1px solid #292d39;
+
+  color: #c5c9d5;
+
+  font-size: 13px;
+}
+
+.retry.show {
+
+  display: block;
+}
+
 .features {
+
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
   gap: 8px;
+
   margin-top: 10px;
 }
+
 .feature {
+
   padding: 14px 6px;
-  border: 1px solid #1e212a;
+
+  border:
+    1px solid #1e212a;
+
   border-radius: 14px;
+
   background: #0e1016;
+
   text-align: center;
 }
+
 .icon {
+
   font-size: 19px;
 }
+
 .feature strong {
+
   display: block;
+
   margin-top: 6px;
+
   font-size: 11px;
 }
+
 .feature span {
+
   display: block;
+
   margin-top: 3px;
+
   color: #626879;
+
   font-size: 9px;
 }
+
 footer {
+
   padding-top: 28px;
+
   text-align: center;
+
   color: #4f5462;
+
   font-size: 11px;
 }
+
 @media(max-width:600px) {
+
   .container {
-    width: calc(100% - 18px);
+
+    width:
+      calc(100% - 18px);
   }
+
   header {
+
     padding-top: 35px;
   }
+
   .app {
+
     padding: 12px;
   }
+
+  .features {
+
+    gap: 5px;
+  }
 }
+
 </style>
+
 </head>
+
+
 <body>
+
 <div class="container">
+
+
 <header>
+
   <div class="badge">
     ● AI POWERED
   </div>
-  <h1>✦ AI Помощник</h1>
+
+  <h1>
+    ✦ AI Помощник
+  </h1>
+
   <p class="subtitle">
     Напиши текст — AI поможет его улучшить,
     перевести или переработать.
   </p>
+
 </header>
+
+
 <main class="app">
-  <label for="action">
-    ДЕЙСТВИЕ
-  </label>
-  <select id="action">
-    <option value="improve">
-      ✨ Улучшить текст
-    </option>
-    <option value="polish">
-      🇵🇱 Перевести на польский
-    </option>
-    <option value="english">
-      🇬🇧 Перевести на английский
-    </option>
-    <option value="tiktok">
-      🎵 Создать текст для TikTok
-    </option>
-    <option value="shorten">
-      ✂️ Сократить текст
-    </option>
-  </select>
-  <textarea
-    id="text"
-    placeholder="Напиши здесь свой текст..."
-  ></textarea>
+
+
+<label for="action">
+  ДЕЙСТВИЕ
+</label>
+
+
+<select id="action">
+
+  <option value="improve">
+    ✨ Улучшить текст
+  </option>
+
+  <option value="polish">
+    🇵🇱 Перевести на польский
+  </option>
+
+  <option value="english">
+    🇬🇧 Перевести на английский
+  </option>
+
+  <option value="tiktok">
+    🎵 Создать текст для TikTok
+  </option>
+
+  <option value="shorten">
+    ✂️ Сократить текст
+  </option>
+
+</select>
+
+
+<textarea
+  id="text"
+  maxlength="10000"
+  placeholder="Напиши здесь свой текст..."
+></textarea>
+
+
+<div
+  class="counter"
+  id="counter"
+>
+  0 / 10 000
+</div>
+
+
+<button
+  id="process"
+  onclick="processText()"
+>
+  ✨ Обработать
+</button>
+
+
+<div
+  class="result"
+  id="resultBox"
+>
+
+  <div class="result-title">
+    ✦ РЕЗУЛЬТАТ AI
+  </div>
+
+  <div
+    class="result-text"
+    id="resultText"
+  ></div>
+
   <button
-    id="process"
+    class="copy"
+    id="copyButton"
+    onclick="copyResult()"
+  >
+    📋 Скопировать
+  </button>
+
+  <button
+    class="retry"
+    id="retryButton"
     onclick="processText()"
   >
-    ✨ Обработать
+    🔄 Попробовать снова
   </button>
-  <div
-    class="result"
-    id="resultBox"
-  >
-    <div class="result-title">
-      ✦ РЕЗУЛЬТАТ AI
-    </div>
-    <div
-      class="result-text"
-      id="resultText"
-    ></div>
-    <button
-      class="copy"
-      onclick="copyResult()"
-    >
-      📋 Скопировать
-    </button>
-  </div>
-</main>
-<section class="features">
-  <div class="feature">
-    <div class="icon">⚡</div>
-    <strong>Быстро</strong>
-    <span>За считанные секунды</span>
-  </div>
-  <div class="feature">
-    <div class="icon">🧠</div>
-    <strong>Умно</strong>
-    <span>Powered by Gemini</span>
-  </div>
-  <div class="feature">
-    <div class="icon">🌍</div>
-    <strong>Много языков</strong>
-    <span>Перевод и редактура</span>
-  </div>
-</section>
-<footer>
-  AI Помощник · Powered by Gemini
-</footer>
+
 </div>
+
+
+</main>
+
+
+<section class="features">
+
+  <div class="feature">
+
+    <div class="icon">
+      ⚡
+    </div>
+
+    <strong>
+      Быстро
+    </strong>
+
+    <span>
+      За считанные секунды
+    </span>
+
+  </div>
+
+
+  <div class="feature">
+
+    <div class="icon">
+      🧠
+    </div>
+
+    <strong>
+      Умно
+    </strong>
+
+    <span>
+      Powered by Gemini
+    </span>
+
+  </div>
+
+
+  <div class="feature">
+
+    <div class="icon">
+      🌍
+    </div>
+
+    <strong>
+      Много языков
+    </strong>
+
+    <span>
+      Перевод и редактура
+    </span>
+
+  </div>
+
+</section>
+
+
+<footer>
+
+  AI Помощник · Powered by Gemini
+
+</footer>
+
+
+</div>
+
+
 <script>
+
+const textInput =
+  document.getElementById("text");
+
+const counter =
+  document.getElementById("counter");
+
+const processButton =
+  document.getElementById("process");
+
+const resultBox =
+  document.getElementById("resultBox");
+
+const resultText =
+  document.getElementById("resultText");
+
+const retryButton =
+  document.getElementById("retryButton");
+
+const copyButton =
+  document.getElementById("copyButton");
+
+
+// Счётчик символов
+
+textInput.addEventListener(
+  "input",
+  () => {
+
+    counter.textContent =
+      `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
+
+  }
+);
+
+
+// Обработка текста
+
 async function processText() {
+
   const text =
-    document.getElementById("text").value.trim();
-  const action =
+    textInput.value.trim();
+
+  const mode =
     document.getElementById("action").value;
-  const button =
-    document.getElementById("process");
-  const resultBox =
-    document.getElementById("resultBox");
-  const resultText =
-    document.getElementById("resultText");
+
+
+  // Проверяем текст
+
   if (!text) {
-    resultBox.classList.add("show");
-    resultText.textContent =
-      "⚠️ Сначала напиши текст.";
+
+    showResult(
+      "⚠️ Сначала напиши текст."
+    );
+
     return;
   }
-  let instruction = "";
-  if (action === "improve") {
-    instruction =
-      "Улучши этот текст. Исправь ошибки, сделай его грамотным, естественным и понятным. Сохрани смысл. Верни только готовый текст.";
+
+
+  // Защита
+
+  if (text.length > 10000) {
+
+    showResult(
+      "⚠️ Текст слишком длинный."
+    );
+
+    return;
   }
-  if (action === "polish") {
-    instruction =
-      "Переведи этот текст на польский язык. Сделай перевод естественным для носителя польского языка. Сохрани смысл. Верни только перевод.";
-  }
-  if (action === "english") {
-    instruction =
-      "Переведи этот текст на английский язык. Сделай перевод естественным для носителя английского языка. Сохрани смысл. Верни только перевод.";
-  }
-  if (action === "tiktok") {
-    instruction =
-      "Переделай этот текст в цепляющий текст для TikTok. Сделай сильный первый хук, динамичную подачу и короткие фразы. Не выдумывай факты. Верни готовый текст.";
-  }
-  if (action === "shorten") {
-    instruction =
-      "Сократи этот текст. Сохрани главную мысль и важные факты. Удали повторения и лишние слова. Верни только сокращённую версию.";
-  }
-  button.disabled = true;
-  button.textContent =
+
+
+  // UI загрузки
+
+  processButton.disabled = true;
+
+  processButton.textContent =
     "⏳ AI обрабатывает...";
+
+  retryButton.classList.remove("show");
+
   resultBox.classList.add("show");
+
   resultText.textContent =
     "AI готовит ответ...";
+
+
   try {
+
     const response =
-      await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message:
-            instruction +
-            "\n\nТекст пользователя:\n" +
-            text
-        })
-      });
-    const data =
-      await response.json();
+      await fetch(
+        "/api/chat",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            message: text,
+            mode: mode
+          })
+        }
+      );
+
+
+    let data;
+
+    try {
+
+      data =
+        await response.json();
+
+    } catch {
+
+      throw new Error(
+        "Сервер вернул некорректный ответ."
+      );
+    }
+
+
+    // Ошибка сервера
+
     if (!response.ok) {
+
+      if (response.status === 429) {
+
+        let message =
+          "⚠️ Лимит AI временно исчерпан.";
+
+        if (
+          Number.isFinite(
+            data.retryAfter
+          )
+        ) {
+
+          message +=
+            `\n\nПопробуйте снова через ${data.retryAfter} сек.`;
+
+          startRetryTimer(
+            data.retryAfter
+          );
+        }
+
+        throw new Error(message);
+      }
+
+
       throw new Error(
         data.error ||
-        "Ошибка сервера"
+        `Ошибка сервера (${response.status})`
       );
     }
-    if (!data.answer) {
+
+
+    // Проверяем ответ
+
+    if (
+      !data ||
+      typeof data.answer !== "string" ||
+      !data.answer.trim()
+    ) {
+
       throw new Error(
-        "AI не вернул ответ"
+        "AI не вернул текстовый ответ."
       );
     }
+
+
+    // Показываем результат
+
     resultText.textContent =
-      data.answer;
+      data.answer.trim();
+
+    copyButton.style.display =
+      "block";
+
+
   } catch (error) {
+
     resultText.textContent =
-      "❌ Ошибка:\n\n" +
+      "❌ " +
       error.message;
+
+    retryButton.classList.add(
+      "show"
+    );
+
   } finally {
-    button.disabled = false;
-    button.textContent =
+
+    processButton.disabled =
+      false;
+
+    processButton.textContent =
       "✨ Обработать";
   }
 }
+
+
+// Показ результата
+
+function showResult(text) {
+
+  resultBox.classList.add(
+    "show"
+  );
+
+  resultText.textContent =
+    text;
+}
+
+
+// Таймер повторной попытки
+
+function startRetryTimer(seconds) {
+
+  let remaining =
+    Math.max(
+      1,
+      Number(seconds) || 60
+    );
+
+  retryButton.disabled =
+    true;
+
+  retryButton.classList.add(
+    "show"
+  );
+
+  retryButton.textContent =
+    `⏳ Повторить через ${remaining} сек.`;
+
+
+  const timer =
+    setInterval(
+      () => {
+
+        remaining--;
+
+        if (remaining <= 0) {
+
+          clearInterval(timer);
+
+          retryButton.disabled =
+            false;
+
+          retryButton.textContent =
+            "🔄 Попробовать снова";
+
+          return;
+        }
+
+        retryButton.textContent =
+          `⏳ Повторить через ${remaining} сек.`;
+
+      },
+      1000
+    );
+}
+
+
+// Копирование
+
 async function copyResult() {
+
   const text =
-    document
-      .getElementById("resultText")
-      .textContent;
-  if (!text) return;
+    resultText.textContent;
+
+
+  if (!text) {
+    return;
+  }
+
+
   try {
-    await navigator.clipboard.writeText(text);
-    const button =
-      document.querySelector(".copy");
-    button.textContent =
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    copyButton.textContent =
       "✓ Скопировано";
-    setTimeout(() => {
-      button.textContent =
-        "📋 Скопировать";
-    }, 1800);
+
+
+    setTimeout(
+      () => {
+
+        copyButton.textContent =
+          "📋 Скопировать";
+
+      },
+      1800
+    );
+
+
   } catch {
+
     alert(
       "Не удалось скопировать текст."
     );
   }
 }
+
 </script>
+
 </body>
+
 </html>
