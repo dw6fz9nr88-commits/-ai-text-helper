@@ -82,7 +82,7 @@ export default async function handler(req, res) {
     // 1. GEMINI
     // =========================
 
-    if (geminiKey) {
+    if (false && geminiKey) {
       try {
         const geminiResponse =
           await fetch(
