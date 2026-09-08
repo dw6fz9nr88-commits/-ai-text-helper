@@ -74,17 +74,16 @@ export default async function handler(req, res) {
     const groqKey =
       process.env.GROQ_API_KEY;
 
+    const openRouterKey =
+      process.env.OPENROUTER_API_KEY;
 
-    /*
-     * =====================================================
-     * 1. СНАЧАЛА GEMINI
-     * =====================================================
-     */
+
+    // =========================
+    // 1. GEMINI
+    // =========================
 
     if (geminiKey) {
-
       try {
-
         const geminiResponse =
           await fetch(
             "https://generativelanguage.googleapis.com/v1beta/interactions",
@@ -98,13 +97,8 @@ export default async function handler(req, res) {
 
               body: JSON.stringify({
                 model: "gemini-3.7-flash",
-
-                system_instruction:
-                  instruction,
-
-                input:
-                  message,
-
+                system_instruction: instruction,
+                input: message,
                 store: false
               })
             }
@@ -113,45 +107,35 @@ export default async function handler(req, res) {
         const geminiData =
           await geminiResponse.json();
 
-
         if (geminiResponse.ok) {
-
           let answer = "";
-
 
           if (
             typeof geminiData.output_text ===
             "string"
           ) {
-
             answer =
               geminiData.output_text.trim();
           }
-
 
           if (
             !answer &&
             Array.isArray(geminiData.steps)
           ) {
-
             for (
               const step of geminiData.steps
             ) {
-
               if (
                 step.type === "model_output" &&
                 Array.isArray(step.content)
               ) {
-
                 for (
                   const item of step.content
                 ) {
-
                   if (
                     item.type === "text" &&
                     typeof item.text === "string"
                   ) {
-
                     answer += item.text;
                   }
                 }
@@ -159,13 +143,9 @@ export default async function handler(req, res) {
             }
           }
 
-
-          answer =
-            answer.trim();
-
+          answer = answer.trim();
 
           if (answer) {
-
             return res.status(200).json({
               answer,
               provider: "gemini"
@@ -173,21 +153,12 @@ export default async function handler(req, res) {
           }
         }
 
-
-        /*
-         * Если Gemini вернул ошибку,
-         * не ломаем сайт.
-         *
-         * Переходим к Groq.
-         */
-
         console.log(
           "Gemini unavailable:",
           geminiResponse.status
         );
 
       } catch (error) {
-
         console.log(
           "Gemini request failed:",
           error?.message
@@ -196,138 +167,181 @@ export default async function handler(req, res) {
     }
 
 
-    /*
-     * =====================================================
-     * 2. РЕЗЕРВНЫЙ ПРОВАЙДЕР — GROQ
-     * =====================================================
-     */
+    // =========================
+    // 2. GROQ
+    // =========================
 
-    if (!groqKey) {
+    if (groqKey) {
+      try {
+        const groqResponse =
+          await fetch(
+            "https://api.groq.com/openai/v1/chat/completions",
+            {
+              method: "POST",
 
-      return res.status(500).json({
-        error:
-          "AI-провайдеры временно недоступны."
-      });
-    }
+              headers: {
+                "Content-Type":
+                  "application/json",
 
+                "Authorization":
+                  `Bearer ${groqKey}`
+              },
 
-    try {
+              body: JSON.stringify({
+                model:
+                  "openai/gpt-oss-20b",
 
-      const groqResponse =
-        await fetch(
-          "https://api.groq.com/openai/v1/chat/completions",
-          {
-            method: "POST",
+                messages: [
+                  {
+                    role: "system",
+                    content:
+                      instruction
+                  },
+                  {
+                    role: "user",
+                    content:
+                      message
+                  }
+                ],
 
-            headers: {
-              "Content-Type":
-                "application/json",
+                temperature: 0.7,
 
-              "Authorization":
-                `Bearer ${groqKey}`
-            },
+                max_completion_tokens: 2048,
 
-            body: JSON.stringify({
+                stream: false
+              })
+            }
+          );
 
-              model:
-                "openai/gpt-oss-20b",
+        const groqData =
+          await groqResponse.json();
 
-              messages: [
+        if (groqResponse.ok) {
+          const answer =
+            groqData
+              ?.choices?.[0]
+              ?.message
+              ?.content
+              ?.trim();
 
-                {
-                  role: "system",
-
-                  content:
-                    instruction
-                },
-
-                {
-                  role: "user",
-
-                  content:
-                    message
-                }
-
-              ],
-
-              temperature: 0.7,
-
-              max_completion_tokens: 2048,
-
-              stream: false
-            })
+          if (answer) {
+            return res.status(200).json({
+              answer,
+              provider: "groq"
+            });
           }
-        );
-
-
-      const groqData =
-        await groqResponse.json();
-
-
-      if (!groqResponse.ok) {
-
-        console.log(
-          "Groq error:",
-          groqResponse.status,
-          groqData
-        );
-
-        if (
-          groqResponse.status === 429
-        ) {
-
-          return res.status(429).json({
-            error:
-              "Лимит AI временно исчерпан. Попробуйте позже."
-          });
         }
 
-        return res.status(502).json({
-          error:
-            "Резервный AI-провайдер временно недоступен."
-        });
+        console.log(
+          "Groq unavailable:",
+          groqResponse.status
+        );
+
+      } catch (error) {
+        console.log(
+          "Groq request failed:",
+          error?.message
+        );
       }
-
-
-      const answer =
-        groqData
-          ?.choices?.[0]
-          ?.message
-          ?.content
-          ?.trim();
-
-
-      if (!answer) {
-
-        return res.status(502).json({
-          error:
-            "AI не вернул текстовый ответ."
-        });
-      }
-
-
-      return res.status(200).json({
-        answer,
-        provider: "groq"
-      });
-
-
-    } catch (error) {
-
-      console.error(
-        "Groq request failed:",
-        error
-      );
-
-      return res.status(502).json({
-        error:
-          "Резервный AI-провайдер недоступен."
-      });
     }
 
 
-  } catch (error) {
+    // =========================
+    // 3. OPENROUTER
+    // =========================
 
+    if (openRouterKey) {
+      try {
+        const openRouterResponse =
+          await fetch(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  `Bearer ${openRouterKey}`,
+
+                "HTTP-Referer":
+                  "https://ai-text-helper-five.vercel.app",
+
+                "X-Title":
+                  "AI Text Helper"
+              },
+
+              body: JSON.stringify({
+                model:
+                  "openrouter/free",
+
+                messages: [
+                  {
+                    role: "system",
+                    content:
+                      instruction
+                  },
+                  {
+                    role: "user",
+                    content:
+                      message
+                  }
+                ],
+
+                temperature: 0.7,
+
+                max_completion_tokens: 2048,
+
+                stream: false
+              })
+            }
+          );
+
+        const openRouterData =
+          await openRouterResponse.json();
+
+        if (openRouterResponse.ok) {
+          const answer =
+            openRouterData
+              ?.choices?.[0]
+              ?.message
+              ?.content
+              ?.trim();
+
+          if (answer) {
+            return res.status(200).json({
+              answer,
+              provider: "openrouter"
+            });
+          }
+        }
+
+        console.log(
+          "OpenRouter unavailable:",
+          openRouterResponse.status,
+          openRouterData
+        );
+
+      } catch (error) {
+        console.log(
+          "OpenRouter request failed:",
+          error?.message
+        );
+      }
+    }
+
+
+    // =========================
+    // ALL PROVIDERS FAILED
+    // =========================
+
+    return res.status(503).json({
+      error:
+        "Все AI-провайдеры временно недоступны. Попробуйте позже."
+    });
+
+  } catch (error) {
     console.error(
       "CHAT API ERROR:",
       error
