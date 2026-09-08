@@ -171,7 +171,7 @@ export default async function handler(req, res) {
     // 2. GROQ
     // =========================
 
-    if (groqKey) {
+    if (false && groqKey) {
       try {
         const groqResponse =
           await fetch(
