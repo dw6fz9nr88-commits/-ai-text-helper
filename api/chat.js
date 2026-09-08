@@ -4,27 +4,33 @@ export default async function handler(req, res) {
       error: "Метод не поддерживается"
     });
   }
+
   try {
     const body = req.body || {};
+
     const message =
       typeof body.message === "string"
         ? body.message.trim()
         : "";
+
     const mode =
       typeof body.mode === "string"
         ? body.mode.trim().toLowerCase()
         : "improve";
+
     if (!message) {
       return res.status(400).json({
         error: "Введите текст"
       });
     }
+
     if (message.length > 10000) {
       return res.status(413).json({
         error:
           "Текст слишком длинный. Максимум — 10 000 символов."
       });
     }
+
     const modeAliases = {
       improve: "improve",
       polish: "polish",
@@ -37,33 +43,44 @@ export default async function handler(req, res) {
       create_tiktok: "tiktok",
       shorten_text: "shorten"
     };
+
     const normalizedMode =
       modeAliases[mode] || "improve";
+
     const instructions = {
       improve:
         "Улучши этот текст. Исправь грамматические, орфографические и стилистические ошибки. Сделай текст естественным, грамотным и понятным. Сохрани исходный смысл. Не добавляй выдуманную информацию. Верни только готовый текст.",
+
       polish:
         "Переведи этот текст на польский язык. Сделай перевод естественным и грамматически правильным для носителя польского языка. Сохрани смысл и стиль исходного текста. Верни только перевод.",
+
       english:
         "Переведи этот текст на английский язык. Сделай перевод естественным и грамматически правильным для носителя английского языка. Сохрани смысл и стиль исходного текста. Верни только перевод.",
+
       tiktok:
         "Переделай этот текст в цепляющий текст для TikTok. Создай сильный первый хук, динамичную подачу и короткие фразы. Сохрани достоверность информации. Не выдумывай факты. Верни только готовый текст.",
+
       shorten:
         "Сократи этот текст. Сохрани главную мысль, важные детали и факты. Удали повторы, лишние слова и ненужные предложения. Верни только сокращённую версию."
     };
+
     const instruction =
       instructions[normalizedMode];
+
     const geminiKey =
       process.env.GEMINI_API_KEY;
+
     const groqKey =
       process.env.GROQ_API_KEY;
+
     const openRouterKey =
       process.env.OPENROUTER_API_KEY;
-    // =========================
+
+    // ==================================================
     // 1. GEMINI
-    // ВРЕМЕННО ОТКЛЮЧЕН ДЛЯ ТЕСТА
-    // =========================
-    if (false && geminiKey) {
+    // ==================================================
+
+    if (geminiKey) {
       try {
         const geminiResponse =
           await fetch(
@@ -82,10 +99,13 @@ export default async function handler(req, res) {
               })
             }
           );
+
         const geminiData =
           await geminiResponse.json();
+
         if (geminiResponse.ok) {
           let answer = "";
+
           if (
             typeof geminiData.output_text ===
             "string"
@@ -93,6 +113,7 @@ export default async function handler(req, res) {
             answer =
               geminiData.output_text.trim();
           }
+
           if (
             !answer &&
             Array.isArray(geminiData.steps)
@@ -117,7 +138,9 @@ export default async function handler(req, res) {
               }
             }
           }
+
           answer = answer.trim();
+
           if (answer) {
             return res.status(200).json({
               answer,
@@ -125,6 +148,12 @@ export default async function handler(req, res) {
             });
           }
         }
+
+        console.log(
+          "Gemini unavailable:",
+          geminiResponse.status,
+          geminiData
+        );
       } catch (error) {
         console.log(
           "Gemini request failed:",
@@ -132,11 +161,12 @@ export default async function handler(req, res) {
         );
       }
     }
-    // =========================
+
+    // ==================================================
     // 2. GROQ
-    // ВРЕМЕННО ОТКЛЮЧЕН ДЛЯ ТЕСТА
-    // =========================
-    if (false && groqKey) {
+    // ==================================================
+
+    if (groqKey) {
       try {
         const groqResponse =
           await fetch(
@@ -170,8 +200,10 @@ export default async function handler(req, res) {
               })
             }
           );
+
         const groqData =
           await groqResponse.json();
+
         if (groqResponse.ok) {
           const answer =
             groqData
@@ -179,6 +211,7 @@ export default async function handler(req, res) {
               ?.message
               ?.content
               ?.trim();
+
           if (answer) {
             return res.status(200).json({
               answer,
@@ -186,6 +219,12 @@ export default async function handler(req, res) {
             });
           }
         }
+
+        console.log(
+          "Groq unavailable:",
+          groqResponse.status,
+          groqData
+        );
       } catch (error) {
         console.log(
           "Groq request failed:",
@@ -193,9 +232,11 @@ export default async function handler(req, res) {
         );
       }
     }
-    // =========================
+
+    // ==================================================
     // 3. OPENROUTER
-    // =========================
+    // ==================================================
+
     if (openRouterKey) {
       try {
         const openRouterResponse =
@@ -234,8 +275,10 @@ export default async function handler(req, res) {
               })
             }
           );
+
         const openRouterData =
           await openRouterResponse.json();
+
         if (openRouterResponse.ok) {
           const answer =
             openRouterData
@@ -243,6 +286,7 @@ export default async function handler(req, res) {
               ?.message
               ?.content
               ?.trim();
+
           if (answer) {
             return res.status(200).json({
               answer,
@@ -250,47 +294,46 @@ export default async function handler(req, res) {
             });
           }
         }
-        // Показываем точную ошибку
+
         console.log(
           "OpenRouter unavailable:",
           openRouterResponse.status,
           openRouterData
         );
-        return res.status(502).json({
+
+        return res.status(503).json({
           error:
-            `OpenRouter ошибка ${openRouterResponse.status}: ` +
-            (
-              openRouterData?.error?.message ||
-              "Неизвестная ошибка"
-            )
+            "Все AI-провайдеры временно недоступны."
         });
+
       } catch (error) {
         console.error(
           "OpenRouter request failed:",
-          error
+          error?.message
         );
-        return res.status(502).json({
+
+        return res.status(503).json({
           error:
-            "Ошибка соединения с OpenRouter: " +
-            (
-              error?.message ||
-              "неизвестная ошибка"
-            )
+            "Все AI-провайдеры временно недоступны."
         });
       }
     }
-    // =========================
-    // OPENROUTER KEY NOT FOUND
-    // =========================
+
+    // ==================================================
+    // НЕТ ДОСТУПНЫХ API КЛЮЧЕЙ
+    // ==================================================
+
     return res.status(500).json({
       error:
-        "OPENROUTER_API_KEY не найден в настройках Vercel."
+        "AI-провайдеры не настроены в Vercel."
     });
+
   } catch (error) {
     console.error(
       "CHAT API ERROR:",
       error
     );
+
     return res.status(500).json({
       error:
         "Внутренняя ошибка сервера."
