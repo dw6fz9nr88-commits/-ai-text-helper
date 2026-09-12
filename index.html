@@ -479,18 +479,18 @@ footer {
     <option value="improve">
       ✨ Улучшить текст
     </option>
-    <option value="polish">
-      🇵🇱 Перевести на польский
-    </option>
-    <option value="english">
-      🇬🇧 Перевести на английский
-    </option>
-    <option value="tiktok">
-      🎵 Создать текст для TikTok
-    </option>
-    <option value="shorten">
-      ✂️ Сократить текст
-    </option>
+<option value="polish">
+  🇵🇱 Перевести на польский
+</option>
+<option value="english">
+  🇬🇧 Перевести на английский
+</option>
+<option value="tiktok">
+  🎵 Создать текст для TikTok
+</option>
+<option value="shorten">
+  ✂️ Сократить текст
+</option>
   </select>
   <textarea
     id="text"
@@ -503,42 +503,43 @@ footer {
   >
     0 / 10 000
   </div>
-  <button
-    id="process"
-    onclick="processText()"
-  >
-    ✨ Обработать
+
+<button
+id=“process”
+onclick=“processText()”
+
+✨ Обработать
   </button>
   <div
     class="result"
     id="resultBox"
   >
-    <div class="result-title">
-      ✦ РЕЗУЛЬТАТ AI
-    </div>
-    <div
-      class="provider"
-      id="provider"
-      style="display:none;"
-    ></div>
-    <div
-      class="result-text"
-      id="resultText"
-    ></div>
-    <button
-      class="copy"
-      id="copyButton"
-      onclick="copyResult()"
-    >
-      📋 Скопировать
-    </button>
-    <button
-      class="retry"
-      id="retryButton"
-      onclick="processText()"
-    >
-      🔄 Попробовать снова
-    </button>
+<div class="result-title">
+  ✦ РЕЗУЛЬТАТ AI
+</div>
+<div
+  class="provider"
+  id="provider"
+  style="display:none;"
+></div>
+<div
+  class="result-text"
+  id="resultText"
+></div>
+<button
+  class="copy"
+  id="copyButton"
+  onclick="copyResult()"
+>
+  📋 Скопировать
+</button>
+<button
+  class="retry"
+  id="retryButton"
+  onclick="processText()"
+>
+  🔄 Попробовать снова
+</button>
   </div>
 </main>
 <section class="features">
@@ -546,34 +547,34 @@ footer {
     <div class="icon">
       ⚡
     </div>
-    <strong>
-      Быстро
-    </strong>
-    <span>
-      За считанные секунды
-    </span>
+<strong>
+  Быстро
+</strong>
+<span>
+  За считанные секунды
+</span>
   </div>
   <div class="feature">
     <div class="icon">
       🧠
     </div>
-    <strong>
-      Несколько AI
-    </strong>
-    <span>
-      Автоматический fallback
-    </span>
+<strong>
+  Несколько AI
+</strong>
+<span>
+  Автоматический fallback
+</span>
   </div>
   <div class="feature">
     <div class="icon">
       🌍
     </div>
-    <strong>
-      Много языков
-    </strong>
-    <span>
-      Перевод и редактура
-    </span>
+<strong>
+  Много языков
+</strong>
+<span>
+  Перевод и редактура
+</span>
   </div>
 </section>
 <footer>
@@ -598,6 +599,7 @@ const retryButton =
 const copyButton =
   document.getElementById("copyButton");
 let retryTimer = null;
+let rateLimited = false;
 /* ==============================
    СЧЁТЧИК
 ============================== */
@@ -623,6 +625,9 @@ function getProviderName(name) {
    ОБРАБОТКА
 ============================== */
 async function processText() {
+  if (rateLimited) {
+    return;
+  }
   const text =
     textInput.value.trim();
   const mode =
@@ -653,6 +658,7 @@ async function processText() {
     "none";
   resultText.textContent =
     "AI готовит ответ...";
+  let requestRateLimited = false;
   try {
     const response =
       await fetch(
@@ -683,25 +689,31 @@ async function processText() {
        RATE LIMIT
     ========================== */
     if (response.status === 429) {
-      let message =
-        "⚠️ Лимит AI временно исчерпан.";
-      if (
+      requestRateLimited = true;
+      rateLimited = true;
+      const retryAfter =
         Number.isFinite(
-          data.retryAfter
+          Number(data.retryAfter)
         )
-      ) {
-        message +=
-          `\n\nПопробуйте снова через ${data.retryAfter} сек.`;
-        startRetryTimer(
-          data.retryAfter
-        );
-      }
+          ? Math.max(
+              1,
+              Math.ceil(
+                Number(data.retryAfter)
+              )
+            )
+          : 60;
       resultText.textContent =
-        "❌ " + message;
+        `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${retryAfter} сек.`;
       provider.style.display =
         "none";
       copyButton.style.display =
         "none";
+      retryButton.classList.remove(
+        "show"
+      );
+      startRetryTimer(
+        retryAfter
+      );
       return;
     }
     /* ==========================
@@ -751,10 +763,20 @@ async function processText() {
       "show"
     );
   } finally {
-    processButton.disabled =
-      false;
-    processButton.textContent =
-      "✨ Обработать";
+    /*
+      ВАЖНО:
+      При rate limit кнопку
+      нельзя разблокировать.
+    */
+    if (
+      !requestRateLimited &&
+      !rateLimited
+    ) {
+      processButton.disabled =
+        false;
+      processButton.textContent =
+        "✨ Обработать";
+    }
   }
 }
 /* ==============================
@@ -768,6 +790,9 @@ function showResult(text) {
     "none";
   copyButton.style.display =
     "none";
+  retryButton.classList.remove(
+    "show"
+  );
   resultText.textContent =
     text;
 }
@@ -779,21 +804,24 @@ function startRetryTimer(seconds) {
     clearInterval(
       retryTimer
     );
+    retryTimer = null;
   }
   let remaining =
     Math.max(
       1,
-      Number(seconds) || 60
+      Math.ceil(
+        Number(seconds) || 60
+      )
     );
   processButton.disabled =
     true;
-  retryButton.disabled =
-    true;
-  retryButton.classList.add(
+  processButton.textContent =
+    "⏳ Лимит активен...";
+  retryButton.classList.remove(
     "show"
   );
-  retryButton.textContent =
-    `⏳ Повторить через ${remaining} сек.`;
+  retryButton.disabled =
+    true;
   retryTimer =
     setInterval(
       () => {
@@ -803,16 +831,24 @@ function startRetryTimer(seconds) {
             retryTimer
           );
           retryTimer = null;
+          rateLimited = false;
+          processButton.disabled =
+            false;
+          processButton.textContent =
+            "✨ Обработать";
           retryButton.disabled =
             false;
           retryButton.textContent =
             "🔄 Попробовать снова";
-          processButton.disabled =
-            false;
+          retryButton.classList.add(
+            "show"
+          );
+          resultText.textContent =
+            "Лимит снят. Теперь можно снова отправить запрос.";
           return;
         }
-        retryButton.textContent =
-          `⏳ Повторить через ${remaining} сек.`;
+        resultText.textContent =
+          `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${remaining} сек.`;
       },
       1000
     );
