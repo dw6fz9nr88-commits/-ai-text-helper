@@ -1,26 +1,44 @@
 import { Redis } from "@upstash/redis";
-import { Ratelimit } from "@upstash/ratelimit";
 
 const redis = Redis.fromEnv();
 
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(10, "10 m"),
-  analytics: false
-});
-
 function getClientIp(req) {
-  const forwarded =
-    req.headers["x-forwarded-for"];
+  const forwarded = req.headers["x-forwarded-for"];
 
   if (typeof forwarded === "string") {
     return forwarded.split(",")[0].trim();
   }
 
-  return (
-    req.headers["x-real-ip"] ||
-    "unknown"
-  );
+  return req.headers["x-real-ip"] || "unknown";
+}
+
+async function checkRateLimit(ip) {
+  const key = `rate:${ip}`;
+
+  const count = await redis.incr(key);
+
+  // Первый запрос запускает 10-минутное окно.
+  if (count === 1) {
+    await redis.expire(key, 600);
+  }
+
+  const remaining = Math.max(0, 10 - count);
+
+  if (count > 10) {
+    const ttl = await redis.ttl(key);
+
+    return {
+      allowed: false,
+      remaining: 0,
+      retryAfter: Math.max(1, ttl)
+    };
+  }
+
+  return {
+    allowed: true,
+    remaining,
+    retryAfter: 0
+  };
 }
 
 export default async function handler(req, res) {
@@ -31,32 +49,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // ==================================================
-    // RATE LIMIT — 10 запросов за 10 минут с одного IP
-    // ==================================================
-
-    const ip = getClientIp(req);
-
-    const { success, reset } =
-      await ratelimit.limit(
-        `chat:${ip}`
-      );
-
-    if (!success) {
-      const retryAfter = Math.max(
-        1,
-        Math.ceil(
-          (reset - Date.now()) / 1000
-        )
-      );
-
-      return res.status(429).json({
-        error:
-          "Лимит запросов временно исчерпан.",
-        retryAfter
-      });
-    }
-
     const body = req.body || {};
 
     const message =
@@ -68,6 +60,10 @@ export default async function handler(req, res) {
       typeof body.mode === "string"
         ? body.mode.trim().toLowerCase()
         : "improve";
+
+    // ==========================================
+    // ПРОВЕРКА ЗАПРОСА
+    // ==========================================
 
     if (!message) {
       return res.status(400).json({
@@ -118,6 +114,27 @@ export default async function handler(req, res) {
     const instruction =
       instructions[normalizedMode];
 
+    // ==========================================
+    // RATE LIMIT
+    // 10 запросов / 10 минут / IP
+    // ==========================================
+
+    const ip = getClientIp(req);
+
+    const limit = await checkRateLimit(ip);
+
+    if (!limit.allowed) {
+      return res.status(429).json({
+        error:
+          "Лимит запросов временно исчерпан.",
+        retryAfter: limit.retryAfter
+      });
+    }
+
+    // ==========================================
+    // API KEYS
+    // ==========================================
+
     const geminiKey =
       process.env.GEMINI_API_KEY;
 
@@ -127,9 +144,9 @@ export default async function handler(req, res) {
     const openRouterKey =
       process.env.OPENROUTER_API_KEY;
 
-    // ==================================================
+    // ==========================================
     // 1. GEMINI
-    // ==================================================
+    // ==========================================
 
     if (geminiKey) {
       try {
@@ -213,9 +230,9 @@ export default async function handler(req, res) {
       }
     }
 
-    // ==================================================
+    // ==========================================
     // 2. GROQ
-    // ==================================================
+    // ==========================================
 
     if (groqKey) {
       try {
@@ -284,9 +301,9 @@ export default async function handler(req, res) {
       }
     }
 
-    // ==================================================
+    // ==========================================
     // 3. OPENROUTER
-    // ==================================================
+    // ==========================================
 
     if (openRouterKey) {
       try {
@@ -352,27 +369,21 @@ export default async function handler(req, res) {
           openRouterData
         );
 
-        return res.status(503).json({
-          error:
-            "Все AI-провайдеры временно недоступны."
-        });
-
       } catch (error) {
         console.error(
           "OpenRouter request failed:",
           error?.message
         );
-
-        return res.status(503).json({
-          error:
-            "Все AI-провайдеры временно недоступны."
-        });
       }
     }
 
-    return res.status(500).json({
+    // ==========================================
+    // ВСЕ ПРОВАЙДЕРЫ НЕДОСТУПНЫ
+    // ==========================================
+
+    return res.status(503).json({
       error:
-        "AI-провайдеры не настроены в Vercel."
+        "Все AI-провайдеры временно недоступны."
     });
 
   } catch (error) {
