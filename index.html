@@ -25,6 +25,10 @@
       --success: #55d99a;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -32,7 +36,11 @@
         radial-gradient(circle at 50% -10%, rgba(109,124,255,.16), transparent 35%),
         var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
     button,
@@ -44,17 +52,22 @@
 
     button {
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(.98);
     }
 
     .container {
       width: min(920px, calc(100% - 28px));
       margin: 0 auto;
-      padding: 24px 0 50px;
+      padding: 20px 0 50px;
     }
 
     header {
       text-align: center;
-      padding: 12px 0 24px;
+      padding: 8px 0 22px;
     }
 
     .language {
@@ -65,8 +78,9 @@
 
     .language select {
       width: auto;
-      min-width: 120px;
+      min-width: 125px;
       padding: 9px 12px;
+      border-radius: 12px;
     }
 
     select,
@@ -92,33 +106,35 @@
       background: rgba(109,124,255,.1);
       border: 1px solid rgba(109,124,255,.25);
       color: #aeb7ff;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       letter-spacing: .08em;
     }
 
     h1 {
-      margin: 16px 0 8px;
+      margin: 15px 0 8px;
       font-size: clamp(34px, 8vw, 58px);
       line-height: 1;
+      letter-spacing: -.04em;
     }
 
     .subtitle {
       margin: 0 auto;
-      max-width: 650px;
+      max-width: 680px;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
+      font-size: 15px;
     }
 
     .app {
-      background: rgba(17,19,26,.88);
+      background: rgba(17,19,26,.92);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 18px;
       box-shadow: 0 20px 60px rgba(0,0,0,.28);
     }
 
-    label {
+    .field-label {
       display: block;
       margin: 0 0 8px;
       color: #b9bfcc;
@@ -129,7 +145,15 @@
 
     #action {
       padding: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 6px;
+    }
+
+    .action-help {
+      min-height: 20px;
+      margin: 0 2px 13px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
     }
 
     textarea {
@@ -139,6 +163,10 @@
       resize: vertical;
       line-height: 1.55;
       font-size: 16px;
+    }
+
+    textarea::placeholder {
+      color: #666d7c;
     }
 
     .input-tools {
@@ -163,15 +191,18 @@
       border-radius: 11px;
       padding: 9px 11px;
       font-size: 13px;
+      white-space: nowrap;
     }
 
-    .tool-btn:active {
-      transform: scale(.97);
+    .tool-btn:hover,
+    .action-btn:hover {
+      border-color: rgba(109,124,255,.35);
     }
 
     .counter {
       color: var(--muted);
       font-size: 12px;
+      white-space: nowrap;
     }
 
     #fileInput {
@@ -191,6 +222,7 @@
     .file-info.show {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
     }
 
@@ -205,11 +237,16 @@
       font-size: 16px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       box-shadow: 0 10px 28px rgba(109,124,255,.22);
+      transition: opacity .2s ease, transform .1s ease;
     }
 
     .process:disabled {
       opacity: .55;
       cursor: not-allowed;
+    }
+
+    .process:not(:disabled):active {
+      transform: scale(.99);
     }
 
     .result {
@@ -243,6 +280,7 @@
     .provider {
       color: #aeb7ff;
       font-size: 12px;
+      white-space: nowrap;
     }
 
     #resultText {
@@ -304,6 +342,7 @@
 
     .card-actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 7px;
       margin-top: 10px;
     }
@@ -325,8 +364,16 @@
 
     @media (max-width: 600px) {
       .container {
-        width: min(100% - 18px, 920px);
-        padding-top: 10px;
+        width: calc(100% - 18px);
+        padding-top: 8px;
+      }
+
+      header {
+        padding-bottom: 17px;
+      }
+
+      .language {
+        margin-bottom: 15px;
       }
 
       .app {
@@ -334,213 +381,365 @@
         border-radius: 19px;
       }
 
+      h1 {
+        font-size: 40px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
       textarea {
         min-height: 190px;
       }
 
+      .tools-left {
+        width: 100%;
+      }
+
       .tool-btn {
         padding: 9px 10px;
+        flex: 1;
       }
 
       .tools-right {
         display: none;
+      }
+
+      .result-actions .action-btn {
+        flex: 1 1 auto;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .tool-btn {
+        padding: 8px 7px;
+        font-size: 12px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      * {
+        transition: none !important;
       }
     }
   </style>
 </head>
 
 <body>
-  <main class="container">
 
-    <header>
-      <div class="language">
-        <select id="interfaceLanguage" aria-label="Язык интерфейса">
-          <option value="ru">🇷🇺 Русский</option>
-          <option value="pl">🇵🇱 Polski</option>
-          <option value="en">🇬🇧 English</option>
-          <option value="uk">🇺🇦 Українська</option>
-          <option value="de">🇩🇪 Deutsch</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="es">🇪🇸 Español</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="pt">🇵🇹 Português</option>
-          <option value="cs">🇨🇿 Čeština</option>
-        </select>
-      </div>
+<main class="container">
 
-      <div class="badge">● AI POWERED</div>
+  <header>
 
-      <h1>✦ AI Помощник</h1>
-
-      <p class="subtitle">
-        Напиши, вставь, загрузи или продиктуй текст — AI поможет его улучшить,
-        создать, перевести или объяснить.
-      </p>
-    </header>
-
-    <section class="app">
-
-      <label for="action">ДЕЙСТВИЕ</label>
-
-      <select id="action">
-        <optgroup label="✨ Работа с текстом">
-          <option value="improve">✨ Улучшить текст</option>
-          <option value="polish">🇵🇱 Перевести на польский</option>
-          <option value="english">🇬🇧 Перевести на английский</option>
-          <option value="shorten">✂️ Сократить текст</option>
-          <option value="summarize">📋 Краткое содержание</option>
-          <option value="explain">🧠 Объяснить простыми словами</option>
-        </optgroup>
-
-        <optgroup label="✍️ Создание">
-          <option value="write">✍️ Написать текст</option>
-          <option value="reply">💬 Ответить на сообщение</option>
-          <option value="business">💼 Сделать деловым</option>
-          <option value="tiktok">🎵 Создать текст для TikTok</option>
-        </optgroup>
+    <div class="language">
+      <select id="interfaceLanguage" aria-label="Язык интерфейса">
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="pl">🇵🇱 Polski</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="uk">🇺🇦 Українська</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="pt">🇵🇹 Português</option>
+        <option value="cs">🇨🇿 Čeština</option>
       </select>
+    </div>
 
-      <textarea
-        id="text"
-        maxlength="10000"
-        placeholder="Напиши здесь свой текст..."
-        autocomplete="off"
-        spellcheck="true"
-      ></textarea>
+    <div class="badge">● AI POWERED</div>
 
-      <div id="fileInfo" class="file-info">
-        <span id="fileName"></span>
-        <button class="tool-btn" id="removeFile" type="button">✕</button>
-      </div>
+    <h1 id="pageTitle">✦ AI Помощник</h1>
 
-      <div class="input-tools">
-        <div class="tools-left">
-          <input
-            id="fileInput"
-            type="file"
-            accept=".txt,.md,.csv,text/plain,text/markdown,text/csv"
-          >
+    <p class="subtitle" id="pageSubtitle">
+      Напиши, вставь, загрузи или продиктуй текст — AI поможет его улучшить,
+      создать, перевести или объяснить.
+    </p>
 
-          <button class="tool-btn" id="fileButton" type="button">
-            📎 Файл
-          </button>
+  </header>
 
-          <button class="tool-btn" id="voiceButton" type="button">
-            🎙 Голос
-          </button>
+  <section class="app">
 
-          <button class="tool-btn" id="clearButton" type="button">
-            Очистить
-          </button>
-        </div>
+    <label class="field-label" id="actionLabel" for="action">
+      ДЕЙСТВИЕ
+    </label>
 
-        <div class="tools-right">
-          <span class="counter" id="counter">0 / 10 000</span>
-        </div>
-      </div>
+    <select id="action">
 
-      <button class="process" id="process" type="button">
-        ✨ Обработать
-      </button>
+      <optgroup id="textGroup" label="✨ Работа с текстом">
+        <option value="improve">✨ Улучшить текст</option>
+        <option value="polish">🇵🇱 Перевести на польский</option>
+        <option value="english">🇬🇧 Перевести на английский</option>
+        <option value="shorten">✂️ Сократить текст</option>
+        <option value="summarize">📋 Краткое содержание</option>
+        <option value="explain">🧠 Объяснить простыми словами</option>
+      </optgroup>
 
-      <div class="result" id="resultBox">
-        <div class="result-head">
-          <div class="result-title">✦ РЕЗУЛЬТАТ AI</div>
-          <div class="provider" id="provider"></div>
-        </div>
+      <optgroup id="createGroup" label="✍️ Создание">
+        <option value="write">✍️ Написать текст</option>
+        <option value="reply">💬 Ответить на сообщение</option>
+        <option value="business">💼 Сделать деловым</option>
+        <option value="tiktok">🎵 Создать текст для TikTok</option>
+      </optgroup>
 
-        <div id="resultText"></div>
+    </select>
 
-        <div class="result-actions">
-          <button class="action-btn" id="speakButton" type="button">
-            🔊 Озвучить
-          </button>
+    <div class="action-help" id="actionHelp"></div>
 
-          <button class="action-btn" id="stopSpeakButton" type="button">
-            ⏹ Стоп
-          </button>
+    <textarea
+      id="text"
+      maxlength="10000"
+      placeholder="Напиши здесь свой текст..."
+      autocomplete="off"
+      spellcheck="true"
+      enterkeyhint="enter"
+    ></textarea>
 
-          <button class="action-btn" id="copyButton" type="button">
-            📋 Скопировать
-          </button>
+    <div id="fileInfo" class="file-info">
+      <span id="fileName"></span>
+      <button class="tool-btn" id="removeFile" type="button">✕</button>
+    </div>
 
-          <button class="action-btn" id="retryButton" type="button">
-            🔄 Повторить
-          </button>
-        </div>
-      </div>
-    </section>
+    <div class="input-tools">
 
-    <section class="section">
-      <div class="section-title">ШАБЛОНЫ</div>
+      <div class="tools-left">
 
-      <div class="templates" id="templatesList"></div>
+        <input
+          id="fileInput"
+          type="file"
+          accept=".txt,.md,.csv,text/plain,text/markdown,text/csv"
+        >
 
-      <button class="action-btn" id="addTemplateButton" type="button">
-        ＋ Добавить шаблон
-      </button>
-    </section>
-
-    <section class="section">
-      <div class="section-title">ИСТОРИЯ</div>
-
-      <div class="card-actions">
-        <button class="action-btn" id="allHistoryTab" type="button">
-          Все
+        <button class="tool-btn" id="pasteButton" type="button">
+          📋 Вставить
         </button>
 
-        <button class="action-btn" id="favoriteHistoryTab" type="button">
-          ⭐ Избранное
+        <button class="tool-btn" id="fileButton" type="button">
+          📎 Файл
         </button>
 
-        <button class="action-btn" id="clearHistoryButton" type="button">
+        <button class="tool-btn" id="voiceButton" type="button">
+          🎙 Голос
+        </button>
+
+        <button class="tool-btn" id="clearButton" type="button">
           Очистить
         </button>
+
       </div>
 
-      <div class="history" id="historyList"></div>
-    </section>
+      <div class="tools-right">
+        <span class="counter" id="counter">0 / 10 000</span>
+      </div>
 
-    <footer>
-      AI Помощник · Gemini · Groq · OpenRouter
-    </footer>
+    </div>
 
-  </main>
+    <button class="process" id="process" type="button">
+      ✨ Обработать
+    </button>
+
+    <div class="result" id="resultBox">
+
+      <div class="result-head">
+
+        <div class="result-title" id="resultTitle">
+          ✦ РЕЗУЛЬТАТ AI
+        </div>
+
+        <div class="provider" id="provider"></div>
+
+      </div>
+
+      <div id="resultText"></div>
+
+      <div class="result-actions">
+
+        <button class="action-btn" id="speakButton" type="button">
+          🔊 Озвучить
+        </button>
+
+        <button class="action-btn" id="stopSpeakButton" type="button">
+          ⏹ Стоп
+        </button>
+
+        <button class="action-btn" id="copyButton" type="button">
+          📋 Скопировать
+        </button>
+
+        <button class="action-btn" id="retryButton" type="button">
+          🔄 Повторить
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="section" id="templatesSection">
+
+    <div class="section-title" id="templatesTitle">
+      ШАБЛОНЫ
+    </div>
+
+    <div class="templates" id="templatesList"></div>
+
+    <button class="action-btn" id="addTemplateButton" type="button">
+      ＋ Добавить шаблон
+    </button>
+
+  </section>
+
+  <section class="section" id="historySection">
+
+    <div class="section-title" id="historyTitle">
+      ИСТОРИЯ
+    </div>
+
+    <div class="card-actions">
+
+      <button class="action-btn" id="allHistoryTab" type="button">
+        Все
+      </button>
+
+      <button class="action-btn" id="favoriteHistoryTab" type="button">
+        ⭐ Избранное
+      </button>
+
+      <button class="action-btn" id="clearHistoryButton" type="button">
+        Очистить
+      </button>
+
+    </div>
+
+    <div class="history" id="historyList"></div>
+
+  </section>
+
+  <footer id="footer">
+    AI Помощник · Gemini · Groq · OpenRouter
+  </footer>
+
+</main>
 
 <script>
 "use strict";
 
+/* =========================
+   ELEMENTS
+========================= */
+
 const textInput = document.getElementById("text");
 const counter = document.getElementById("counter");
+
 const processButton = document.getElementById("process");
+
 const resultBox = document.getElementById("resultBox");
 const resultText = document.getElementById("resultText");
 const provider = document.getElementById("provider");
+
 const retryButton = document.getElementById("retryButton");
 const copyButton = document.getElementById("copyButton");
 const speakButton = document.getElementById("speakButton");
 const stopSpeakButton = document.getElementById("stopSpeakButton");
+
 const actionSelect = document.getElementById("action");
-const interfaceLanguage = document.getElementById("interfaceLanguage");
+const interfaceLanguage =
+  document.getElementById("interfaceLanguage");
 
-const fileInput = document.getElementById("fileInput");
-const fileButton = document.getElementById("fileButton");
-const removeFile = document.getElementById("removeFile");
-const fileInfo = document.getElementById("fileInfo");
-const fileName = document.getElementById("fileName");
-const voiceButton = document.getElementById("voiceButton");
-const clearButton = document.getElementById("clearButton");
+const actionLabel =
+  document.getElementById("actionLabel");
 
-const historyList = document.getElementById("historyList");
-const clearHistoryButton = document.getElementById("clearHistoryButton");
-const allHistoryTab = document.getElementById("allHistoryTab");
-const favoriteHistoryTab = document.getElementById("favoriteHistoryTab");
-const templatesList = document.getElementById("templatesList");
-const addTemplateButton = document.getElementById("addTemplateButton");
+const actionHelp =
+  document.getElementById("actionHelp");
 
-const HISTORY_KEY = "ai_helper_history_v2";
-const TEMPLATES_KEY = "ai_helper_templates_v2";
-const LANGUAGE_KEY = "ai_helper_interface_language_v2";
+const pageTitle =
+  document.getElementById("pageTitle");
+
+const pageSubtitle =
+  document.getElementById("pageSubtitle");
+
+const resultTitle =
+  document.getElementById("resultTitle");
+
+const templatesTitle =
+  document.getElementById("templatesTitle");
+
+const historyTitle =
+  document.getElementById("historyTitle");
+
+const footer =
+  document.getElementById("footer");
+
+const textGroup =
+  document.getElementById("textGroup");
+
+const createGroup =
+  document.getElementById("createGroup");
+
+const pasteButton =
+  document.getElementById("pasteButton");
+
+const fileInput =
+  document.getElementById("fileInput");
+
+const fileButton =
+  document.getElementById("fileButton");
+
+const removeFile =
+  document.getElementById("removeFile");
+
+const fileInfo =
+  document.getElementById("fileInfo");
+
+const fileName =
+  document.getElementById("fileName");
+
+const voiceButton =
+  document.getElementById("voiceButton");
+
+const clearButton =
+  document.getElementById("clearButton");
+
+const historyList =
+  document.getElementById("historyList");
+
+const clearHistoryButton =
+  document.getElementById("clearHistoryButton");
+
+const allHistoryTab =
+  document.getElementById("allHistoryTab");
+
+const favoriteHistoryTab =
+  document.getElementById("favoriteHistoryTab");
+
+const templatesList =
+  document.getElementById("templatesList");
+
+const addTemplateButton =
+  document.getElementById("addTemplateButton");
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+const HISTORY_KEY =
+  "ai_helper_history_v3";
+
+const TEMPLATES_KEY =
+  "ai_helper_templates_v3";
+
+const LANGUAGE_KEY =
+  "ai_helper_interface_language_v3";
 
 const MAX_HISTORY = 20;
 const MAX_TEMPLATES = 30;
@@ -551,10 +750,21 @@ let rateLimited = false;
 let retryTimer = null;
 let recognition = null;
 
+
+/* =========================
+   TRANSLATIONS
+========================= */
+
 const translations = {
+
   ru: {
-    subtitle: "Напиши, вставь, загрузи или продиктуй текст — AI поможет его улучшить, создать, перевести или объяснить.",
-    action: "Действие",
+    pageTitle: "✦ AI Помощник",
+    subtitle:
+      "Напиши, вставь, загрузи или продиктуй текст — AI поможет его улучшить, создать, перевести или объяснить.",
+    action: "ДЕЙСТВИЕ",
+    textGroup: "✨ Работа с текстом",
+    createGroup: "✍️ Создание",
+
     improve: "✨ Улучшить текст",
     polish: "🇵🇱 Перевести на польский",
     english: "🇬🇧 Перевести на английский",
@@ -565,48 +775,209 @@ const translations = {
     reply: "💬 Ответить на сообщение",
     business: "💼 Сделать деловым",
     tiktok: "🎵 Создать текст для TikTok",
+
+    help: {
+      improve: "Сделает текст грамотнее, понятнее и естественнее.",
+      polish: "Переведёт текст на польский язык.",
+      english: "Переведёт текст на английский язык.",
+      shorten: "Уберёт лишнее и сохранит главную мысль.",
+      summarize: "Выделит самое важное из длинного текста.",
+      explain: "Объяснит сложный текст или термин простыми словами.",
+      write: "Создаст новый текст по твоему описанию.",
+      reply: "Поможет написать подходящий ответ.",
+      business: "Сделает текст более деловым и профессиональным.",
+      tiktok: "Создаст короткий и цепляющий текст для TikTok."
+    },
+
+    placeholder: "Напиши здесь свой текст...",
+    explainPlaceholder:
+      "Вставь сложный текст, термин или описание — AI объяснит это простыми словами.",
+
     process: "✨ Обработать",
     processing: "⏳ AI работает...",
+
+    result: "✦ РЕЗУЛЬТАТ AI",
+
     copy: "📋 Скопировать",
     copied: "✓ Скопировано",
     retry: "🔄 Повторить",
+
     speak: "🔊 Озвучить",
     stop: "⏹ Стоп",
+
+    paste: "📋 Вставить",
     file: "📎 Файл",
     voice: "🎙 Голос",
+    listening: "🔴 Слушаю...",
     clear: "Очистить",
+
     templates: "ШАБЛОНЫ",
     history: "ИСТОРИЯ",
+
     all: "Все",
     favorites: "⭐ Избранное",
+
     clearHistory: "Очистить",
     addTemplate: "＋ Добавить шаблон",
+
     emptyHistory: "История пока пуста.",
     emptyFavorites: "Избранных записей пока нет.",
     emptyTemplates: "Шаблонов пока нет.",
+
     useAgain: "Использовать",
     favorite: "☆",
     favoriteActive: "★",
     delete: "Удалить",
+
     enterText: "Введите текст.",
     tooLong: "Текст слишком длинный. Максимум 10 000 символов.",
     serverError: "Произошла ошибка сервера.",
     noAnswer: "AI не вернул ответ.",
+
     limit: "⚠️ Лимит AI временно исчерпан.",
     retryIn: "Попробуйте снова через",
     seconds: "сек.",
+
     fileLoaded: "Файл загружен",
     unsupportedFile: "Поддерживаются только TXT, MD и CSV.",
     fileTooLarge: "Файл слишком большой. Максимум 1 МБ.",
-    microphoneUnavailable: "Голосовой ввод не поддерживается этим браузером.",
-    listening: "🔴 Слушаю...",
-    explainPlaceholder: "Вставь сложный текст, термин или описание — AI объяснит это простыми словами.",
-    placeholder: "Напиши здесь свой текст..."
+    fileReadError: "Не удалось прочитать файл.",
+
+    microphoneUnavailable:
+      "Голосовой ввод не поддерживается этим браузером.",
+
+    pasteUnavailable:
+      "Не удалось получить текст из буфера обмена.",
+
+    pastePermission:
+      "Разрешите доступ к буферу обмена или вставьте текст вручную.",
+
+    copiedError:
+      "Не удалось скопировать текст.",
+
+    confirmClear:
+      "Удалить всю историю?",
+
+    templateName:
+      "Название шаблона:",
+
+    footer:
+      "AI Помощник · Gemini · Groq · OpenRouter"
+  },
+
+  pl: {
+    pageTitle: "✦ Asystent AI",
+    subtitle:
+      "Napisz, wklej, załaduj lub podyktuj tekst — AI pomoże go poprawić, stworzyć, przetłumaczyć lub wyjaśnić.",
+    action: "DZIAŁANIE",
+    textGroup: "✨ Praca z tekstem",
+    createGroup: "✍️ Tworzenie",
+
+    improve: "✨ Popraw tekst",
+    polish: "🇵🇱 Przetłumacz na polski",
+    english: "🇬🇧 Przetłumacz na angielski",
+    shorten: "✂️ Skróć tekst",
+    summarize: "📋 Podsumuj",
+    explain: "🧠 Wyjaśnij prostymi słowami",
+    write: "✍️ Napisz tekst",
+    reply: "💬 Odpowiedz na wiadomość",
+    business: "💼 Nadaj styl biznesowy",
+    tiktok: "🎵 Stwórz tekst na TikTok",
+
+    help: {
+      improve: "Poprawi tekst i sprawi, że będzie bardziej naturalny.",
+      polish: "Przetłumaczy tekst na język polski.",
+      english: "Przetłumaczy tekst na język angielski.",
+      shorten: "Usunie zbędne fragmenty i zachowa sens.",
+      summarize: "Wyciągnie najważniejsze informacje.",
+      explain: "Wyjaśni trudny tekst lub termin prostymi słowami.",
+      write: "Stworzy nowy tekst na podstawie Twojego opisu.",
+      reply: "Pomoże napisać odpowiednią odpowiedź.",
+      business: "Nada tekstowi profesjonalny, biznesowy charakter.",
+      tiktok: "Stworzy krótki i angażujący tekst na TikTok."
+    },
+
+    placeholder: "Napisz tutaj swój tekst...",
+    explainPlaceholder:
+      "Wklej trudny tekst, termin lub opis — AI wyjaśni go prostymi słowami.",
+
+    process: "✨ Przetwórz",
+    processing: "⏳ AI pracuje...",
+    result: "✦ WYNIK AI",
+
+    copy: "📋 Kopiuj",
+    copied: "✓ Skopiowano",
+    retry: "🔄 Spróbuj ponownie",
+
+    speak: "🔊 Odtwórz",
+    stop: "⏹ Stop",
+
+    paste: "📋 Wklej",
+    file: "📎 Plik",
+    voice: "🎙 Głos",
+    listening: "🔴 Słucham...",
+    clear: "Wyczyść",
+
+    templates: "SZABLONY",
+    history: "HISTORIA",
+    all: "Wszystkie",
+    favorites: "⭐ Ulubione",
+    clearHistory: "Wyczyść",
+    addTemplate: "＋ Dodaj szablon",
+
+    emptyHistory: "Historia jest pusta.",
+    emptyFavorites: "Brak ulubionych.",
+    emptyTemplates: "Brak szablonów.",
+
+    useAgain: "Użyj",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Usuń",
+
+    enterText: "Wpisz tekst.",
+    tooLong: "Tekst jest za długi. Maksymalnie 10 000 znaków.",
+    serverError: "Wystąpił błąd serwera.",
+    noAnswer: "AI nie zwróciło odpowiedzi.",
+
+    limit: "⚠️ Limit AI został tymczasowo osiągnięty.",
+    retryIn: "Spróbuj ponownie za",
+    seconds: "sek.",
+
+    fileLoaded: "Plik załadowany",
+    unsupportedFile: "Obsługiwane są tylko pliki TXT, MD i CSV.",
+    fileTooLarge: "Plik jest za duży. Maksymalnie 1 MB.",
+    fileReadError: "Nie udało się odczytać pliku.",
+
+    microphoneUnavailable:
+      "Ta przeglądarka nie obsługuje wprowadzania głosowego.",
+
+    pasteUnavailable:
+      "Nie udało się pobrać tekstu ze schowka.",
+
+    pastePermission:
+      "Zezwól na dostęp do schowka lub wklej tekst ręcznie.",
+
+    copiedError:
+      "Nie udało się skopiować tekstu.",
+
+    confirmClear:
+      "Usunąć całą historię?",
+
+    templateName:
+      "Nazwa szablonu:",
+
+    footer:
+      "Asystent AI · Gemini · Groq · OpenRouter"
   },
 
   en: {
-    subtitle: "Write, paste, upload or dictate text — AI can improve, create, translate or explain it.",
-    action: "Action",
+    pageTitle: "✦ AI Assistant",
+    subtitle:
+      "Write, paste, upload or dictate text — AI can improve, create, translate or explain it.",
+    action: "ACTION",
+    textGroup: "✨ Work with text",
+    createGroup: "✍️ Create",
+
     improve: "✨ Improve text",
     polish: "🇵🇱 Translate to Polish",
     english: "🇬🇧 Translate to English",
@@ -617,398 +988,1740 @@ const translations = {
     reply: "💬 Reply to message",
     business: "💼 Make professional",
     tiktok: "🎵 Create TikTok text",
+
+    help: {
+      improve: "Makes the text clearer, more natural and grammatically correct.",
+      polish: "Translates the text into Polish.",
+      english: "Translates the text into English.",
+      shorten: "Removes unnecessary parts while keeping the main idea.",
+      summarize: "Extracts the most important information.",
+      explain: "Explains difficult text or terms in simple language.",
+      write: "Creates a new text based on your description.",
+      reply: "Helps you write an appropriate reply.",
+      business: "Makes the text more professional and business-like.",
+      tiktok: "Creates a short and engaging TikTok text."
+    },
+
+    placeholder: "Write your text here...",
+    explainPlaceholder:
+      "Paste a difficult text, term or description — AI will explain it simply.",
+
     process: "✨ Process",
     processing: "⏳ AI is working...",
+    result: "✦ AI RESULT",
+
     copy: "📋 Copy",
     copied: "✓ Copied",
     retry: "🔄 Retry",
+
     speak: "🔊 Read aloud",
     stop: "⏹ Stop",
+
+    paste: "📋 Paste",
     file: "📎 File",
     voice: "🎙 Voice",
+    listening: "🔴 Listening...",
     clear: "Clear",
+
     templates: "TEMPLATES",
     history: "HISTORY",
     all: "All",
     favorites: "⭐ Favorites",
     clearHistory: "Clear",
     addTemplate: "＋ Add template",
+
     emptyHistory: "History is empty.",
     emptyFavorites: "No favorites yet.",
     emptyTemplates: "No templates yet.",
+
     useAgain: "Use",
     favorite: "☆",
     favoriteActive: "★",
     delete: "Delete",
+
     enterText: "Enter some text.",
     tooLong: "Text is too long. Maximum 10,000 characters.",
     serverError: "Server error.",
     noAnswer: "AI returned no answer.",
+
     limit: "⚠️ AI limit reached.",
     retryIn: "Try again in",
     seconds: "sec.",
+
     fileLoaded: "File loaded",
     unsupportedFile: "Only TXT, MD and CSV files are supported.",
     fileTooLarge: "File is too large. Maximum 1 MB.",
-    microphoneUnavailable: "Voice input is not supported by this browser.",
-    listening: "🔴 Listening...",
-    explainPlaceholder: "Paste a difficult text, term or description — AI will explain it simply.",
-    placeholder: "Write your text here..."
+    fileReadError: "Could not read the file.",
+
+    microphoneUnavailable:
+      "Voice input is not supported by this browser.",
+
+    pasteUnavailable:
+      "Could not read the clipboard.",
+
+    pastePermission:
+      "Allow clipboard access or paste the text manually.",
+
+    copiedError:
+      "Could not copy the text.",
+
+    confirmClear:
+      "Delete all history?",
+
+    templateName:
+      "Template name:",
+
+    footer:
+      "AI Assistant · Gemini · Groq · OpenRouter"
+  },
+
+  uk: {
+    pageTitle: "✦ AI Помічник",
+    subtitle:
+      "Напиши, встав, завантаж або продиктуй текст — AI допоможе його покращити, створити, перекласти чи пояснити.",
+    action: "ДІЯ",
+    textGroup: "✨ Робота з текстом",
+    createGroup: "✍️ Створення",
+
+    improve: "✨ Покращити текст",
+    polish: "🇵🇱 Перекласти польською",
+    english: "🇬🇧 Перекласти англійською",
+    shorten: "✂️ Скоротити текст",
+    summarize: "📋 Короткий зміст",
+    explain: "🧠 Пояснити простими словами",
+    write: "✍️ Написати текст",
+    reply: "💬 Відповісти на повідомлення",
+    business: "💼 Зробити діловим",
+    tiktok: "🎵 Створити текст для TikTok",
+
+    help: {
+      improve: "Зробить текст грамотнішим, зрозумілішим і природнішим.",
+      polish: "Перекладе текст польською мовою.",
+      english: "Перекладе текст англійською мовою.",
+      shorten: "Прибере зайве та збереже головну думку.",
+      summarize: "Виділить найважливішу інформацію.",
+      explain: "Пояснить складний текст або термін простими словами.",
+      write: "Створить новий текст за твоїм описом.",
+      reply: "Допоможе написати відповідну відповідь.",
+      business: "Зробить текст більш діловим і професійним.",
+      tiktok: "Створить короткий та цікавий текст для TikTok."
+    },
+
+    placeholder: "Напиши тут свій текст...",
+    explainPlaceholder:
+      "Встав складний текст, термін або опис — AI пояснить його простими словами.",
+
+    process: "✨ Обробити",
+    processing: "⏳ AI працює...",
+    result: "✦ РЕЗУЛЬТАТ AI",
+
+    copy: "📋 Скопіювати",
+    copied: "✓ Скопійовано",
+    retry: "🔄 Повторити",
+
+    speak: "🔊 Озвучити",
+    stop: "⏹ Стоп",
+
+    paste: "📋 Вставити",
+    file: "📎 Файл",
+    voice: "🎙 Голос",
+    listening: "🔴 Слухаю...",
+    clear: "Очистити",
+
+    templates: "ШАБЛОНИ",
+    history: "ІСТОРІЯ",
+    all: "Усі",
+    favorites: "⭐ Обране",
+    clearHistory: "Очистити",
+    addTemplate: "＋ Додати шаблон",
+
+    emptyHistory: "Історія поки порожня.",
+    emptyFavorites: "Обраних записів поки немає.",
+    emptyTemplates: "Шаблонів поки немає.",
+
+    useAgain: "Використати",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Видалити",
+
+    enterText: "Введи текст.",
+    tooLong: "Текст занадто довгий. Максимум 10 000 символів.",
+    serverError: "Сталася помилка сервера.",
+    noAnswer: "AI не повернув відповідь.",
+
+    limit: "⚠️ Ліміт AI тимчасово вичерпано.",
+    retryIn: "Спробуйте знову через",
+    seconds: "сек.",
+
+    fileLoaded: "Файл завантажено",
+    unsupportedFile: "Підтримуються лише TXT, MD та CSV.",
+    fileTooLarge: "Файл занадто великий. Максимум 1 МБ.",
+    fileReadError: "Не вдалося прочитати файл.",
+
+    microphoneUnavailable:
+      "Цей браузер не підтримує голосове введення.",
+
+    pasteUnavailable:
+      "Не вдалося отримати текст із буфера обміну.",
+
+    pastePermission:
+      "Дозвольте доступ до буфера обміну або вставте текст вручну.",
+
+    copiedError:
+      "Не вдалося скопіювати текст.",
+
+    confirmClear:
+      "Видалити всю історію?",
+
+    templateName:
+      "Назва шаблону:",
+
+    footer:
+      "AI Помічник · Gemini · Groq · OpenRouter"
+  },
+
+  de: {
+    pageTitle: "✦ AI-Assistent",
+    subtitle:
+      "Schreibe, füge ein, lade hoch oder diktiere Text — die KI kann ihn verbessern, erstellen, übersetzen oder erklären.",
+    action: "AKTION",
+    textGroup: "✨ Text bearbeiten",
+    createGroup: "✍️ Erstellen",
+
+    improve: "✨ Text verbessern",
+    polish: "🇵🇱 Auf Polnisch übersetzen",
+    english: "🇬🇧 Auf Englisch übersetzen",
+    shorten: "✂️ Text kürzen",
+    summarize: "📋 Zusammenfassen",
+    explain: "🧠 Einfach erklären",
+    write: "✍️ Text schreiben",
+    reply: "💬 Auf Nachricht antworten",
+    business: "💼 Geschäftlich formulieren",
+    tiktok: "🎵 TikTok-Text erstellen",
+
+    help: {
+      improve: "Macht den Text klarer, natürlicher und grammatikalisch korrekt.",
+      polish: "Übersetzt den Text ins Polnische.",
+      english: "Übersetzt den Text ins Englische.",
+      shorten: "Entfernt unnötige Teile und bewahrt die Hauptaussage.",
+      summarize: "Hebt die wichtigsten Informationen hervor.",
+      explain: "Erklärt schwierige Texte oder Begriffe einfach.",
+      write: "Erstellt einen neuen Text nach deiner Beschreibung.",
+      reply: "Hilft dir, eine passende Antwort zu schreiben.",
+      business: "Macht den Text professioneller.",
+      tiktok: "Erstellt einen kurzen und ansprechenden TikTok-Text."
+    },
+
+    placeholder: "Schreibe deinen Text hier...",
+    explainPlaceholder:
+      "Füge einen schwierigen Text, Begriff oder eine Beschreibung ein — die KI erklärt ihn einfach.",
+
+    process: "✨ Verarbeiten",
+    processing: "⏳ KI arbeitet...",
+    result: "✦ KI-ERGEBNIS",
+
+    copy: "📋 Kopieren",
+    copied: "✓ Kopiert",
+    retry: "🔄 Wiederholen",
+
+    speak: "🔊 Vorlesen",
+    stop: "⏹ Stop",
+
+    paste: "📋 Einfügen",
+    file: "📎 Datei",
+    voice: "🎙 Stimme",
+    listening: "🔴 Zuhören...",
+    clear: "Löschen",
+
+    templates: "VORLAGEN",
+    history: "VERLAUF",
+    all: "Alle",
+    favorites: "⭐ Favoriten",
+    clearHistory: "Löschen",
+    addTemplate: "＋ Vorlage hinzufügen",
+
+    emptyHistory: "Verlauf ist leer.",
+    emptyFavorites: "Noch keine Favoriten.",
+    emptyTemplates: "Noch keine Vorlagen.",
+
+    useAgain: "Verwenden",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Löschen",
+
+    enterText: "Text eingeben.",
+    tooLong: "Text ist zu lang. Maximal 10.000 Zeichen.",
+    serverError: "Serverfehler.",
+    noAnswer: "Die KI hat keine Antwort zurückgegeben.",
+
+    limit: "⚠️ KI-Limit erreicht.",
+    retryIn: "Erneut versuchen in",
+    seconds: "Sek.",
+
+    fileLoaded: "Datei geladen",
+    unsupportedFile: "Nur TXT, MD und CSV werden unterstützt.",
+    fileTooLarge: "Datei ist zu groß. Maximal 1 MB.",
+    fileReadError: "Datei konnte nicht gelesen werden.",
+
+    microphoneUnavailable:
+      "Dieser Browser unterstützt keine Spracheingabe.",
+
+    pasteUnavailable:
+      "Zwischenablage konnte nicht gelesen werden.",
+
+    pastePermission:
+      "Erlaube den Zugriff auf die Zwischenablage oder füge den Text manuell ein.",
+
+    copiedError:
+      "Text konnte nicht kopiert werden.",
+
+    confirmClear:
+      "Gesamten Verlauf löschen?",
+
+    templateName:
+      "Vorlagenname:",
+
+    footer:
+      "AI-Assistent · Gemini · Groq · OpenRouter"
+  },
+
+  fr: {
+    pageTitle: "✦ Assistant IA",
+    subtitle:
+      "Écrivez, collez, chargez ou dictez un texte — l’IA peut l’améliorer, le créer, le traduire ou l’expliquer.",
+    action: "ACTION",
+    textGroup: "✨ Travailler avec le texte",
+    createGroup: "✍️ Créer",
+
+    improve: "✨ Améliorer le texte",
+    polish: "🇵🇱 Traduire en polonais",
+    english: "🇬🇧 Traduire en anglais",
+    shorten: "✂️ Raccourcir",
+    summarize: "📋 Résumer",
+    explain: "🧠 Expliquer simplement",
+    write: "✍️ Écrire un texte",
+    reply: "💬 Répondre au message",
+    business: "💼 Rendre professionnel",
+    tiktok: "🎵 Créer un texte TikTok",
+
+    help: {
+      improve: "Rend le texte plus clair, naturel et correct.",
+      polish: "Traduit le texte en polonais.",
+      english: "Traduit le texte en anglais.",
+      shorten: "Supprime le superflu en gardant l’idée principale.",
+      summarize: "Extrait les informations essentielles.",
+      explain: "Explique les textes ou termes difficiles simplement.",
+      write: "Crée un nouveau texte à partir de votre description.",
+      reply: "Aide à rédiger une réponse adaptée.",
+      business: "Rend le texte plus professionnel.",
+      tiktok: "Crée un texte court et accrocheur pour TikTok."
+    },
+
+    placeholder: "Écrivez votre texte ici...",
+    explainPlaceholder:
+      "Collez un texte, un terme ou une description difficile — l’IA l’expliquera simplement.",
+
+    process: "✨ Traiter",
+    processing: "⏳ L’IA travaille...",
+    result: "✦ RÉSULTAT IA",
+
+    copy: "📋 Copier",
+    copied: "✓ Copié",
+    retry: "🔄 Réessayer",
+
+    speak: "🔊 Lire",
+    stop: "⏹ Stop",
+
+    paste: "📋 Coller",
+    file: "📎 Fichier",
+    voice: "🎙 Voix",
+    listening: "🔴 Écoute...",
+    clear: "Effacer",
+
+    templates: "MODÈLES",
+    history: "HISTORIQUE",
+    all: "Tous",
+    favorites: "⭐ Favoris",
+    clearHistory: "Effacer",
+    addTemplate: "＋ Ajouter un modèle",
+
+    emptyHistory: "L’historique est vide.",
+    emptyFavorites: "Aucun favori.",
+    emptyTemplates: "Aucun modèle.",
+
+    useAgain: "Utiliser",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Supprimer",
+
+    enterText: "Entrez du texte.",
+    tooLong: "Le texte est trop long. Maximum 10 000 caractères.",
+    serverError: "Erreur du serveur.",
+    noAnswer: "L’IA n’a pas renvoyé de réponse.",
+
+    limit: "⚠️ Limite IA atteinte.",
+    retryIn: "Réessayez dans",
+    seconds: "sec.",
+
+    fileLoaded: "Fichier chargé",
+    unsupportedFile: "Seuls TXT, MD et CSV sont pris en charge.",
+    fileTooLarge: "Le fichier est trop volumineux. Maximum 1 Mo.",
+    fileReadError: "Impossible de lire le fichier.",
+
+    microphoneUnavailable:
+      "Ce navigateur ne prend pas en charge la saisie vocale.",
+
+    pasteUnavailable:
+      "Impossible de lire le presse-papiers.",
+
+    pastePermission:
+      "Autorisez l’accès au presse-papiers ou collez le texte manuellement.",
+
+    copiedError:
+      "Impossible de copier le texte.",
+
+    confirmClear:
+      "Supprimer tout l’historique ?",
+
+    templateName:
+      "Nom du modèle:",
+
+    footer:
+      "Assistant IA · Gemini · Groq · OpenRouter"
+  },
+
+  es: {
+    pageTitle: "✦ Asistente IA",
+    subtitle:
+      "Escribe, pega, carga o dicta un texto — la IA puede mejorarlo, crearlo, traducirlo o explicarlo.",
+    action: "ACCIÓN",
+    textGroup: "✨ Trabajar con texto",
+    createGroup: "✍️ Crear",
+
+    improve: "✨ Mejorar texto",
+    polish: "🇵🇱 Traducir al polaco",
+    english: "🇬🇧 Traducir al inglés",
+    shorten: "✂️ Acortar texto",
+    summarize: "📋 Resumir",
+    explain: "🧠 Explicar de forma sencilla",
+    write: "✍️ Escribir texto",
+    reply: "💬 Responder mensaje",
+    business: "💼 Hacer profesional",
+    tiktok: "🎵 Crear texto para TikTok",
+
+    help: {
+      improve: "Hace el texto más claro, natural y correcto.",
+      polish: "Traduce el texto al polaco.",
+      english: "Traduce el texto al inglés.",
+      shorten: "Elimina lo innecesario y mantiene la idea principal.",
+      summarize: "Extrae la información más importante.",
+      explain: "Explica textos o términos difíciles de forma sencilla.",
+      write: "Crea un nuevo texto según tu descripción.",
+      reply: "Ayuda a escribir una respuesta adecuada.",
+      business: "Hace el texto más profesional.",
+      tiktok: "Crea un texto corto y atractivo para TikTok."
+    },
+
+    placeholder: "Escribe tu texto aquí...",
+    explainPlaceholder:
+      "Pega un texto, término o descripción difícil — la IA lo explicará de forma sencilla.",
+
+    process: "✨ Procesar",
+    processing: "⏳ La IA está trabajando...",
+    result: "✦ RESULTADO IA",
+
+    copy: "📋 Copiar",
+    copied: "✓ Copiado",
+    retry: "🔄 Reintentar",
+
+    speak: "🔊 Escuchar",
+    stop: "⏹ Detener",
+
+    paste: "📋 Pegar",
+    file: "📎 Archivo",
+    voice: "🎙 Voz",
+    listening: "🔴 Escuchando...",
+    clear: "Limpiar",
+
+    templates: "PLANTILLAS",
+    history: "HISTORIAL",
+    all: "Todos",
+    favorites: "⭐ Favoritos",
+    clearHistory: "Limpiar",
+    addTemplate: "＋ Añadir plantilla",
+
+    emptyHistory: "El historial está vacío.",
+    emptyFavorites: "No hay favoritos.",
+    emptyTemplates: "No hay plantillas.",
+
+    useAgain: "Usar",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Eliminar",
+
+    enterText: "Introduce un texto.",
+    tooLong: "El texto es demasiado largo. Máximo 10.000 caracteres.",
+    serverError: "Error del servidor.",
+    noAnswer: "La IA no devolvió una respuesta.",
+
+    limit: "⚠️ Límite de IA alcanzado.",
+    retryIn: "Inténtalo de nuevo en",
+    seconds: "seg.",
+
+    fileLoaded: "Archivo cargado",
+    unsupportedFile: "Solo se admiten TXT, MD y CSV.",
+    fileTooLarge: "El archivo es demasiado grande. Máximo 1 MB.",
+    fileReadError: "No se pudo leer el archivo.",
+
+    microphoneUnavailable:
+      "Este navegador no admite entrada de voz.",
+
+    pasteUnavailable:
+      "No se pudo leer el portapapeles.",
+
+    pastePermission:
+      "Permite el acceso al portapapeles o pega el texto manualmente.",
+
+    copiedError:
+      "No se pudo copiar el texto.",
+
+    confirmClear:
+      "¿Eliminar todo el historial?",
+
+    templateName:
+      "Nombre de la plantilla:",
+
+    footer:
+      "Asistente IA · Gemini · Groq · OpenRouter"
+  },
+
+  it: {
+    pageTitle: "✦ Assistente AI",
+    subtitle:
+      "Scrivi, incolla, carica o detta un testo — l’AI può migliorarlo, crearlo, tradurlo o spiegarlo.",
+    action: "AZIONE",
+    textGroup: "✨ Lavorare con il testo",
+    createGroup: "✍️ Creare",
+
+    improve: "✨ Migliora testo",
+    polish: "🇵🇱 Traduci in polacco",
+    english: "🇬🇧 Traduci in inglese",
+    shorten: "✂️ Accorcia testo",
+    summarize: "📋 Riassumi",
+    explain: "🧠 Spiega in modo semplice",
+    write: "✍️ Scrivi testo",
+    reply: "💬 Rispondi al messaggio",
+    business: "💼 Rendi professionale",
+    tiktok: "🎵 Crea testo per TikTok",
+
+    help: {
+      improve: "Rende il testo più chiaro, naturale e corretto.",
+      polish: "Traduce il testo in polacco.",
+      english: "Traduce il testo in inglese.",
+      shorten: "Elimina il superfluo mantenendo l’idea principale.",
+      summarize: "Evidenzia le informazioni più importanti.",
+      explain: "Spiega testi o termini difficili con parole semplici.",
+      write: "Crea un nuovo testo in base alla tua descrizione.",
+      reply: "Aiuta a scrivere una risposta adatta.",
+      business: "Rende il testo più professionale.",
+      tiktok: "Crea un testo breve e coinvolgente per TikTok."
+    },
+
+    placeholder: "Scrivi qui il tuo testo...",
+    explainPlaceholder:
+      "Incolla un testo, termine o descrizione difficile — l’AI lo spiegherà semplicemente.",
+
+    process: "✨ Elabora",
+    processing: "⏳ L’AI sta lavorando...",
+    result: "✦ RISULTATO AI",
+
+    copy: "📋 Copia",
+    copied: "✓ Copiato",
+    retry: "🔄 Riprova",
+
+    speak: "🔊 Leggi",
+    stop: "⏹ Stop",
+
+    paste: "📋 Incolla",
+    file: "📎 File",
+    voice: "🎙 Voce",
+    listening: "🔴 Ascolto...",
+    clear: "Cancella",
+
+    templates: "MODELLI",
+    history: "CRONOLOGIA",
+    all: "Tutti",
+    favorites: "⭐ Preferiti",
+    clearHistory: "Cancella",
+    addTemplate: "＋ Aggiungi modello",
+
+    emptyHistory: "La cronologia è vuota.",
+    emptyFavorites: "Nessun preferito.",
+    emptyTemplates: "Nessun modello.",
+
+    useAgain: "Usa",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Elimina",
+
+    enterText: "Inserisci del testo.",
+    tooLong: "Il testo è troppo lungo. Massimo 10.000 caratteri.",
+    serverError: "Errore del server.",
+    noAnswer: "L’AI non ha restituito una risposta.",
+
+    limit: "⚠️ Limite AI raggiunto.",
+    retryIn: "Riprova tra",
+    seconds: "sec.",
+
+    fileLoaded: "File caricato",
+    unsupportedFile: "Sono supportati solo TXT, MD e CSV.",
+    fileTooLarge: "Il file è troppo grande. Massimo 1 MB.",
+    fileReadError: "Impossibile leggere il file.",
+
+    microphoneUnavailable:
+      "Questo browser non supporta l’input vocale.",
+
+    pasteUnavailable:
+      "Impossibile leggere gli appunti.",
+
+    pastePermission:
+      "Consenti l’accesso agli appunti o incolla il testo manualmente.",
+
+    copiedError:
+      "Impossibile copiare il testo.",
+
+    confirmClear:
+      "Eliminare tutta la cronologia?",
+
+    templateName:
+      "Nome del modello:",
+
+    footer:
+      "Assistente AI · Gemini · Groq · OpenRouter"
+  },
+
+  pt: {
+    pageTitle: "✦ Assistente IA",
+    subtitle:
+      "Escreva, cole, carregue ou dite um texto — a IA pode melhorá-lo, criá-lo, traduzi-lo ou explicá-lo.",
+    action: "AÇÃO",
+    textGroup: "✨ Trabalhar com texto",
+    createGroup: "✍️ Criar",
+
+    improve: "✨ Melhorar texto",
+    polish: "🇵🇱 Traduzir para polaco",
+    english: "🇬🇧 Traduzir para inglês",
+    shorten: "✂️ Encurtar texto",
+    summarize: "📋 Resumir",
+    explain: "🧠 Explicar de forma simples",
+    write: "✍️ Escrever texto",
+    reply: "💬 Responder à mensagem",
+    business: "💼 Tornar profissional",
+    tiktok: "🎵 Criar texto para TikTok",
+
+    help: {
+      improve: "Torna o texto mais claro, natural e correto.",
+      polish: "Traduz o texto para polaco.",
+      english: "Traduz o texto para inglês.",
+      shorten: "Remove o desnecessário mantendo a ideia principal.",
+      summarize: "Destaca as informações mais importantes.",
+      explain: "Explica textos ou termos difíceis de forma simples.",
+      write: "Cria um novo texto com base na sua descrição.",
+      reply: "Ajuda a escrever uma resposta adequada.",
+      business: "Torna o texto mais profissional.",
+      tiktok: "Cria um texto curto e envolvente para TikTok."
+    },
+
+    placeholder: "Escreva o seu texto aqui...",
+    explainPlaceholder:
+      "Cole um texto, termo ou descrição difícil — a IA irá explicá-lo de forma simples.",
+
+    process: "✨ Processar",
+    processing: "⏳ A IA está a trabalhar...",
+    result: "✦ RESULTADO IA",
+
+    copy: "📋 Copiar",
+    copied: "✓ Copiado",
+    retry: "🔄 Tentar novamente",
+
+    speak: "🔊 Ouvir",
+    stop: "⏹ Parar",
+
+    paste: "📋 Colar",
+    file: "📎 Ficheiro",
+    voice: "🎙 Voz",
+    listening: "🔴 A ouvir...",
+    clear: "Limpar",
+
+    templates: "MODELOS",
+    history: "HISTÓRICO",
+    all: "Todos",
+    favorites: "⭐ Favoritos",
+    clearHistory: "Limpar",
+    addTemplate: "＋ Adicionar modelo",
+
+    emptyHistory: "O histórico está vazio.",
+    emptyFavorites: "Ainda não há favoritos.",
+    emptyTemplates: "Ainda não há modelos.",
+
+    useAgain: "Usar",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Eliminar",
+
+    enterText: "Introduza algum texto.",
+    tooLong: "O texto é demasiado longo. Máximo 10.000 caracteres.",
+    serverError: "Erro do servidor.",
+    noAnswer: "A IA não devolveu uma resposta.",
+
+    limit: "⚠️ Limite de IA atingido.",
+    retryIn: "Tente novamente em",
+    seconds: "seg.",
+
+    fileLoaded: "Ficheiro carregado",
+    unsupportedFile: "Apenas TXT, MD e CSV são suportados.",
+    fileTooLarge: "O ficheiro é demasiado grande. Máximo 1 MB.",
+    fileReadError: "Não foi possível ler o ficheiro.",
+
+    microphoneUnavailable:
+      "Este navegador não suporta entrada de voz.",
+
+    pasteUnavailable:
+      "Não foi possível ler a área de transferência.",
+
+    pastePermission:
+      "Permita o acesso à área de transferência ou cole o texto manualmente.",
+
+    copiedError:
+      "Não foi possível copiar o texto.",
+
+    confirmClear:
+      "Eliminar todo o histórico?",
+
+    templateName:
+      "Nome do modelo:",
+
+    footer:
+      "Assistente IA · Gemini · Groq · OpenRouter"
+  },
+
+  cs: {
+    pageTitle: "✦ AI Asistent",
+    subtitle:
+      "Napište, vložte, nahrajte nebo nadiktujte text — AI ho pomůže upravit, vytvořit, přeložit nebo vysvětlit.",
+    action: "AKCE",
+    textGroup: "✨ Práce s textem",
+    createGroup: "✍️ Tvorba",
+
+    improve: "✨ Vylepšit text",
+    polish: "🇵🇱 Přeložit do polštiny",
+    english: "🇬🇧 Přeložit do angličtiny",
+    shorten: "✂️ Zkrátit text",
+    summarize: "📋 Shrnutí",
+    explain: "🧠 Vysvětlit jednoduše",
+    write: "✍️ Napsat text",
+    reply: "💬 Odpovědět na zprávu",
+    business: "💼 Udělat profesionální",
+    tiktok: "🎵 Vytvořit text pro TikTok",
+
+    help: {
+      improve: "Udělá text jasnější, přirozenější a gramaticky správný.",
+      polish: "Přeloží text do polštiny.",
+      english: "Přeloží text do angličtiny.",
+      shorten: "Odstraní zbytečnosti a zachová hlavní myšlenku.",
+      summarize: "Vybere nejdůležitější informace.",
+      explain: "Vysvětlí složitý text nebo pojem jednoduchými slovy.",
+      write: "Vytvoří nový text podle vašeho zadání.",
+      reply: "Pomůže napsat vhodnou odpověď.",
+      business: "Udělá text profesionálnější.",
+      tiktok: "Vytvoří krátký a poutavý text pro TikTok."
+    },
+
+    placeholder: "Napište svůj text zde...",
+    explainPlaceholder:
+      "Vložte složitý text, pojem nebo popis — AI ho vysvětlí jednoduše.",
+
+    process: "✨ Zpracovat",
+    processing: "⏳ AI pracuje...",
+    result: "✦ VÝSLEDEK AI",
+
+    copy: "📋 Kopírovat",
+    copied: "✓ Zkopírováno",
+    retry: "🔄 Zkusit znovu",
+
+    speak: "🔊 Přečíst",
+    stop: "⏹ Stop",
+
+    paste: "📋 Vložit",
+    file: "📎 Soubor",
+    voice: "🎙 Hlas",
+    listening: "🔴 Poslouchám...",
+    clear: "Vymazat",
+
+    templates: "ŠABLONY",
+    history: "HISTORIE",
+    all: "Vše",
+    favorites: "⭐ Oblíbené",
+    clearHistory: "Vymazat",
+    addTemplate: "＋ Přidat šablonu",
+
+    emptyHistory: "Historie je prázdná.",
+    emptyFavorites: "Žádné oblíbené položky.",
+    emptyTemplates: "Žádné šablony.",
+
+    useAgain: "Použít",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Smazat",
+
+    enterText: "Zadejte text.",
+    tooLong: "Text je příliš dlouhý. Maximum je 10 000 znaků.",
+    serverError: "Chyba serveru.",
+    noAnswer: "AI nevrátilo odpověď.",
+
+    limit: "⚠️ Limit AI byl dosažen.",
+    retryIn: "Zkuste znovu za",
+    seconds: "s.",
+
+    fileLoaded: "Soubor načten",
+    unsupportedFile: "Podporovány jsou pouze TXT, MD a CSV.",
+    fileTooLarge: "Soubor je příliš velký. Maximum 1 MB.",
+    fileReadError: "Soubor se nepodařilo přečíst.",
+
+    microphoneUnavailable:
+      "Tento prohlížeč nepodporuje hlasový vstup.",
+
+    pasteUnavailable:
+      "Nepodařilo se načíst schránku.",
+
+    pastePermission:
+      "Povolte přístup ke schránce nebo vložte text ručně.",
+
+    copiedError:
+      "Text se nepodařilo zkopírovat.",
+
+    confirmClear:
+      "Smazat celou historii?",
+
+    templateName:
+      "Název šablony:",
+
+    footer:
+      "AI Asistent · Gemini · Groq · OpenRouter"
   }
+
 };
 
-function t(key) {
-  const lang = translations[interfaceLanguage.value] || translations.ru;
-  return lang[key] || translations.ru[key] || key;
-}
+
+/* =========================
+   HELPERS
+========================= */
 
 function getLanguage() {
   return interfaceLanguage.value || "ru";
 }
 
-function applyLanguage() {
-  document.documentElement.lang = getLanguage();
+function t(key) {
+  const lang = translations[getLanguage()] || translations.ru;
 
-  document.querySelector('label[for="action"]').textContent = t("action");
-
-  document.querySelector("#action option[value='improve']").textContent = t("improve");
-  document.querySelector("#action option[value='polish']").textContent = t("polish");
-  document.querySelector("#action option[value='english']").textContent = t("english");
-  document.querySelector("#action option[value='shorten']").textContent = t("shorten");
-  document.querySelector("#action option[value='summarize']").textContent = t("summarize");
-  document.querySelector("#action option[value='explain']").textContent = t("explain");
-  document.querySelector("#action option[value='write']").textContent = t("write");
-  document.querySelector("#action option[value='reply']").textContent = t("reply");
-  document.querySelector("#action option[value='business']").textContent = t("business");
-  document.querySelector("#action option[value='tiktok']").textContent = t("tiktok");
-
-  processButton.textContent = rateLimited ? processButton.textContent : t("process");
-  copyButton.textContent = t("copy");
-  retryButton.textContent = t("retry");
-  speakButton.textContent = t("speak");
-  stopSpeakButton.textContent = t("stop");
-  fileButton.textContent = t("file");
-  voiceButton.textContent = t("voice");
-  clearButton.textContent = t("clear");
-
-  document.querySelector(".section:nth-of-type(1) .section-title").textContent = t("templates");
-  document.querySelector(".section:nth-of-type(2) .section-title").textContent = t("history");
-
-  addTemplateButton.textContent = t("addTemplate");
-  allHistoryTab.textContent = t("all");
-  favoriteHistoryTab.textContent = t("favorites");
-  clearHistoryButton.textContent = t("clearHistory");
-
-  updatePlaceholder();
-  updateCounter();
-  renderHistory();
-  renderTemplates();
+  return lang[key] !== undefined
+    ? lang[key]
+    : translations.ru[key] || key;
 }
 
-function updatePlaceholder() {
-  if (actionSelect.value === "explain") {
-    textInput.placeholder = t("explainPlaceholder");
-  } else {
-    textInput.placeholder = t("placeholder");
+function getHelp(mode) {
+  const lang = translations[getLanguage()] || translations.ru;
+
+  return (
+    lang.help?.[mode] ||
+    translations.ru.help?.[mode] ||
+    ""
+  );
+}
+
+function safeId() {
+  if (
+    window.crypto &&
+    typeof window.crypto.randomUUID === "function"
+  ) {
+    return window.crypto.randomUUID();
+  }
+
+  return String(Date.now()) + "-" + Math.random();
+}
+
+
+/* =========================
+   LANGUAGE
+========================= */
+
+function applyLanguage() {
+
+  document.documentElement.lang = getLanguage();
+
+  document.title =
+    t("pageTitle").replace("✦ ", "");
+
+  pageTitle.textContent =
+    t("pageTitle");
+
+  pageSubtitle.textContent =
+    t("subtitle");
+
+  actionLabel.textContent =
+    t("action");
+
+  textGroup.label =
+    t("textGroup");
+
+  createGroup.label =
+    t("createGroup");
+
+  const optionKeys = [
+    "improve",
+    "polish",
+    "english",
+    "shorten",
+    "summarize",
+    "explain",
+    "write",
+    "reply",
+    "business",
+    "tiktok"
+  ];
+
+  optionKeys.forEach(key => {
+    const option =
+      document.querySelector(
+        "#action option[value='" + key + "']"
+      );
+
+    if (option) {
+      option.textContent = t(key);
+    }
+  });
+
+  resultTitle.textContent =
+    t("result");
+
+  processButton.textContent =
+    rateLimited
+      ? processButton.textContent
+      : t("process");
+
+  copyButton.textContent =
+    t("copy");
+
+  retryButton.textContent =
+    t("retry");
+
+  speakButton.textContent =
+    t("speak");
+
+  stopSpeakButton.textContent =
+    t("stop");
+
+  pasteButton.textContent =
+    t("paste");
+
+  fileButton.textContent =
+    t("file");
+
+  voiceButton.textContent =
+    t("voice");
+
+  clearButton.textContent =
+    t("clear");
+
+  templatesTitle.textContent =
+    t("templates");
+
+  historyTitle.textContent =
+    t("history");
+
+  addTemplateButton.textContent =
+    t("addTemplate");
+
+  allHistoryTab.textContent =
+    t("all");
+
+  favoriteHistoryTab.textContent =
+    t("favorites");
+
+  clearHistoryButton.textContent =
+    t("clearHistory");
+
+  footer.textContent =
+    t("footer");
+
+  updatePlaceholder();
+  updateActionHelp();
+  updateCounter();
+
+  renderHistory();
+  renderTemplates();
+
+  if (recognition) {
+    recognition.lang =
+      getSpeechLanguage(getLanguage());
   }
 }
 
+
+/* =========================
+   ACTION HELP
+========================= */
+
+function updateActionHelp() {
+
+  const mode =
+    actionSelect.value;
+
+  actionHelp.textContent =
+    getHelp(mode);
+
+  updatePlaceholder();
+}
+
+
+/* =========================
+   PLACEHOLDER
+========================= */
+
+function updatePlaceholder() {
+
+  if (actionSelect.value === "explain") {
+    textInput.placeholder =
+      t("explainPlaceholder");
+  } else {
+    textInput.placeholder =
+      t("placeholder");
+  }
+}
+
+
+/* =========================
+   COUNTER
+========================= */
+
 function updateCounter() {
+
+  const value =
+    textInput.value.length;
+
   counter.textContent =
-    textInput.value.length.toLocaleString(getLanguage()) +
+    value.toLocaleString(
+      getLanguage()
+    ) +
     " / 10 000";
 }
 
+
+/* =========================
+   RESULT
+========================= */
+
 function showResult(message) {
+
   resultBox.classList.add("show");
-  resultText.textContent = message;
+
+  resultText.textContent =
+    message;
 }
 
 function resetResult() {
+
   resultBox.classList.remove("show");
+
   resultText.textContent = "";
+
   provider.textContent = "";
+
+  retryButton.style.display =
+    "none";
+
+  copyButton.style.display =
+    "none";
+
+  speakButton.style.display =
+    "none";
+
+  stopSpeakButton.style.display =
+    "none";
 }
 
+
+/* =========================
+   PROVIDER
+========================= */
+
 function getProviderName(name) {
-  if (name === "gemini") return "✦ Gemini";
-  if (name === "groq") return "⚡ Groq";
-  if (name === "openrouter") return "◈ OpenRouter";
+
+  if (name === "gemini") {
+    return "✦ Gemini";
+  }
+
+  if (name === "groq") {
+    return "⚡ Groq";
+  }
+
+  if (name === "openrouter") {
+    return "◈ OpenRouter";
+  }
+
   return "✦ AI";
 }
 
+
+/* =========================
+   HISTORY
+========================= */
+
 function loadHistory() {
+
   try {
-    const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-    return Array.isArray(data) ? data.slice(0, MAX_HISTORY) : [];
+
+    const data =
+      JSON.parse(
+        localStorage.getItem(HISTORY_KEY) || "[]"
+      );
+
+    return Array.isArray(data)
+      ? data.slice(0, MAX_HISTORY)
+      : [];
+
   } catch {
+
     return [];
+
   }
 }
 
 function saveHistory(data) {
-  localStorage.setItem(
-    HISTORY_KEY,
-    JSON.stringify(data.slice(0, MAX_HISTORY))
-  );
+
+  try {
+
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(
+        data.slice(0, MAX_HISTORY)
+      )
+    );
+
+  } catch {
+
+    /* Если localStorage переполнен,
+       приложение продолжает работать. */
+
+  }
 }
 
-function addHistory(source, result, mode, providerName) {
-  const history = loadHistory();
+function addHistory(
+  source,
+  result,
+  mode,
+  providerName
+) {
+
+  const history =
+    loadHistory();
 
   history.unshift({
-    id: crypto.randomUUID
-      ? crypto.randomUUID()
-      : String(Date.now() + Math.random()),
-    sourceText: source.slice(0, MAX_TEXT),
-    resultText: result.slice(0, 15000),
+
+    id: safeId(),
+
+    sourceText:
+      source.slice(0, MAX_TEXT),
+
+    resultText:
+      result.slice(0, 15000),
+
     mode,
-    provider: providerName,
-    createdAt: Date.now(),
-    favorite: false
+
+    provider:
+      providerName,
+
+    createdAt:
+      Date.now(),
+
+    favorite:
+      false
+
   });
 
   saveHistory(history);
+
   renderHistory();
 }
 
 function getModeLabel(mode) {
-  const map = {
-    improve: "improve",
-    polish: "polish",
-    english: "english",
-    shorten: "shorten",
-    summarize: "summarize",
-    explain: "explain",
-    write: "write",
-    reply: "reply",
-    business: "business",
-    tiktok: "tiktok"
-  };
 
-  return t(map[mode] || "improve");
+  return t(mode) || mode;
 }
 
 function renderHistory() {
-  const history = loadHistory();
 
-  const filtered = historyFilter === "favorites"
-    ? history.filter(item => item.favorite)
-    : history;
+  const history =
+    loadHistory();
+
+  const filtered =
+    historyFilter === "favorites"
+      ? history.filter(
+          item => item.favorite
+        )
+      : history;
 
   historyList.innerHTML = "";
 
   if (!filtered.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "empty";
+
     empty.textContent =
       historyFilter === "favorites"
         ? t("emptyFavorites")
         : t("emptyHistory");
 
     historyList.appendChild(empty);
+
     return;
   }
 
   filtered.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "card";
 
-    const title = document.createElement("div");
-    title.className = "card-title";
-    title.textContent = getModeLabel(item.mode);
+    const card =
+      document.createElement("div");
 
-    const preview = document.createElement("div");
-    preview.className = "card-preview";
-    preview.textContent = item.sourceText.slice(0, 180);
+    card.className =
+      "card";
 
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
+    const title =
+      document.createElement("div");
 
-    const use = document.createElement("button");
-    use.className = "action-btn";
-    use.textContent = t("useAgain");
+    title.className =
+      "card-title";
+
+    title.textContent =
+      getModeLabel(item.mode);
+
+    const preview =
+      document.createElement("div");
+
+    preview.className =
+      "card-preview";
+
+    preview.textContent =
+      item.sourceText.slice(0, 180);
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "card-actions";
+
+    const use =
+      document.createElement("button");
+
+    use.className =
+      "action-btn";
+
+    use.type =
+      "button";
+
+    use.textContent =
+      t("useAgain");
+
     use.onclick = () => {
-      actionSelect.value = item.mode;
-      textInput.value = item.sourceText;
+
+      actionSelect.value =
+        item.mode;
+
+      textInput.value =
+        item.sourceText;
+
       updateCounter();
-      updatePlaceholder();
+      updateActionHelp();
       resetResult();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     };
 
-    const favorite = document.createElement("button");
-    favorite.className = "action-btn";
-    favorite.textContent = item.favorite
-      ? t("favoriteActive")
-      : t("favorite");
+    const favorite =
+      document.createElement("button");
+
+    favorite.className =
+      "action-btn";
+
+    favorite.type =
+      "button";
+
+    favorite.textContent =
+      item.favorite
+        ? t("favoriteActive")
+        : t("favorite");
 
     favorite.onclick = () => {
-      const data = loadHistory();
-      const target = data.find(x => x.id === item.id);
+
+      const data =
+        loadHistory();
+
+      const target =
+        data.find(
+          x => x.id === item.id
+        );
 
       if (target) {
-        target.favorite = !target.favorite;
+
+        target.favorite =
+          !target.favorite;
+
         saveHistory(data);
+
         renderHistory();
       }
     };
 
-    const copy = document.createElement("button");
-    copy.className = "action-btn";
-    copy.textContent = t("copy");
+    const copy =
+      document.createElement("button");
 
-    copy.onclick = () => copyText(item.resultText, copy);
+    copy.className =
+      "action-btn";
 
-    const remove = document.createElement("button");
-    remove.className = "action-btn";
-    remove.textContent = t("delete");
+    copy.type =
+      "button";
+
+    copy.textContent =
+      t("copy");
+
+    copy.onclick = () =>
+      copyText(
+        item.resultText,
+        copy
+      );
+
+    const remove =
+      document.createElement("button");
+
+    remove.className =
+      "action-btn";
+
+    remove.type =
+      "button";
+
+    remove.textContent =
+      t("delete");
 
     remove.onclick = () => {
-      saveHistory(loadHistory().filter(x => x.id !== item.id));
+
+      saveHistory(
+        loadHistory().filter(
+          x => x.id !== item.id
+        )
+      );
+
       renderHistory();
     };
 
-    actions.append(use, favorite, copy, remove);
-    card.append(title, preview, actions);
+    actions.append(
+      use,
+      favorite,
+      copy,
+      remove
+    );
+
+    card.append(
+      title,
+      preview,
+      actions
+    );
+
     historyList.appendChild(card);
+
   });
 }
 
+
+/* =========================
+   TEMPLATES
+========================= */
+
 function loadTemplates() {
+
   try {
-    const data = JSON.parse(localStorage.getItem(TEMPLATES_KEY) || "[]");
-    return Array.isArray(data) ? data.slice(0, MAX_TEMPLATES) : [];
+
+    const data =
+      JSON.parse(
+        localStorage.getItem(TEMPLATES_KEY) || "[]"
+      );
+
+    return Array.isArray(data)
+      ? data.slice(0, MAX_TEMPLATES)
+      : [];
+
   } catch {
+
     return [];
+
   }
 }
 
 function saveTemplates(data) {
-  localStorage.setItem(
-    TEMPLATES_KEY,
-    JSON.stringify(data.slice(0, MAX_TEMPLATES))
-  );
+
+  try {
+
+    localStorage.setItem(
+      TEMPLATES_KEY,
+      JSON.stringify(
+        data.slice(0, MAX_TEMPLATES)
+      )
+    );
+
+  } catch {}
+
 }
 
 function renderTemplates() {
-  const templates = loadTemplates();
 
-  templatesList.innerHTML = "";
+  const templates =
+    loadTemplates();
+
+  templatesList.innerHTML =
+    "";
 
   if (!templates.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = t("emptyTemplates");
+
+    const empty =
+      document.createElement("div");
+
+    empty.className =
+      "empty";
+
+    empty.textContent =
+      t("emptyTemplates");
+
     templatesList.appendChild(empty);
+
     return;
   }
 
   templates.forEach(template => {
-    const card = document.createElement("div");
-    card.className = "card";
 
-    const title = document.createElement("div");
-    title.className = "card-title";
-    title.textContent = template.name;
+    const card =
+      document.createElement("div");
 
-    const preview = document.createElement("div");
-    preview.className = "card-preview";
-    preview.textContent = template.text.slice(0, 160);
+    card.className =
+      "card";
 
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
+    const title =
+      document.createElement("div");
 
-    const use = document.createElement("button");
-    use.className = "action-btn";
-    use.textContent = t("useAgain");
+    title.className =
+      "card-title";
+
+    title.textContent =
+      template.name;
+
+    const preview =
+      document.createElement("div");
+
+    preview.className =
+      "card-preview";
+
+    preview.textContent =
+      template.text.slice(0, 160);
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "card-actions";
+
+    const use =
+      document.createElement("button");
+
+    use.className =
+      "action-btn";
+
+    use.type =
+      "button";
+
+    use.textContent =
+      t("useAgain");
 
     use.onclick = () => {
-      actionSelect.value = template.mode;
-      textInput.value = template.text;
+
+      actionSelect.value =
+        template.mode;
+
+      textInput.value =
+        template.text;
+
       updateCounter();
-      updatePlaceholder();
+      updateActionHelp();
       resetResult();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     };
 
-    const remove = document.createElement("button");
-    remove.className = "action-btn";
-    remove.textContent = t("delete");
+    const remove =
+      document.createElement("button");
+
+    remove.className =
+      "action-btn";
+
+    remove.type =
+      "button";
+
+    remove.textContent =
+      t("delete");
 
     remove.onclick = () => {
+
       saveTemplates(
-        loadTemplates().filter(x => x.id !== template.id)
+        loadTemplates().filter(
+          x => x.id !== template.id
+        )
       );
+
       renderTemplates();
     };
 
-    actions.append(use, remove);
-    card.append(title, preview, actions);
+    actions.append(
+      use,
+      remove
+    );
+
+    card.append(
+      title,
+      preview,
+      actions
+    );
+
     templatesList.appendChild(card);
+
   });
 }
 
-async function copyText(text, button = copyButton) {
-  try {
-    await navigator.clipboard.writeText(text);
 
-    const old = button.textContent;
-    button.textContent = t("copied");
+/* =========================
+   COPY
+========================= */
+
+async function copyText(
+  text,
+  button = copyButton
+) {
+
+  if (!text) {
+    return;
+  }
+
+  try {
+
+    if (
+      navigator.clipboard &&
+      typeof navigator.clipboard.writeText === "function"
+    ) {
+
+      await navigator.clipboard.writeText(text);
+
+    } else {
+
+      const area =
+        document.createElement("textarea");
+
+      area.value =
+        text;
+
+      area.style.position =
+        "fixed";
+
+      area.style.opacity =
+        "0";
+
+      document.body.appendChild(area);
+
+      area.select();
+
+      document.execCommand("copy");
+
+      area.remove();
+    }
+
+    const old =
+      button.textContent;
+
+    button.textContent =
+      t("copied");
 
     setTimeout(() => {
-      button.textContent = old;
+
+      button.textContent =
+        old;
+
     }, 1400);
+
   } catch {
-    alert("Не удалось скопировать текст.");
+
+    alert(t("copiedError"));
+
   }
 }
 
-async function processText() {
-  if (rateLimited) return;
 
-  const message = textInput.value.trim();
-  const mode = actionSelect.value;
+/* =========================
+   PASTE
+========================= */
+
+pasteButton.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      if (
+        !navigator.clipboard ||
+        typeof navigator.clipboard.readText !== "function"
+      ) {
+
+        showResult(
+          t("pastePermission")
+        );
+
+        return;
+      }
+
+      const text =
+        await navigator.clipboard.readText();
+
+      if (!text) {
+        return;
+      }
+
+      textInput.value =
+        text.slice(0, MAX_TEXT);
+
+      updateCounter();
+      resetResult();
+
+      textInput.focus();
+
+    } catch {
+
+      showResult(
+        t("pasteUnavailable")
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   AI PROCESSING
+========================= */
+
+async function processText() {
+
+  if (rateLimited) {
+    return;
+  }
+
+  const message =
+    textInput.value.trim();
+
+  const mode =
+    actionSelect.value;
 
   if (!message) {
-    showResult(t("enterText"));
+
+    showResult(
+      t("enterText")
+    );
+
+    textInput.focus();
+
     return;
   }
 
   if (message.length > MAX_TEXT) {
-    showResult(t("tooLong"));
+
+    showResult(
+      t("tooLong")
+    );
+
     return;
   }
 
-  processButton.disabled = true;
-  processButton.textContent = t("processing");
+  processButton.disabled =
+    true;
 
-  retryButton.style.display = "none";
-  copyButton.style.display = "none";
-  speakButton.style.display = "none";
-  stopSpeakButton.style.display = "none";
+  processButton.textContent =
+    t("processing");
 
-  showResult(t("processing"));
-  provider.textContent = "";
+  retryButton.style.display =
+    "none";
+
+  copyButton.style.display =
+    "none";
+
+  speakButton.style.display =
+    "none";
+
+  stopSpeakButton.style.display =
+    "none";
+
+  showResult(
+    t("processing")
+  );
+
+  provider.textContent =
+    "";
 
   try {
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message,
-        mode
-      })
-    });
 
-    const data = await response.json().catch(() => ({}));
+    const response =
+      await fetch(
+        "/api/chat",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              message,
+              mode
+            })
+        }
+      );
+
+    const data =
+      await response
+        .json()
+        .catch(() => ({}));
 
     if (response.status === 429) {
-      const seconds = Number(data.retryAfter) || 60;
+
+      const seconds =
+        Number(data.retryAfter) || 60;
 
       startRetryTimer(seconds);
+
       showResult(
         t("limit") +
         "\n\n" +
@@ -1023,21 +2736,51 @@ async function processText() {
     }
 
     if (!response.ok) {
-      throw new Error(data.error || t("serverError"));
+
+      throw new Error(
+        data.error ||
+        t("serverError")
+      );
     }
 
-    if (!data.answer || typeof data.answer !== "string") {
-      throw new Error(t("noAnswer"));
+    if (
+      !data.answer ||
+      typeof data.answer !== "string"
+    ) {
+
+      throw new Error(
+        t("noAnswer")
+      );
     }
 
-    resultText.textContent = data.answer;
-    resultBox.classList.add("show");
+    resultText.textContent =
+      data.answer;
 
-    provider.textContent = getProviderName(data.provider);
+    resultBox.classList.add(
+      "show"
+    );
 
-    copyButton.style.display = "inline-block";
-    speakButton.style.display = "inline-block";
-    retryButton.style.display = "inline-block";
+    provider.textContent =
+      getProviderName(
+        data.provider
+      );
+
+    copyButton.style.display =
+      "inline-block";
+
+    retryButton.style.display =
+      "inline-block";
+
+    if (
+      "speechSynthesis" in window
+    ) {
+
+      speakButton.style.display =
+        "inline-block";
+
+      stopSpeakButton.style.display =
+        "inline-block";
+    }
 
     addHistory(
       message,
@@ -1046,175 +2789,233 @@ async function processText() {
       data.provider
     );
 
+    resultBox.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+
   } catch (error) {
-    showResult(error.message || t("serverError"));
-    retryButton.style.display = "inline-block";
+
+    showResult(
+      error.message ||
+      t("serverError")
+    );
+
+    retryButton.style.display =
+      "inline-block";
+
   } finally {
+
     if (!rateLimited) {
-      processButton.disabled = false;
-      processButton.textContent = t("process");
+
+      processButton.disabled =
+        false;
+
+      processButton.textContent =
+        t("process");
     }
+
   }
 }
 
+
+/* =========================
+   RATE LIMIT TIMER
+========================= */
+
 function startRetryTimer(seconds) {
-  clearInterval(retryTimer);
 
-  rateLimited = true;
-  processButton.disabled = true;
+  clearInterval(
+    retryTimer
+  );
 
-  let remaining = Math.max(1, Math.floor(seconds));
+  rateLimited =
+    true;
+
+  processButton.disabled =
+    true;
+
+  let remaining =
+    Math.max(
+      1,
+      Math.floor(seconds)
+    );
 
   processButton.textContent =
-    "⏳ " + t("retryIn") + " " + remaining + " " + t("seconds");
+    "⏳ " +
+    t("retryIn") +
+    " " +
+    remaining +
+    " " +
+    t("seconds");
 
-  retryTimer = setInterval(() => {
-    remaining--;
+  retryTimer =
+    setInterval(() => {
 
-    if (remaining <= 0) {
-      clearInterval(retryTimer);
-      retryTimer = null;
-      rateLimited = false;
-      processButton.disabled = false;
-      processButton.textContent = t("process");
+      remaining--;
+
+      if (remaining <= 0) {
+
+        clearInterval(
+          retryTimer
+        );
+
+        retryTimer =
+          null;
+
+        rateLimited =
+          false;
+
+        processButton.disabled =
+          false;
+
+        processButton.textContent =
+          t("process");
+
+        return;
+      }
+
+      processButton.textContent =
+        "⏳ " +
+        t("retryIn") +
+        " " +
+        remaining +
+        " " +
+        t("seconds");
+
+    }, 1000);
+}
+
+
+/* =========================
+   FILE
+========================= */
+
+fileButton.addEventListener(
+  "click",
+  () => {
+
+    fileInput.click();
+
+  }
+);
+
+fileInput.addEventListener(
+  "change",
+  async () => {
+
+    const file =
+      fileInput.files?.[0];
+
+    if (!file) {
       return;
     }
 
-    processButton.textContent =
-      "⏳ " + t("retryIn") + " " + remaining + " " + t("seconds");
-  }, 1000);
-}
-
-/* ФАЙЛ */
-
-fileButton.addEventListener("click", () => {
-  fileInput.click();
-});
-
-fileInput.addEventListener("change", async () => {
-  const file = fileInput.files?.[0];
-
-  if (!file) return;
-
-  if (file.size > 1024 * 1024) {
-    showResult(t("fileTooLarge"));
-    fileInput.value = "";
-    return;
-  }
-
-  const extension = file.name
-    .split(".")
-    .pop()
-    .toLowerCase();
-
-  if (!["txt", "md", "csv"].includes(extension)) {
-    showResult(t("unsupportedFile"));
-    fileInput.value = "";
-    return;
-  }
-
-  try {
-    const content = await file.text();
-
-    textInput.value = content.slice(0, MAX_TEXT);
-
-    updateCounter();
-
-    fileName.textContent =
-      "📄 " + file.name + " · " + t("fileLoaded");
-
-    fileInfo.classList.add("show");
-
-    resetResult();
-
-  } catch {
-    showResult("Не удалось прочитать файл.");
-  }
-});
-
-removeFile.addEventListener("click", () => {
-  fileInput.value = "";
-  fileInfo.classList.remove("show");
-  fileName.textContent = "";
-});
-
-/* ГОЛОС */
-
-function setupVoice() {
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    voiceButton.addEventListener("click", () => {
-      showResult(t("microphoneUnavailable"));
-    });
-
-    return;
-  }
-
-  recognition = new SpeechRecognition();
-
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.lang = getLanguage();
-
-  recognition.onstart = () => {
-    voiceButton.textContent = t("listening");
-  };
-
-  recognition.onresult = event => {
-    let text = "";
-
-    for (
-      let i = event.resultIndex;
-      i < event.results.length;
-      i++
+    if (
+      file.size >
+      1024 * 1024
     ) {
-      text += event.results[i][0].transcript;
+
+      showResult(
+        t("fileTooLarge")
+      );
+
+      fileInput.value =
+        "";
+
+      return;
     }
 
-    textInput.value = text.slice(0, MAX_TEXT);
-    updateCounter();
-  };
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
 
-  recognition.onerror = () => {
-    voiceButton.textContent = t("voice");
-  };
+    if (
+      ![
+        "txt",
+        "md",
+        "csv"
+      ].includes(extension)
+    ) {
 
-  recognition.onend = () => {
-    voiceButton.textContent = t("voice");
-  };
+      showResult(
+        t("unsupportedFile")
+      );
 
-  voiceButton.addEventListener("click", () => {
-    recognition.lang = getLanguage();
+      fileInput.value =
+        "";
+
+      return;
+    }
 
     try {
-      recognition.start();
+
+      const content =
+        await file.text();
+
+      textInput.value =
+        content.slice(
+          0,
+          MAX_TEXT
+        );
+
+      updateCounter();
+
+      fileName.textContent =
+        "📄 " +
+        file.name +
+        " · " +
+        t("fileLoaded");
+
+      fileInfo.classList.add(
+        "show"
+      );
+
+      resetResult();
+
+      textInput.focus();
+
     } catch {
-      try {
-        recognition.stop();
-      } catch {}
+
+      showResult(
+        t("fileReadError")
+      );
+
     }
-  });
-}
 
-setupVoice();
-
-/* ОЗВУЧИВАНИЕ */
-
-speakButton.addEventListener("click", () => {
-  const text = resultText.textContent.trim();
-
-  if (!text || !("speechSynthesis" in window)) {
-    return;
   }
+);
 
-  window.speechSynthesis.cancel();
+removeFile.addEventListener(
+  "click",
+  () => {
 
-  const utterance = new SpeechSynthesisUtterance(text);
+    fileInput.value =
+      "";
+
+    fileInfo.classList.remove(
+      "show"
+    );
+
+    fileName.textContent =
+      "";
+
+  }
+);
+
+
+/* =========================
+   VOICE INPUT
+========================= */
+
+function getSpeechLanguage(
+  language
+) {
 
   const languages = {
+
     ru: "ru-RU",
     pl: "pl-PL",
     en: "en-US",
@@ -1225,126 +3026,468 @@ speakButton.addEventListener("click", () => {
     it: "it-IT",
     pt: "pt-PT",
     cs: "cs-CZ"
+
   };
 
-  utterance.lang = languages[getLanguage()] || "ru-RU";
-  utterance.rate = 0.95;
-
-  window.speechSynthesis.speak(utterance);
-});
-
-stopSpeakButton.addEventListener("click", () => {
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
-});
-
-/* КНОПКИ */
-
-processButton.addEventListener("click", processText);
-
-retryButton.addEventListener("click", processText);
-
-copyButton.addEventListener("click", () => {
-  copyText(resultText.textContent);
-});
-
-clearButton.addEventListener("click", () => {
-  textInput.value = "";
-  fileInput.value = "";
-  fileInfo.classList.remove("show");
-  resetResult();
-  updateCounter();
-});
-
-actionSelect.addEventListener("change", () => {
-  updatePlaceholder();
-});
-
-textInput.addEventListener("input", () => {
-  updateCounter();
-
-  if (textInput.value.length > MAX_TEXT) {
-    textInput.value = textInput.value.slice(0, MAX_TEXT);
-  }
-});
-
-interfaceLanguage.addEventListener("change", () => {
-  localStorage.setItem(
-    LANGUAGE_KEY,
-    interfaceLanguage.value
+  return (
+    languages[language] ||
+    "ru-RU"
   );
+}
 
-  if (recognition) {
-    recognition.lang = getLanguage();
-  }
+function setupVoice() {
 
-  applyLanguage();
-});
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
 
-allHistoryTab.addEventListener("click", () => {
-  historyFilter = "all";
-  renderHistory();
-});
+  if (!SpeechRecognition) {
 
-favoriteHistoryTab.addEventListener("click", () => {
-  historyFilter = "favorites";
-  renderHistory();
-});
+    voiceButton.addEventListener(
+      "click",
+      () => {
 
-clearHistoryButton.addEventListener("click", () => {
-  if (confirm("Удалить всю историю?")) {
-    localStorage.removeItem(HISTORY_KEY);
-    renderHistory();
-  }
-});
+        showResult(
+          t("microphoneUnavailable")
+        );
 
-addTemplateButton.addEventListener("click", () => {
-  const text = textInput.value.trim();
+      }
+    );
 
-  if (!text) {
-    showResult(t("enterText"));
     return;
   }
 
-  const name = prompt("Название шаблона:");
+  recognition =
+    new SpeechRecognition();
 
-  if (!name || !name.trim()) return;
+  recognition.continuous =
+    false;
 
-  const templates = loadTemplates();
+  recognition.interimResults =
+    true;
 
-  templates.unshift({
-    id: crypto.randomUUID
-      ? crypto.randomUUID()
-      : String(Date.now()),
-    name: name.trim().slice(0, 100),
-    text: text.slice(0, MAX_TEXT),
-    mode: actionSelect.value
-  });
+  recognition.lang =
+    getSpeechLanguage(
+      getLanguage()
+    );
 
-  saveTemplates(templates);
-  renderTemplates();
-});
+  recognition.onstart =
+    () => {
 
-/* ЯЗЫК ПО УМОЛЧАНИЮ */
+      voiceButton.textContent =
+        t("listening");
+
+      voiceButton.disabled =
+        true;
+
+    };
+
+  recognition.onresult =
+    event => {
+
+      let spokenText =
+        "";
+
+      for (
+        let i =
+          event.resultIndex;
+
+        i <
+          event.results.length;
+
+        i++
+      ) {
+
+        spokenText +=
+          event.results[i][0].transcript;
+      }
+
+      textInput.value =
+        spokenText.slice(
+          0,
+          MAX_TEXT
+        );
+
+      updateCounter();
+
+    };
+
+  recognition.onerror =
+    () => {
+
+      voiceButton.textContent =
+        t("voice");
+
+      voiceButton.disabled =
+        false;
+
+    };
+
+  recognition.onend =
+    () => {
+
+      voiceButton.textContent =
+        t("voice");
+
+      voiceButton.disabled =
+        false;
+
+    };
+
+  voiceButton.addEventListener(
+    "click",
+    () => {
+
+      recognition.lang =
+        getSpeechLanguage(
+          getLanguage()
+        );
+
+      try {
+
+        recognition.start();
+
+      } catch {
+
+        try {
+          recognition.stop();
+        } catch {}
+
+      }
+
+    }
+  );
+}
+
+
+/* =========================
+   TEXT TO SPEECH
+========================= */
+
+speakButton.addEventListener(
+  "click",
+  () => {
+
+    const text =
+      resultText.textContent.trim();
+
+    if (
+      !text ||
+      !("speechSynthesis" in window)
+    ) {
+
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance =
+      new SpeechSynthesisUtterance(
+        text
+      );
+
+    utterance.lang =
+      getSpeechLanguage(
+        getLanguage()
+      );
+
+    utterance.rate =
+      0.95;
+
+    window.speechSynthesis.speak(
+      utterance
+    );
+
+  }
+);
+
+stopSpeakButton.addEventListener(
+  "click",
+  () => {
+
+    if (
+      "speechSynthesis" in window
+    ) {
+
+      window.speechSynthesis.cancel();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+processButton.addEventListener(
+  "click",
+  processText
+);
+
+retryButton.addEventListener(
+  "click",
+  processText
+);
+
+copyButton.addEventListener(
+  "click",
+  () => {
+
+    copyText(
+      resultText.textContent
+    );
+
+  }
+);
+
+clearButton.addEventListener(
+  "click",
+  () => {
+
+    textInput.value =
+      "";
+
+    fileInput.value =
+      "";
+
+    fileInfo.classList.remove(
+      "show"
+    );
+
+    fileName.textContent =
+      "";
+
+    resetResult();
+
+    updateCounter();
+
+    updateActionHelp();
+
+    textInput.focus();
+
+  }
+);
+
+actionSelect.addEventListener(
+  "change",
+  () => {
+
+    updateActionHelp();
+
+  }
+);
+
+textInput.addEventListener(
+  "input",
+  () => {
+
+    if (
+      textInput.value.length >
+      MAX_TEXT
+    ) {
+
+      textInput.value =
+        textInput.value.slice(
+          0,
+          MAX_TEXT
+        );
+    }
+
+    updateCounter();
+
+  }
+);
+
+
+/* =========================
+   LANGUAGE SWITCH
+========================= */
+
+interfaceLanguage.addEventListener(
+  "change",
+  () => {
+
+    try {
+
+      localStorage.setItem(
+        LANGUAGE_KEY,
+        interfaceLanguage.value
+      );
+
+    } catch {}
+
+    applyLanguage();
+
+  }
+);
+
+
+/* =========================
+   HISTORY TABS
+========================= */
+
+allHistoryTab.addEventListener(
+  "click",
+  () => {
+
+    historyFilter =
+      "all";
+
+    renderHistory();
+
+  }
+);
+
+favoriteHistoryTab.addEventListener(
+  "click",
+  () => {
+
+    historyFilter =
+      "favorites";
+
+    renderHistory();
+
+  }
+);
+
+clearHistoryButton.addEventListener(
+  "click",
+  () => {
+
+    if (
+      confirm(
+        t("confirmClear")
+      )
+    ) {
+
+      localStorage.removeItem(
+        HISTORY_KEY
+      );
+
+      renderHistory();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   ADD TEMPLATE
+========================= */
+
+addTemplateButton.addEventListener(
+  "click",
+  () => {
+
+    const text =
+      textInput.value.trim();
+
+    if (!text) {
+
+      showResult(
+        t("enterText")
+      );
+
+      return;
+    }
+
+    const name =
+      prompt(
+        t("templateName")
+      );
+
+    if (
+      !name ||
+      !name.trim()
+    ) {
+
+      return;
+    }
+
+    const templates =
+      loadTemplates();
+
+    templates.unshift({
+
+      id:
+        safeId(),
+
+      name:
+        name
+          .trim()
+          .slice(0, 100),
+
+      text:
+        text.slice(0, MAX_TEXT),
+
+      mode:
+        actionSelect.value
+
+    });
+
+    saveTemplates(
+      templates
+    );
+
+    renderTemplates();
+
+  }
+);
+
+
+/* =========================
+   INITIAL LANGUAGE
+========================= */
 
 const savedLanguage =
-  localStorage.getItem(LANGUAGE_KEY);
+  localStorage.getItem(
+    LANGUAGE_KEY
+  );
 
-if (savedLanguage && translations[savedLanguage]) {
-  interfaceLanguage.value = savedLanguage;
+if (
+  savedLanguage &&
+  translations[savedLanguage]
+) {
+
+  interfaceLanguage.value =
+    savedLanguage;
+
 } else {
-  const browserLanguage =
-    (navigator.language || "ru").slice(0, 2);
 
-  if (translations[browserLanguage]) {
-    interfaceLanguage.value = browserLanguage;
+  const browserLanguage =
+    (
+      navigator.language ||
+      "ru"
+    ).slice(0, 2);
+
+  if (
+    translations[browserLanguage]
+  ) {
+
+    interfaceLanguage.value =
+      browserLanguage;
+
   } else {
-    interfaceLanguage.value = "ru";
+
+    interfaceLanguage.value =
+      "ru";
   }
 }
 
+
+/* =========================
+   INITIAL STATE
+========================= */
+
+resetResult();
+
 applyLanguage();
+
+setupVoice();
+
 </script>
 
 </body>
