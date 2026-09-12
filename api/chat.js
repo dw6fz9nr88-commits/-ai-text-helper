@@ -9,11 +9,11 @@ const RATE_WINDOW = 600;
 const AI_TIMEOUT = 15000;
 const MAX_MESSAGE_LENGTH = 10000;
 
-// Было 24 KB. Для мультимодальных запросов нужен больший лимит.
 const MAX_BODY_BYTES = 15 * 1024 * 1024;
 
 const MAX_ATTACHMENTS = 5;
 const MAX_ATTACHMENT_BYTES = 6 * 1024 * 1024;
+const MAX_TOTAL_ATTACHMENT_BYTES = 8 * 1024 * 1024;
 
 const PRODUCTION_ORIGIN =
   "https://ai-text-helper-five.vercel.app";
@@ -76,7 +76,6 @@ function hashIp(ip) {
 function isAllowedOrigin(req) {
   const origin = req.headers.origin;
 
-  // Некоторые запросы браузер может отправить без Origin.
   if (!origin) return true;
 
   if (origin === PRODUCTION_ORIGIN) {
@@ -123,14 +122,20 @@ function getRequestBodySize(req) {
 }
 
 function withTimeout(promise, timeout = AI_TIMEOUT) {
+  let timer;
+
+  const timeoutPromise = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error("AI request timeout"));
+    }, timeout);
+  });
+
   return Promise.race([
     promise,
-    new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error("AI request timeout"));
-      }, timeout);
-    }),
-  ]);
+    timeoutPromise,
+  ]).finally(() => {
+    clearTimeout(timer);
+  });
 }
 
 function cleanAnswer(text) {
@@ -141,18 +146,23 @@ function cleanAnswer(text) {
     .trim();
 }
 
-/**
- * Безопасная проверка вложений.
- *
- * Сейчас backend принимает изображения:
- * image/jpeg
- * image/png
- * image/webp
- * image/gif
- *
- * Остальные бинарные файлы backend намеренно не отправляет
- * в AI напрямую.
- */
+function safeProviderError(error, fallback) {
+  const message =
+    typeof error?.message === "string"
+      ? error.message
+      : "";
+
+  if (!message) return fallback;
+
+  return message
+    .replace(/\s+/g, " ")
+    .slice(0, 700);
+}
+
+/* =========================
+   ATTACHMENTS
+========================= */
+
 function validateAttachments(attachments) {
   if (attachments === undefined) {
     return {
@@ -171,7 +181,8 @@ function validateAttachments(attachments) {
   if (attachments.length > MAX_ATTACHMENTS) {
     return {
       ok: false,
-      error: `Можно прикрепить максимум ${MAX_ATTACHMENTS} файлов.`,
+      error:
+        `Можно прикрепить максимум ${MAX_ATTACHMENTS} файлов.`,
     };
   }
 
@@ -183,6 +194,7 @@ function validateAttachments(attachments) {
   ]);
 
   const result = [];
+  let totalBytes = 0;
 
   for (const file of attachments) {
     if (!file || typeof file !== "object") {
@@ -212,14 +224,15 @@ function validateAttachments(attachments) {
         ok: false,
         error:
           `Файл "${name}" имеет тип ${type || "неизвестный"}. ` +
-          "Для визуального анализа пока поддерживаются JPG, PNG, WEBP и GIF.",
+          "Поддерживаются JPG, PNG, WEBP и GIF.",
       };
     }
 
     if (!data.startsWith("data:")) {
       return {
         ok: false,
-        error: `Некорректные данные файла "${name}".`,
+        error:
+          `Некорректные данные файла "${name}".`,
       };
     }
 
@@ -228,17 +241,41 @@ function validateAttachments(attachments) {
     if (commaIndex === -1) {
       return {
         ok: false,
-        error: `Некорректные данные файла "${name}".`,
+        error:
+          `Некорректные данные файла "${name}".`,
       };
     }
 
-    const header = data.slice(0, commaIndex);
-    const base64 = data.slice(commaIndex + 1);
+    const header = data
+      .slice(0, commaIndex)
+      .toLowerCase();
+
+    const base64 = data
+      .slice(commaIndex + 1)
+      .replace(/\s/g, "");
 
     if (!header.includes(";base64")) {
       return {
         ok: false,
-        error: `Файл "${name}" должен передаваться в Base64.`,
+        error:
+          `Файл "${name}" должен передаваться в Base64.`,
+      };
+    }
+
+    if (!base64) {
+      return {
+        ok: false,
+        error:
+          `Файл "${name}" пустой.`,
+      };
+    }
+
+    // Проверяем Base64
+    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
+      return {
+        ok: false,
+        error:
+          `Некорректный Base64 у файла "${name}".`,
       };
     }
 
@@ -253,7 +290,8 @@ function validateAttachments(attachments) {
     if (decodedBytes <= 0) {
       return {
         ok: false,
-        error: `Файл "${name}" пустой.`,
+        error:
+          `Файл "${name}" пустой.`,
       };
     }
 
@@ -262,14 +300,40 @@ function validateAttachments(attachments) {
         ok: false,
         error:
           `Файл "${name}" слишком большой. ` +
-          `Максимум ${Math.floor(MAX_ATTACHMENT_BYTES / 1024 / 1024)} MB.`,
+          `Максимум ${Math.floor(
+            MAX_ATTACHMENT_BYTES / 1024 / 1024
+          )} MB.`,
+      };
+    }
+
+    totalBytes += decodedBytes;
+
+    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+      return {
+        ok: false,
+        error:
+          `Общий размер изображений слишком большой. ` +
+          `Максимум ${Math.floor(
+            MAX_TOTAL_ATTACHMENT_BYTES / 1024 / 1024
+          )} MB.`,
+      };
+    }
+
+    // Проверяем соответствие MIME в data URL
+    const expectedHeader = `data:${type};base64`;
+
+    if (!header.startsWith(expectedHeader)) {
+      return {
+        ok: false,
+        error:
+          `Тип файла "${name}" не соответствует его данным.`,
       };
     }
 
     result.push({
       name,
       type,
-      data,
+      data: `data:${type};base64,${base64}`,
       bytes: decodedBytes,
     });
   }
@@ -279,6 +343,10 @@ function validateAttachments(attachments) {
     items: result,
   };
 }
+
+/* =========================
+   SAFETY
+========================= */
 
 function buildSafetyInstruction() {
   return `
@@ -296,6 +364,10 @@ function buildSafetyInstruction() {
 Выполняй только задачу пользователя.
 `.trim();
 }
+
+/* =========================
+   RATE LIMIT
+========================= */
 
 async function checkRateLimit(req) {
   const ip = getClientIp(req);
@@ -320,18 +392,24 @@ async function checkRateLimit(req) {
 
   return {
     allowed: true,
-    remaining: Math.max(RATE_LIMIT - current, 0),
+    remaining: Math.max(
+      RATE_LIMIT - current,
+      0
+    ),
   };
 }
 
-/**
- * Gemini — текстовый запрос.
- */
+/* =========================
+   GEMINI
+========================= */
+
 async function askGemini(message) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is not configured");
+    throw new Error(
+      "GEMINI_API_KEY is not configured"
+    );
   }
 
   const response = await withTimeout(
@@ -350,7 +428,8 @@ async function askGemini(message) {
             content: [
               {
                 type: "text",
-                text: `${buildSafetyInstruction()}\n\n${message}`,
+                text:
+                  `${buildSafetyInstruction()}\n\n${message}`,
               },
             ],
           },
@@ -362,7 +441,9 @@ async function askGemini(message) {
   const raw = await response.text();
 
   if (!response.ok) {
-    throw new Error(`Gemini ${response.status}: ${raw.slice(0, 500)}`);
+    throw new Error(
+      `Gemini ${response.status}: ${raw.slice(0, 500)}`
+    );
   }
 
   let data;
@@ -370,7 +451,9 @@ async function askGemini(message) {
   try {
     data = JSON.parse(raw);
   } catch {
-    throw new Error("Gemini returned invalid JSON");
+    throw new Error(
+      "Gemini returned invalid JSON"
+    );
   }
 
   let text = "";
@@ -412,20 +495,25 @@ async function askGemini(message) {
   text = cleanAnswer(text);
 
   if (!text) {
-    throw new Error("Gemini не вернул текстовый ответ");
+    throw new Error(
+      "Gemini не вернул текстовый ответ"
+    );
   }
 
   return text;
 }
 
-/**
- * Groq — текстовый fallback.
- */
+/* =========================
+   GROQ
+========================= */
+
 async function askGroq(message) {
   const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
-    throw new Error("GROQ_API_KEY is not configured");
+    throw new Error(
+      "GROQ_API_KEY is not configured"
+    );
   }
 
   const response = await withTimeout(
@@ -455,7 +543,9 @@ async function askGroq(message) {
   const raw = await response.text();
 
   if (!response.ok) {
-    throw new Error(`Groq ${response.status}: ${raw.slice(0, 500)}`);
+    throw new Error(
+      `Groq ${response.status}: ${raw.slice(0, 500)}`
+    );
   }
 
   let data;
@@ -463,7 +553,9 @@ async function askGroq(message) {
   try {
     data = JSON.parse(raw);
   } catch {
-    throw new Error("Groq returned invalid JSON");
+    throw new Error(
+      "Groq returned invalid JSON"
+    );
   }
 
   const text =
@@ -472,20 +564,25 @@ async function askGroq(message) {
   const answer = cleanAnswer(text);
 
   if (!answer) {
-    throw new Error("Groq не вернул текстовый ответ");
+    throw new Error(
+      "Groq не вернул текстовый ответ"
+    );
   }
 
   return answer;
 }
 
-/**
- * OpenRouter — текстовый запрос.
- */
+/* =========================
+   OPENROUTER TEXT
+========================= */
+
 async function askOpenRouterText(message) {
   const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not configured");
+    throw new Error(
+      "OPENROUTER_API_KEY is not configured"
+    );
   }
 
   const response = await withTimeout(
@@ -518,7 +615,7 @@ async function askOpenRouterText(message) {
 
   if (!response.ok) {
     throw new Error(
-      `OpenRouter ${response.status}: ${raw.slice(0, 500)}`
+      `OpenRouter ${response.status}: ${raw.slice(0, 700)}`
     );
   }
 
@@ -527,7 +624,9 @@ async function askOpenRouterText(message) {
   try {
     data = JSON.parse(raw);
   } catch {
-    throw new Error("OpenRouter returned invalid JSON");
+    throw new Error(
+      "OpenRouter returned invalid JSON"
+    );
   }
 
   const text =
@@ -536,34 +635,42 @@ async function askOpenRouterText(message) {
   const answer = cleanAnswer(text);
 
   if (!answer) {
-    throw new Error("OpenRouter не вернул текстовый ответ");
+    throw new Error(
+      "OpenRouter не вернул текстовый ответ"
+    );
   }
 
   return answer;
 }
 
-/**
- * OpenRouter — визуальный анализ.
- *
- * Важно:
- * openrouter/free может выбрать модель без поддержки изображений.
- * Поэтому для изображений передаём multimodal content.
- */
-async function askOpenRouterVision(message, attachments) {
+/* =========================
+   OPENROUTER VISION
+========================= */
+
+async function askOpenRouterVision(
+  message,
+  attachments
+) {
   const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not configured");
+    throw new Error(
+      "OPENROUTER_API_KEY is not configured"
+    );
   }
 
   const content = [];
 
-  if (message) {
-    content.push({
-      type: "text",
-      text: `${buildSafetyInstruction()}\n\n${message}`,
-    });
-  }
+  content.push({
+    type: "text",
+    text:
+      `${buildSafetyInstruction()}\n\n` +
+      (
+        message ||
+        "Проанализируй прикреплённые изображения. " +
+        "Опиши подробно, что на них изображено."
+      ),
+  });
 
   for (const file of attachments) {
     content.push({
@@ -599,8 +706,22 @@ async function askOpenRouterVision(message, attachments) {
   const raw = await response.text();
 
   if (!response.ok) {
+    let providerMessage = "";
+
+    try {
+      const errorData = JSON.parse(raw);
+
+      providerMessage =
+        errorData?.error?.message ||
+        errorData?.message ||
+        "";
+    } catch {
+      providerMessage = "";
+    }
+
     throw new Error(
-      `OpenRouter Vision ${response.status}: ${raw.slice(0, 500)}`
+      `OpenRouter Vision ${response.status}: ` +
+      `${providerMessage || raw.slice(0, 500)}`
     );
   }
 
@@ -609,23 +730,42 @@ async function askOpenRouterVision(message, attachments) {
   try {
     data = JSON.parse(raw);
   } catch {
-    throw new Error("OpenRouter returned invalid JSON");
+    throw new Error(
+      "OpenRouter вернул некорректный JSON."
+    );
   }
 
-  const text =
-    data?.choices?.[0]?.message?.content || "";
+  const messageContent =
+    data?.choices?.[0]?.message?.content;
+
+  let text = "";
+
+  if (typeof messageContent === "string") {
+    text = messageContent;
+  } else if (Array.isArray(messageContent)) {
+    for (const item of messageContent) {
+      if (typeof item?.text === "string") {
+        text += item.text;
+      }
+    }
+  }
 
   const answer = cleanAnswer(text);
 
   if (!answer) {
-    throw new Error("OpenRouter не вернул ответ по изображению");
+    throw new Error(
+      "OpenRouter не вернул ответ по изображению."
+    );
   }
 
   return answer;
 }
 
+/* =========================
+   MAIN HANDLER
+========================= */
+
 export default async function handler(req, res) {
-  // Только POST
   if (req.method !== "POST") {
     return send(
       res,
@@ -639,25 +779,27 @@ export default async function handler(req, res) {
     );
   }
 
-  // Проверка Origin
   if (!isAllowedOrigin(req)) {
     return send(res, 403, {
       error: "Доступ запрещён.",
     });
   }
 
-  // Content-Type
   const contentType =
     req.headers["content-type"] || "";
 
-  if (!contentType.toLowerCase().includes("application/json")) {
+  if (
+    !contentType
+      .toLowerCase()
+      .includes("application/json")
+  ) {
     return send(res, 415, {
       error: "Ожидается application/json.",
     });
   }
 
-  // Ограничение размера HTTP body
-  const requestSize = getRequestBodySize(req);
+  const requestSize =
+    getRequestBodySize(req);
 
   if (requestSize > MAX_BODY_BYTES) {
     return send(res, 413, {
@@ -666,7 +808,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Rate limit
     const rate = await checkRateLimit(req);
 
     if (!rate.allowed) {
@@ -676,44 +817,61 @@ export default async function handler(req, res) {
         {
           error:
             `⚠️ Лимит AI временно исчерпан. ` +
-            `Попробуйте снова через ${rate.retryAfter} сек.`,
+            `Попробуйте снова через ` +
+            `${rate.retryAfter} сек.`,
         },
         {
-          "Retry-After": String(rate.retryAfter),
+          "Retry-After":
+            String(rate.retryAfter),
         }
       );
     }
 
     const body = req.body || {};
 
-    const message = normalizeText(body.message);
-    const mode = normalizeText(body.mode).slice(0, 100);
+    const message =
+      normalizeText(body.message);
 
-    if (message.length > MAX_MESSAGE_LENGTH) {
+    const mode =
+      normalizeText(body.mode)
+        .slice(0, 100);
+
+    if (
+      message.length >
+      MAX_MESSAGE_LENGTH
+    ) {
       return send(res, 400, {
         error:
-          `Текст слишком длинный. Максимум ${MAX_MESSAGE_LENGTH} символов.`,
+          `Текст слишком длинный. ` +
+          `Максимум ${MAX_MESSAGE_LENGTH} символов.`,
       });
     }
 
     const attachmentValidation =
-      validateAttachments(body.attachments);
+      validateAttachments(
+        body.attachments
+      );
 
     if (!attachmentValidation.ok) {
       return send(res, 400, {
-        error: attachmentValidation.error,
+        error:
+          attachmentValidation.error,
       });
     }
 
-    const attachments = attachmentValidation.items;
+    const attachments =
+      attachmentValidation.items;
 
-    if (!message && attachments.length === 0) {
+    if (
+      !message &&
+      attachments.length === 0
+    ) {
       return send(res, 400, {
-        error: "Введите текст или прикрепите файл.",
+        error:
+          "Введите текст или прикрепите файл.",
       });
     }
 
-    // Проверяем общий размер входных данных.
     let attachmentBytes = 0;
 
     for (const file of attachments) {
@@ -721,55 +879,92 @@ export default async function handler(req, res) {
     }
 
     if (
-      attachmentBytes + byteLength(message) >
+      attachmentBytes +
+        byteLength(message) >
       MAX_BODY_BYTES
     ) {
       return send(res, 413, {
-        error: "Общий размер запроса слишком большой.",
+        error:
+          "Общий размер запроса слишком большой.",
       });
     }
 
-    // Есть изображения → OpenRouter Vision.
+    /* =========================
+       IMAGE REQUEST
+    ========================= */
+
     if (attachments.length > 0) {
-      const answer = await askOpenRouterVision(
-        message ||
-          "Проанализируй прикреплённые изображения и подробно опиши, что на них изображено.",
-        attachments
-      );
+      try {
+        const answer =
+          await askOpenRouterVision(
+            message,
+            attachments
+          );
 
-      return send(res, 200, {
-        answer,
-        provider: "OpenRouter",
-      });
+        return send(res, 200, {
+          answer,
+          provider: "OpenRouter",
+        });
+      } catch (visionError) {
+        console.error(
+          "OpenRouter Vision error:",
+          visionError?.message
+        );
+
+        return send(res, 502, {
+          error:
+            "Не удалось обработать изображение.",
+          details:
+            safeProviderError(
+              visionError,
+              "OpenRouter Vision недоступен."
+            ),
+        });
+      }
     }
 
-    // Обычный текст:
-    // Gemini → Groq → OpenRouter.
+    /* =========================
+       TEXT REQUEST
+       Gemini → Groq → OpenRouter
+    ========================= */
+
+    const finalMessage =
+      `${mode ? `Режим: ${mode}\n\n` : ""}${message}`;
+
     let answer;
     let provider;
 
     try {
-      answer = await askGemini(
-        `${mode ? `Режим: ${mode}\n\n` : ""}${message}`
-      );
+      answer =
+        await askGemini(
+          finalMessage
+        );
 
       provider = "Gemini";
     } catch (geminiError) {
-      console.error("Gemini error:", geminiError?.message);
+      console.error(
+        "Gemini error:",
+        geminiError?.message
+      );
 
       try {
-        answer = await askGroq(
-          `${mode ? `Режим: ${mode}\n\n` : ""}${message}`
-        );
+        answer =
+          await askGroq(
+            finalMessage
+          );
 
         provider = "Groq";
       } catch (groqError) {
-        console.error("Groq error:", groqError?.message);
+        console.error(
+          "Groq error:",
+          groqError?.message
+        );
 
         try {
-          answer = await askOpenRouterText(
-            `${mode ? `Режим: ${mode}\n\n` : ""}${message}`
-          );
+          answer =
+            await askOpenRouterText(
+              finalMessage
+            );
 
           provider = "OpenRouter";
         } catch (openRouterError) {
@@ -791,10 +986,14 @@ export default async function handler(req, res) {
       provider,
     });
   } catch (error) {
-    console.error("API error:", error);
+    console.error(
+      "API error:",
+      error
+    );
 
     return send(res, 500, {
-      error: "Внутренняя ошибка сервера.",
+      error:
+        "Внутренняя ошибка сервера.",
     });
   }
 }
