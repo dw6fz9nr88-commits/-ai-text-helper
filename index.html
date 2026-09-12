@@ -2,733 +2,359 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
-  <meta
-    name="theme-color"
-    content="#08090d"
-  >
-  <meta
-    name="description"
-    content="AI Помощник — улучшение, перевод, создание и переработка текста с помощью искусственного интеллекта."
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="AI Помощник — улучшение, перевод, создание и объяснение текста с помощью искусственного интеллекта.">
   <title>AI Помощник</title>
+
   <style>
     * {
       box-sizing: border-box;
     }
-    html {
-      min-height: 100%;
-      background: #08090d;
+
+    :root {
+      --bg: #08090d;
+      --panel: #11131a;
+      --panel2: #171a23;
+      --border: rgba(255,255,255,.09);
+      --text: #f5f7fb;
+      --muted: #8f96a6;
+      --accent: #6d7cff;
+      --accent2: #9b5cff;
+      --danger: #ff647c;
+      --success: #55d99a;
     }
+
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(
-          circle at 50% -10%,
-          rgba(104, 117, 255, 0.10),
-          transparent 38%
-        ),
-        #08090d;
-      color: #f5f5f7;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-      -webkit-font-smoothing: antialiased;
+        radial-gradient(circle at 50% -10%, rgba(109,124,255,.16), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+
     button,
     select,
-    textarea {
+    textarea,
+    input {
       font: inherit;
     }
-    button,
-    select {
-      -webkit-tap-highlight-color: transparent;
-    }
-    .container {
-      width: min(100% - 32px, 980px);
-      margin: 0 auto;
-      padding:
-        0 0
-        max(40px, env(safe-area-inset-bottom));
-    }
-    header {
-      position: relative;
-      text-align: center;
-      padding: 64px 20px 42px;
-    }
-    .language-switcher {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .language-select {
-      width: auto;
-      min-width: 150px;
-      height: 42px;
-      padding: 0 13px;
-      border-radius: 12px;
-      background: #11141c;
-      border: 1px solid #292d39;
-      color: #aeb4c4;
-      font-size: 12px;
+
+    button {
       cursor: pointer;
     }
-    .language-select:focus {
-      border-color: #6875ff;
-      box-shadow:
-        0 0 0 3px
-        rgba(104, 117, 255, 0.10);
+
+    .container {
+      width: min(920px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 50px;
     }
+
+    header {
+      text-align: center;
+      padding: 12px 0 24px;
+    }
+
+    .language {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .language select {
+      width: auto;
+      min-width: 120px;
+      padding: 9px 12px;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      outline: none;
+    }
+
+    select:focus,
+    textarea:focus {
+      border-color: rgba(109,124,255,.7);
+      box-shadow: 0 0 0 3px rgba(109,124,255,.12);
+    }
+
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      display: inline-block;
       padding: 7px 12px;
-      border: 1px solid #292d39;
       border-radius: 999px;
-      background: rgba(17, 19, 26, 0.65);
-      color: #9da7ff;
-      font-size: 11px;
+      background: rgba(109,124,255,.1);
+      border: 1px solid rgba(109,124,255,.25);
+      color: #aeb7ff;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: .08em;
     }
+
     h1 {
-      margin: 20px 0 12px;
-      font-size:
-        clamp(40px, 7vw, 68px);
-      line-height: 1.05;
-      letter-spacing: -.055em;
+      margin: 16px 0 8px;
+      font-size: clamp(34px, 8vw, 58px);
+      line-height: 1;
     }
+
     .subtitle {
-      max-width: 620px;
       margin: 0 auto;
-      color: #858a9a;
-      font-size:
-        clamp(14px, 2vw, 17px);
-      line-height: 1.65;
+      max-width: 650px;
+      color: var(--muted);
+      line-height: 1.5;
     }
+
     .app {
-      width: 100%;
-      padding:
-        clamp(16px, 3vw, 26px);
-      border: 1px solid #242833;
+      background: rgba(17,19,26,.88);
+      border: 1px solid var(--border);
       border-radius: 24px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(17, 19, 26, 0.98),
-          rgba(13, 15, 21, 0.98)
-        );
-      box-shadow:
-        0 20px 70px rgba(0, 0, 0, 0.28);
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.28);
     }
+
     label {
       display: block;
-      margin:
-        0 0 8px 2px;
-      color: #777d90;
+      margin: 0 0 8px;
+      color: #b9bfcc;
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .04em;
-    }
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid #292d39;
-      outline: none;
-      background: #0b0d12;
-      color: #fff;
-      transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-    }
-    select {
-      height: 54px;
-      padding: 0 15px;
-      border-radius: 14px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    textarea {
-      display: block;
-      min-height: 210px;
-      margin-top: 14px;
-      padding: 17px;
-      border-radius: 15px;
-      resize: vertical;
-      font-size: 16px;
-      line-height: 1.65;
-    }
-    select:focus,
-    textarea:focus {
-      border-color: #6875ff;
-      box-shadow:
-        0 0 0 3px
-        rgba(104, 117, 255, 0.10);
-    }
-    .counter {
-      margin-top: 7px;
-      text-align: right;
-      color: #555b6b;
-      font-size: 11px;
-    }
-    #process {
-      display: block;
-      width: 100%;
-      min-height: 56px;
-      margin-top: 14px;
-      padding: 0 18px;
-      border: 0;
-      border-radius: 14px;
-      background:
-        linear-gradient(
-          135deg,
-          #6875ff,
-          #886cff
-        );
-      color: white;
-      font-size: 16px;
       font-weight: 800;
-      cursor: pointer;
-      box-shadow:
-        0 10px 30px
-        rgba(104, 117, 255, 0.16);
-      transition:
-        transform .15s ease,
-        opacity .2s ease,
-        box-shadow .2s ease;
+      letter-spacing: .08em;
     }
-    #process:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow:
-        0 14px 34px
-        rgba(104, 117, 255, 0.24);
+
+    #action {
+      padding: 14px;
+      margin-bottom: 14px;
     }
-    #process:active:not(:disabled) {
-      transform: translateY(0);
+
+    textarea {
+      display: block;
+      min-height: 220px;
+      padding: 16px;
+      resize: vertical;
+      line-height: 1.55;
+      font-size: 16px;
     }
-    button:disabled {
+
+    .input-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .tools-left,
+    .tools-right {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tool-btn {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: #dfe3eb;
+      border-radius: 11px;
+      padding: 9px 11px;
+      font-size: 13px;
+    }
+
+    .tool-btn:active {
+      transform: scale(.97);
+    }
+
+    .counter {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .file-info {
+      display: none;
+      margin-top: 9px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      background: rgba(109,124,255,.08);
+      color: #b9c0ff;
+      font-size: 13px;
+    }
+
+    .file-info.show {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .process {
+      width: 100%;
+      margin-top: 16px;
+      padding: 15px 18px;
+      border: 0;
+      border-radius: 15px;
+      color: white;
+      font-weight: 800;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 28px rgba(109,124,255,.22);
+    }
+
+    .process:disabled {
       opacity: .55;
       cursor: not-allowed;
     }
+
     .result {
       display: none;
-      margin-top: 16px;
-      padding:
-        clamp(16px, 3vw, 22px);
-      border: 1px solid #292d39;
-      border-radius: 16px;
-      background: #0b0d12;
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
     }
+
     .result.show {
       display: block;
     }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
     .result-title {
-      margin-bottom: 12px;
-      color: #9da7ff;
       font-size: 12px;
       font-weight: 800;
-      letter-spacing: .05em;
+      letter-spacing: .08em;
+      color: #aeb6c7;
     }
+
     .provider {
-      display: none;
-      width: fit-content;
-      margin-bottom: 15px;
-      padding: 6px 10px;
-      border: 1px solid #292d39;
-      border-radius: 999px;
-      background: #11141c;
-      color: #858ca0;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .04em;
+      color: #aeb7ff;
+      font-size: 12px;
     }
-    .result-text {
+
+    #resultText {
       white-space: pre-wrap;
-      word-break: break-word;
-      color: #e5e6eb;
-      font-size: 16px;
-      line-height: 1.75;
-    }
-    .copy,
-    .retry {
-      width: 100%;
-      min-height: 44px;
-      border-radius: 12px;
-      background: #171a23;
-      border: 1px solid #292d39;
-      color: #aeb3c2;
-      font-size: 13px;
-      cursor: pointer;
-      transition:
-        background .2s ease,
-        border-color .2s ease;
-    }
-    .copy {
-      display: none;
-      margin-top: 16px;
-    }
-    .retry {
-      display: none;
-      margin-top: 10px;
-    }
-    .retry.show {
-      display: block;
-    }
-    .copy:hover:not(:disabled),
-    .retry:hover:not(:disabled) {
-      background: #1c202b;
-      border-color: #373c4b;
-    }
-    .templates {
-      margin-top: 16px;
-      padding:
-        clamp(16px, 3vw, 22px);
-      border: 1px solid #242833;
-      border-radius: 20px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(17, 19, 26, 0.98),
-          rgba(13, 15, 21, 0.98)
-        );
-    }
-    .templates-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .templates-title {
-      color: #d8c47c;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .05em;
-    }
-    .add-template {
-      min-height: 38px;
-      padding: 0 12px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #11141c;
-      color: #aeb3c2;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .add-template:hover {
-      background: #181b24;
-      border-color: #373c4b;
-    }
-    .templates-list {
-      display: grid;
-      gap: 10px;
-    }
-    .templates-empty {
-      padding: 24px 12px;
-      border: 1px dashed #292d39;
-      border-radius: 14px;
-      color: #626879;
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-    .template-item {
-      padding: 14px;
-      border: 1px solid #242833;
-      border-radius: 14px;
-      background: #0b0d12;
-    }
-    .template-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .template-name {
-      color: #e5e6eb;
-      font-size: 13px;
-      font-weight: 800;
-    }
-    .template-mode {
-      margin-top: 4px;
-      color: #777d90;
-      font-size: 10px;
-    }
-    .template-text {
-      margin-top: 10px;
-      color: #858a9a;
-      font-size: 12px;
-      line-height: 1.5;
-      white-space: pre-wrap;
+      line-height: 1.65;
       word-break: break-word;
     }
-    .template-actions {
+
+    .result-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 12px;
+      gap: 8px;
+      margin-top: 16px;
     }
-    .template-action {
-      min-height: 40px;
-      padding: 0 11px;
-      border: 1px solid #292d39;
+
+    .action-btn {
+      padding: 9px 12px;
       border-radius: 10px;
-      background: #11141c;
-      color: #858ca0;
-      font-size: 11px;
-      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: #e6e9f0;
     }
-    .template-action:hover {
-      background: #181b24;
-      border-color: #373c4b;
+
+    .section {
+      margin-top: 28px;
     }
+
+    .section-title {
+      margin-bottom: 10px;
+      color: #c4c9d4;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .07em;
+    }
+
+    .templates,
     .history {
-      margin-top: 16px;
-      padding:
-        clamp(16px, 3vw, 22px);
-      border: 1px solid #242833;
-      border-radius: 20px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(17, 19, 26, 0.98),
-          rgba(13, 15, 21, 0.98)
-        );
-    }
-    .history-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .history-title {
-      color: #9da7ff;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .05em;
-    }
-    .clear-history {
-      min-height: 38px;
-      padding: 0 12px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #11141c;
-      color: #858ca0;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .clear-history:hover {
-      background: #181b24;
-      border-color: #373c4b;
-    }
-    .history-tabs {
-      display: flex;
-      gap: 7px;
-      margin-bottom: 12px;
-    }
-    .history-tab {
-      min-height: 38px;
-      padding: 0 13px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #0b0d12;
-      color: #777d90;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .history-tab.active {
-      border-color: #6875ff;
-      background: rgba(104, 117, 255, 0.10);
-      color: #b8beff;
-    }
-    .history-empty {
-      padding: 24px 12px;
-      border: 1px dashed #292d39;
-      border-radius: 14px;
-      color: #626879;
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-    .history-list {
       display: grid;
-      gap: 10px;
+      gap: 9px;
     }
-    .history-item {
-      padding: 14px;
-      border: 1px solid #242833;
+
+    .card {
+      padding: 13px;
+      border: 1px solid var(--border);
+      background: var(--panel);
       border-radius: 14px;
-      background: #0b0d12;
     }
-    .history-item-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
+
+    .card-title {
+      font-weight: 700;
     }
-    .history-mode {
-      color: #aeb4ff;
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1.4;
-    }
-    .history-time {
-      flex-shrink: 0;
-      color: #555b6b;
-      font-size: 10px;
-    }
-    .history-source {
-      margin-top: 10px;
-      color: #858a9a;
-      font-size: 12px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .history-result {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #1e212a;
-      color: #e5e6eb;
-      font-size: 13px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .history-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 12px;
-    }
-    .history-action {
-      min-height: 40px;
-      padding: 0 11px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #11141c;
-      color: #858ca0;
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .history-action:hover {
-      background: #181b24;
-      border-color: #373c4b;
-    }
-    .history-action.favorite {
-      color: #d8c47c;
-    }
-    .features {
-      display: grid;
-      grid-template-columns:
-        repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .feature {
-      min-height: 116px;
-      padding: 20px 12px;
-      border: 1px solid #1e212a;
-      border-radius: 16px;
-      background: #0e1016;
-      text-align: center;
-      transition:
-        border-color .2s ease,
-        transform .2s ease;
-    }
-    .feature:hover {
-      transform: translateY(-2px);
-      border-color: #292e3a;
-    }
-    .icon {
-      font-size: 21px;
-    }
-    .feature strong {
-      display: block;
-      margin-top: 8px;
-      font-size: 12px;
-    }
-    .feature span {
-      display: block;
+
+    .card-preview {
       margin-top: 5px;
-      color: #626879;
-      font-size: 10px;
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.4;
     }
-    footer {
-      padding: 30px 0 10px;
+
+    .card-actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .empty {
+      color: var(--muted);
       text-align: center;
-      color: #4f5462;
-      font-size: 11px;
+      padding: 20px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
     }
-    @media (min-width: 601px) {
-      .container {
-        width:
-          min(100% - 48px, 980px);
-      }
-      .app {
-        padding: 28px;
-      }
-      textarea {
-        min-height: 240px;
-      }
-      #process {
-        min-height: 58px;
-      }
-      .copy,
-      .retry {
-        width: auto;
-        padding: 0 22px;
-      }
+
+    footer {
+      text-align: center;
+      color: #656c7b;
+      font-size: 12px;
+      margin-top: 30px;
     }
-    @media (min-width: 900px) {
-      header {
-        padding-top: 55px;
-      }
-      .app {
-        border-radius: 26px;
-      }
-      textarea {
-        min-height: 260px;
-      }
-      .features {
-        gap: 14px;
-      }
-      .feature {
-        min-height: 128px;
-        padding:
-          23px 16px;
-      }
-      .feature strong {
-        font-size: 13px;
-      }
-      .feature span {
-        font-size: 11px;
-      }
-    }
+
     @media (max-width: 600px) {
       .container {
-        width:
-          calc(100% - 18px);
+        width: min(100% - 18px, 920px);
+        padding-top: 10px;
       }
-      header {
-        padding:
-          28px 8px 28px;
-      }
-      h1 {
-        margin-top: 17px;
-        font-size:
-          clamp(36px, 11vw, 48px);
-      }
-      .subtitle {
-        font-size: 14px;
-      }
-      .language-select {
-        min-width: 145px;
-      }
+
       .app {
-        padding: 13px;
-        border-radius: 20px;
+        padding: 12px;
+        border-radius: 19px;
       }
+
       textarea {
         min-height: 190px;
       }
-      .templates {
-        padding: 14px;
+
+      .tool-btn {
+        padding: 9px 10px;
       }
-      .template-actions {
-        display: grid;
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
-      .template-action {
-        width: 100%;
-      }
-      .history {
-        padding: 14px;
-      }
-      .history-header {
-        align-items: flex-start;
-      }
-      .history-actions {
-        display: grid;
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
-      .history-action {
-        width: 100%;
-      }
-      .features {
-        gap: 6px;
-      }
-      .feature {
-        min-height: 104px;
-        padding:
-          15px 5px;
-      }
-      .feature strong {
-        font-size: 10px;
-      }
-      .feature span {
-        font-size: 8px;
-      }
-      footer {
-        padding-bottom: 20px;
-      }
-    }
-    @media (max-width: 380px) {
-      .container {
-        width:
-          calc(100% - 12px);
-      }
-      .template-actions {
-        grid-template-columns:
-          1fr;
-      }
-      .features {
-        grid-template-columns:
-          1fr;
-      }
-      .feature {
-        min-height: auto;
-        padding: 13px;
-      }
-      .feature span {
-        font-size: 9px;
-      }
-      .history-actions {
-        grid-template-columns:
-          1fr;
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition:
-          none !important;
+
+      .tools-right {
+        display: none;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
+  <main class="container">
+
     <header>
-      <div class="language-switcher">
-        <select
-          id="interfaceLanguage"
-          class="language-select"
-          aria-label="Language"
-        >
+      <div class="language">
+        <select id="interfaceLanguage" aria-label="Язык интерфейса">
           <option value="ru">🇷🇺 Русский</option>
           <option value="pl">🇵🇱 Polski</option>
           <option value="en">🇬🇧 English</option>
@@ -741,2985 +367,985 @@
           <option value="cs">🇨🇿 Čeština</option>
         </select>
       </div>
-      <div class="badge">
-        ● AI POWERED
-      </div>
-      <h1 id="pageTitle">
-        ✦ AI Помощник
-      </h1>
-      <p
-        class="subtitle"
-        id="pageSubtitle"
-      >
-        Напиши текст — AI поможет его улучшить,
-        создать, перевести или переработать.
+
+      <div class="badge">● AI POWERED</div>
+
+      <h1>✦ AI Помощник</h1>
+
+      <p class="subtitle">
+        Напиши, вставь, загрузи или продиктуй текст — AI поможет его улучшить,
+        создать, перевести или объяснить.
       </p>
     </header>
-    <main class="app">
-      <label
-        for="action"
-        id="actionLabel"
-      >
-        ДЕЙСТВИЕ
-      </label>
+
+    <section class="app">
+
+      <label for="action">ДЕЙСТВИЕ</label>
+
       <select id="action">
-        <option value="improve">
-          ✨ Улучшить текст
-        </option>
-        <option value="polish">
-          🇵🇱 Перевести на польский
-        </option>
-        <option value="english">
-          🇬🇧 Перевести на английский
-        </option>
-        <option value="tiktok">
-          🎵 Создать текст для TikTok
-        </option>
-        <option value="shorten">
-          ✂️ Сократить текст
-        </option>
-        <option value="write">
-          📝 Написать текст
-        </option>
-        <option value="reply">
-          💬 Ответить на сообщение
-        </option>
-        <option value="business">
-          📧 Деловой текст
-        </option>
-        <option value="summarize">
-          📋 Краткое резюме
-        </option>
+        <optgroup label="✨ Работа с текстом">
+          <option value="improve">✨ Улучшить текст</option>
+          <option value="polish">🇵🇱 Перевести на польский</option>
+          <option value="english">🇬🇧 Перевести на английский</option>
+          <option value="shorten">✂️ Сократить текст</option>
+          <option value="summarize">📋 Краткое содержание</option>
+          <option value="explain">🧠 Объяснить простыми словами</option>
+        </optgroup>
+
+        <optgroup label="✍️ Создание">
+          <option value="write">✍️ Написать текст</option>
+          <option value="reply">💬 Ответить на сообщение</option>
+          <option value="business">💼 Сделать деловым</option>
+          <option value="tiktok">🎵 Создать текст для TikTok</option>
+        </optgroup>
       </select>
+
       <textarea
         id="text"
         maxlength="10000"
         placeholder="Напиши здесь свой текст..."
+        autocomplete="off"
+        spellcheck="true"
       ></textarea>
-      <div
-        class="counter"
-        id="counter"
-      >
-        0 / 10 000
+
+      <div id="fileInfo" class="file-info">
+        <span id="fileName"></span>
+        <button class="tool-btn" id="removeFile" type="button">✕</button>
       </div>
-      <button
-        id="process"
-        type="button"
-        onclick="processText()"
-      >
+
+      <div class="input-tools">
+        <div class="tools-left">
+          <input
+            id="fileInput"
+            type="file"
+            accept=".txt,.md,.csv,text/plain,text/markdown,text/csv"
+          >
+
+          <button class="tool-btn" id="fileButton" type="button">
+            📎 Файл
+          </button>
+
+          <button class="tool-btn" id="voiceButton" type="button">
+            🎙 Голос
+          </button>
+
+          <button class="tool-btn" id="clearButton" type="button">
+            Очистить
+          </button>
+        </div>
+
+        <div class="tools-right">
+          <span class="counter" id="counter">0 / 10 000</span>
+        </div>
+      </div>
+
+      <button class="process" id="process" type="button">
         ✨ Обработать
       </button>
-      <div
-        class="result"
-        id="resultBox"
-      >
-        <div
-          class="result-title"
-          id="resultTitle"
-        >
-          ✦ РЕЗУЛЬТАТ AI
+
+      <div class="result" id="resultBox">
+        <div class="result-head">
+          <div class="result-title">✦ РЕЗУЛЬТАТ AI</div>
+          <div class="provider" id="provider"></div>
         </div>
-        <div
-          class="provider"
-          id="provider"
-        ></div>
-        <div
-          class="result-text"
-          id="resultText"
-        ></div>
-        <button
-          class="copy"
-          id="copyButton"
-          type="button"
-          onclick="copyResult()"
-        >
-          📋 Скопировать
-        </button>
-        <button
-          class="retry"
-          id="retryButton"
-          type="button"
-          onclick="processText()"
-        >
-          🔄 Попробовать снова
-        </button>
-      </div>
-    </main>
-    <section
-      class="templates"
-      id="templatesSection"
-    >
-      <div class="templates-header">
-        <div
-          class="templates-title"
-          id="templatesTitle"
-        >
-          ★ МОИ ШАБЛОНЫ
+
+        <div id="resultText"></div>
+
+        <div class="result-actions">
+          <button class="action-btn" id="speakButton" type="button">
+            🔊 Озвучить
+          </button>
+
+          <button class="action-btn" id="stopSpeakButton" type="button">
+            ⏹ Стоп
+          </button>
+
+          <button class="action-btn" id="copyButton" type="button">
+            📋 Скопировать
+          </button>
+
+          <button class="action-btn" id="retryButton" type="button">
+            🔄 Повторить
+          </button>
         </div>
-        <button
-          class="add-template"
-          id="addTemplateButton"
-          type="button"
-        >
-          ＋ Добавить
-        </button>
       </div>
-      <div
-        class="templates-list"
-        id="templatesList"
-      ></div>
     </section>
-    <section
-      class="history"
-      id="historySection"
-    >
-      <div class="history-header">
-        <div
-          class="history-title"
-          id="historyTitle"
-        >
-          ✦ ИСТОРИЯ
-        </div>
-        <button
-          class="clear-history"
-          id="clearHistoryButton"
-          type="button"
-        >
-          🧹 Очистить
-        </button>
-      </div>
-      <div class="history-tabs">
-        <button
-          class="history-tab active"
-          id="allHistoryTab"
-          type="button"
-        >
+
+    <section class="section">
+      <div class="section-title">ШАБЛОНЫ</div>
+
+      <div class="templates" id="templatesList"></div>
+
+      <button class="action-btn" id="addTemplateButton" type="button">
+        ＋ Добавить шаблон
+      </button>
+    </section>
+
+    <section class="section">
+      <div class="section-title">ИСТОРИЯ</div>
+
+      <div class="card-actions">
+        <button class="action-btn" id="allHistoryTab" type="button">
           Все
         </button>
-        <button
-          class="history-tab"
-          id="favoriteHistoryTab"
-          type="button"
-        >
+
+        <button class="action-btn" id="favoriteHistoryTab" type="button">
           ⭐ Избранное
         </button>
+
+        <button class="action-btn" id="clearHistoryButton" type="button">
+          Очистить
+        </button>
       </div>
-      <div
-        class="history-list"
-        id="historyList"
-      ></div>
+
+      <div class="history" id="historyList"></div>
     </section>
-    <section class="features">
-      <div class="feature">
-        <div class="icon">
-          ⚡
-        </div>
-        <strong id="featureFastTitle">
-          Быстро
-        </strong>
-        <span id="featureFastText">
-          За считанные секунды
-        </span>
-      </div>
-      <div class="feature">
-        <div class="icon">
-          🧠
-        </div>
-        <strong id="featureAiTitle">
-          Несколько AI
-        </strong>
-        <span id="featureAiText">
-          Автоматический fallback
-        </span>
-      </div>
-      <div class="feature">
-        <div class="icon">
-          🌍
-        </div>
-        <strong id="featureLangTitle">
-          Много языков
-        </strong>
-        <span id="featureLangText">
-          Перевод и редактура
-        </span>
-      </div>
-    </section>
-    <footer id="footerText">
+
+    <footer>
       AI Помощник · Gemini · Groq · OpenRouter
     </footer>
-  </div>
-  <script>
-    /*
-     * ================================
-     * ЭЛЕМЕНТЫ
-     * ================================
-     */
-    const textInput =
-      document.getElementById("text");
-    const counter =
-      document.getElementById("counter");
-    const processButton =
-      document.getElementById("process");
-    const resultBox =
-      document.getElementById("resultBox");
-    const resultText =
-      document.getElementById("resultText");
-    const provider =
-      document.getElementById("provider");
-    const retryButton =
-      document.getElementById("retryButton");
-    const copyButton =
-      document.getElementById("copyButton");
-    const actionSelect =
-      document.getElementById("action");
-    const interfaceLanguage =
-      document.getElementById(
-        "interfaceLanguage"
-      );
-    const historyList =
-      document.getElementById("historyList");
-    const clearHistoryButton =
-      document.getElementById(
-        "clearHistoryButton"
-      );
-    const allHistoryTab =
-      document.getElementById(
-        "allHistoryTab"
-      );
-    const favoriteHistoryTab =
-      document.getElementById(
-        "favoriteHistoryTab"
-      );
-    const templatesList =
-      document.getElementById(
-        "templatesList"
-      );
-    const addTemplateButton =
-      document.getElementById(
-        "addTemplateButton"
-      );
-    let retryTimer = null;
-    let rateLimited = false;
-    /*
-     * ================================
-     * НАСТРОЙКИ
-     * ================================
-     */
-    const HISTORY_KEY =
-      "ai_helper_history_v1";
-    const TEMPLATES_KEY =
-      "ai_helper_templates_v1";
-    const LANGUAGE_KEY =
-      "ai_helper_interface_language_v1";
-    const MAX_HISTORY = 20;
-    const MAX_TEMPLATES = 30;
-    let historyFilter = "all";
-    /*
-     * ================================
-     * ПЕРЕВОДЫ
-     * ================================
-     */
-    const translations = {
-      ru: {
-        pageTitle:
-          "✦ AI Помощник",
-        subtitle:
-          "Напиши текст — AI поможет его улучшить, создать, перевести или переработать.",
-        actionLabel:
-          "ДЕЙСТВИЕ",
-        improve:
-          "✨ Улучшить текст",
-        polish:
-          "🇵🇱 Перевести на польский",
-        english:
-          "🇬🇧 Перевести на английский",
-        tiktok:
-          "🎵 Создать текст для TikTok",
-        shorten:
-          "✂️ Сократить текст",
-        write:
-          "📝 Написать текст",
-        reply:
-          "💬 Ответить на сообщение",
-        business:
-          "📧 Деловой текст",
-        summarize:
-          "📋 Краткое резюме",
-        placeholder:
-          "Напиши здесь свой текст...",
-        counter:
-          "0 / 10 000",
-        process:
-          "✨ Обработать",
-        processing:
-          "⏳ AI обрабатывает...",
-        result:
-          "✦ РЕЗУЛЬТАТ AI",
-        copy:
-          "📋 Скопировать",
-        copied:
-          "✓ Скопировано",
-        retry:
-          "🔄 Попробовать снова",
-        templates:
-          "★ МОИ ШАБЛОНЫ",
-        add:
-          "＋ Добавить",
-        history:
-          "✦ ИСТОРИЯ",
-        clear:
-          "🧹 Очистить",
-        all:
-          "Все",
-        favorites:
-          "⭐ Избранное",
-        useAgain:
-          "🔄 Использовать снова",
-        copyAction:
-          "📋 Копировать",
-        favorite:
-          "☆ В избранное",
-        favoriteActive:
-          "★ В избранном",
-        delete:
-          "🗑 Удалить",
-        featureFast:
-          "Быстро",
-        featureFastText:
-          "За считанные секунды",
-        featureAi:
-          "Несколько AI",
-        featureAiText:
-          "Автоматический fallback",
-        featureLanguages:
-          "Много языков",
-        featureLanguagesText:
-          "Перевод и редактура",
-        templateEmpty:
-          "Здесь будут твои часто используемые запросы. Введи текст и нажми «＋ Добавить».",
-        historyEmpty:
-          "Здесь появятся твои последние запросы после обработки текста.",
-        favoritesEmpty:
-          "В избранном пока ничего нет.",
-        request:
-          "Запрос: ",
-        confirmClear:
-          "Удалить всю историю запросов?",
-        enterText:
-          "⚠️ Сначала напиши текст.",
-        tooLong:
-          "⚠️ Текст слишком длинный.",
-        copiedError:
-          "Не удалось скопировать текст.",
-        templateName:
-          "Название шаблона:",
-        templateDefault:
-          "Мой шаблон",
-        retryLimit:
-          "❌ ⚠️ Лимит AI временно исчерпан.",
-        retryAvailable:
-          "Повторить можно через",
-        seconds:
-          "сек.",
-        limitRemoved:
-          "Лимит снят. Теперь можно снова отправить запрос.",
-        aiPreparing:
-          "AI готовит ответ...",
-        unknownError:
-          "Произошла неизвестная ошибка.",
-        serverError:
-          "Сервер вернул некорректный ответ.",
-        noAiAnswer:
-          "AI не вернул текстовый ответ.",
-        fallback:
-          "✦ AI"
-      },
-      pl: {
-        pageTitle:
-          "✦ Asystent AI",
-        subtitle:
-          "Napisz tekst — AI pomoże go poprawić, stworzyć, przetłumaczyć lub przeredagować.",
-        actionLabel:
-          "DZIAŁANIE",
-        improve:
-          "✨ Popraw tekst",
-        polish:
-          "🇵🇱 Przetłumacz na polski",
-        english:
-          "🇬🇧 Przetłumacz na angielski",
-        tiktok:
-          "🎵 Stwórz tekst na TikTok",
-        shorten:
-          "✂️ Skróć tekst",
-        write:
-          "📝 Napisz tekst",
-        reply:
-          "💬 Odpowiedz na wiadomość",
-        business:
-          "📧 Tekst biznesowy",
-        summarize:
-          "📋 Krótkie podsumowanie",
-        placeholder:
-          "Napisz tutaj swój tekst...",
-        counter:
-          "0 / 10 000",
-        process:
-          "✨ Przetwórz",
-        processing:
-          "⏳ AI przetwarza...",
-        result:
-          "✦ WYNIK AI",
-        copy:
-          "📋 Kopiuj",
-        copied:
-          "✓ Skopiowano",
-        retry:
-          "🔄 Spróbuj ponownie",
-        templates:
-          "★ MOJE SZABLONY",
-        add:
-          "＋ Dodaj",
-        history:
-          "✦ HISTORIA",
-        clear:
-          "🧹 Wyczyść",
-        all:
-          "Wszystkie",
-        favorites:
-          "⭐ Ulubione",
-        useAgain:
-          "🔄 Użyj ponownie",
-        copyAction:
-          "📋 Kopiuj",
-        favorite:
-          "☆ Dodaj do ulubionych",
-        favoriteActive:
-          "★ W ulubionych",
-        delete:
-          "🗑 Usuń",
-        featureFast:
-          "Szybko",
-        featureFastText:
-          "W kilka sekund",
-        featureAi:
-          "Wiele AI",
-        featureAiText:
-          "Automatyczny fallback",
-        featureLanguages:
-          "Wiele języków",
-        featureLanguagesText:
-          "Tłumaczenie i edycja",
-        templateEmpty:
-          "Tutaj pojawią się często używane zapytania. Wpisz tekst i kliknij „＋ Dodaj”.",
-        historyEmpty:
-          "Tutaj pojawią się ostatnie zapytania po przetworzeniu tekstu.",
-        favoritesEmpty:
-          "Brak ulubionych.",
-        request:
-          "Zapytanie: ",
-        confirmClear:
-          "Usunąć całą historię zapytań?",
-        enterText:
-          "⚠️ Najpierw wpisz tekst.",
-        tooLong:
-          "⚠️ Tekst jest za długi.",
-        copiedError:
-          "Nie udało się skopiować tekstu.",
-        templateName:
-          "Nazwa szablonu:",
-        templateDefault:
-          "Mój szablon",
-        retryLimit:
-          "❌ ⚠️ Limit AI został tymczasowo wyczerpany.",
-        retryAvailable:
-          "Możesz spróbować ponownie za",
-        seconds:
-          "sek.",
-        limitRemoved:
-          "Limit został usunięty. Możesz ponownie wysłać zapytanie.",
-        aiPreparing:
-          "AI przygotowuje odpowiedź...",
-        unknownError:
-          "Wystąpił nieznany błąd.",
-        serverError:
-          "Serwer zwrócił nieprawidłową odpowiedź.",
-        noAiAnswer:
-          "AI nie zwróciło odpowiedzi tekstowej.",
-        fallback:
-          "✦ AI"
-      },
-      en: {
-        pageTitle:
-          "✦ AI Assistant",
-        subtitle:
-          "Write a text — AI will help you improve, create, translate or rewrite it.",
-        actionLabel:
-          "ACTION",
-        improve:
-          "✨ Improve text",
-        polish:
-          "🇵🇱 Translate to Polish",
-        english:
-          "🇬🇧 Translate to English",
-        tiktok:
-          "🎵 Create TikTok text",
-        shorten:
-          "✂️ Shorten text",
-        write:
-          "📝 Write text",
-        reply:
-          "💬 Reply to a message",
-        business:
-          "📧 Business text",
-        summarize:
-          "📋 Short summary",
-        placeholder:
-          "Write your text here...",
-        counter:
-          "0 / 10,000",
-        process:
-          "✨ Process",
-        processing:
-          "⏳ AI is processing...",
-        result:
-          "✦ AI RESULT",
-        copy:
-          "📋 Copy",
-        copied:
-          "✓ Copied",
-        retry:
-          "🔄 Try again",
-        templates:
-          "★ MY TEMPLATES",
-        add:
-          "＋ Add",
-        history:
-          "✦ HISTORY",
-        clear:
-          "🧹 Clear",
-        all:
-          "All",
-        favorites:
-          "⭐ Favorites",
-        useAgain:
-          "🔄 Use again",
-        copyAction:
-          "📋 Copy",
-        favorite:
-          "☆ Add to favorites",
-        favoriteActive:
-          "★ In favorites",
-        delete:
-          "🗑 Delete",
-        featureFast:
-          "Fast",
-        featureFastText:
-          "In just seconds",
-        featureAi:
-          "Multiple AI",
-        featureAiText:
-          "Automatic fallback",
-        featureLanguages:
-          "Many languages",
-        featureLanguagesText:
-          "Translation and editing",
-        templateEmpty:
-          "Your frequently used requests will appear here. Enter text and tap “＋ Add”.",
-        historyEmpty:
-          "Your recent requests will appear here after processing.",
-        favoritesEmpty:
-          "No favorites yet.",
-        request:
-          "Request: ",
-        confirmClear:
-          "Delete all request history?",
-        enterText:
-          "⚠️ Please enter some text first.",
-        tooLong:
-          "⚠️ The text is too long.",
-        copiedError:
-          "Failed to copy the text.",
-        templateName:
-          "Template name:",
-        templateDefault:
-          "My template",
-        retryLimit:
-          "❌ ⚠️ AI limit temporarily reached.",
-        retryAvailable:
-          "Try again in",
-        seconds:
-          "sec.",
-        limitRemoved:
-          "The limit has been removed. You can send another request.",
-        aiPreparing:
-          "AI is preparing the response...",
-        unknownError:
-          "An unknown error occurred.",
-        serverError:
-          "The server returned an invalid response.",
-        noAiAnswer:
-          "AI did not return a text response.",
-        fallback:
-          "✦ AI"
-      },
-      uk: {
-        pageTitle:
-          "✦ AI Помічник",
-        subtitle:
-          "Напиши текст — AI допоможе його покращити, створити, перекласти або переробити.",
-        actionLabel:
-          "ДІЯ",
-        improve:
-          "✨ Покращити текст",
-        polish:
-          "🇵🇱 Перекласти польською",
-        english:
-          "🇬🇧 Перекласти англійською",
-        tiktok:
-          "🎵 Створити текст для TikTok",
-        shorten:
-          "✂️ Скоротити текст",
-        write:
-          "📝 Написати текст",
-        reply:
-          "💬 Відповісти на повідомлення",
-        business:
-          "📧 Діловий текст",
-        summarize:
-          "📋 Коротке резюме",
-        placeholder:
-          "Напиши тут свій текст...",
-        counter:
-          "0 / 10 000",
-        process:
-          "✨ Обробити",
-        processing:
-          "⏳ AI обробляє...",
-        result:
-          "✦ РЕЗУЛЬТАТ AI",
-        copy:
-          "📋 Скопіювати",
-        copied:
-          "✓ Скопійовано",
-        retry:
-          "🔄 Спробувати ще раз",
-        templates:
-          "★ МОЇ ШАБЛОНИ",
-        add:
-          "＋ Додати",
-        history:
-          "✦ ІСТОРІЯ",
-        clear:
-          "🧹 Очистити",
-        all:
-          "Усі",
-        favorites:
-          "⭐ Обране",
-        useAgain:
-          "🔄 Використати знову",
-        copyAction:
-          "📋 Копіювати",
-        favorite:
-          "☆ Додати в обране",
-        favoriteActive:
-          "★ В обраному",
-        delete:
-          "🗑 Видалити",
-        featureFast:
-          "Швидко",
-        featureFastText:
-          "За лічені секунди",
-        featureAi:
-          "Кілька AI",
-        featureAiText:
-          "Автоматичний fallback",
-        featureLanguages:
-          "Багато мов",
-        featureLanguagesText:
-          "Переклад і редагування",
-        templateEmpty:
-          "Тут будуть твої часто використовувані запити. Введи текст і натисни «＋ Додати».",
-        historyEmpty:
-          "Тут з'являться твої останні запити після обробки тексту.",
-        favoritesEmpty:
-          "В обраному поки нічого немає.",
-        request:
-          "Запит: ",
-        confirmClear:
-          "Видалити всю історію запитів?",
-        enterText:
-          "⚠️ Спочатку введи текст.",
-        tooLong:
-          "⚠️ Текст занадто довгий.",
-        copiedError:
-          "Не вдалося скопіювати текст.",
-        templateName:
-          "Назва шаблону:",
-        templateDefault:
-          "Мій шаблон",
-        retryLimit:
-          "❌ ⚠️ Ліміт AI тимчасово вичерпано.",
-        retryAvailable:
-          "Повторити можна через",
-        seconds:
-          "сек.",
-        limitRemoved:
-          "Ліміт знято. Тепер можна знову надіслати запит.",
-        aiPreparing:
-          "AI готує відповідь...",
-        unknownError:
-          "Сталася невідома помилка.",
-        serverError:
-          "Сервер повернув некоректну відповідь.",
-        noAiAnswer:
-          "AI не повернув текстову відповідь.",
-        fallback:
-          "✦ AI"
-      },
-      de: {
-        pageTitle:
-          "✦ AI-Assistent",
-        subtitle:
-          "Schreibe einen Text — AI hilft dir, ihn zu verbessern, zu erstellen, zu übersetzen oder umzuformulieren.",
-        actionLabel:
-          "AKTION",
-        improve:
-          "✨ Text verbessern",
-        polish:
-          "🇵🇱 Auf Polnisch übersetzen",
-        english:
-          "🇬🇧 Auf Englisch übersetzen",
-        tiktok:
-          "🎵 TikTok-Text erstellen",
-        shorten:
-          "✂️ Text kürzen",
-        write:
-          "📝 Text schreiben",
-        reply:
-          "💬 Auf Nachricht antworten",
-        business:
-          "📧 Geschäftstext",
-        summarize:
-          "📋 Kurze Zusammenfassung",
-        placeholder:
-          "Schreibe hier deinen Text...",
-        counter:
-          "0 / 10.000",
-        process:
-          "✨ Verarbeiten",
-        processing:
-          "⏳ AI verarbeitet...",
-        result:
-          "✦ AI-ERGEBNIS",
-        copy:
-          "📋 Kopieren",
-        copied:
-          "✓ Kopiert",
-        retry:
-          "🔄 Erneut versuchen",
-        templates:
-          "★ MEINE VORLAGEN",
-        add:
-          "＋ Hinzufügen",
-        history:
-          "✦ VERLAUF",
-        clear:
-          "🧹 Löschen",
-        all:
-          "Alle",
-        favorites:
-          "⭐ Favoriten",
-        useAgain:
-          "🔄 Erneut verwenden",
-        copyAction:
-          "📋 Kopieren",
-        favorite:
-          "☆ Zu Favoriten",
-        favoriteActive:
-          "★ In Favoriten",
-        delete:
-          "🗑 Löschen",
-        featureFast:
-          "Schnell",
-        featureFastText:
-          "In wenigen Sekunden",
-        featureAi:
-          "Mehrere AI",
-        featureAiText:
-          "Automatischer Fallback",
-        featureLanguages:
-          "Viele Sprachen",
-        featureLanguagesText:
-          "Übersetzung und Bearbeitung",
-        templateEmpty:
-          "Hier erscheinen häufig verwendete Anfragen. Text eingeben und „＋ Hinzufügen“ drücken.",
-        historyEmpty:
-          "Hier erscheinen deine letzten Anfragen nach der Verarbeitung.",
-        favoritesEmpty:
-          "Noch keine Favoriten.",
-        request:
-          "Anfrage: ",
-        confirmClear:
-          "Gesamten Anfrageverlauf löschen?",
-        enterText:
-          "⚠️ Bitte zuerst Text eingeben.",
-        tooLong:
-          "⚠️ Der Text ist zu lang.",
-        copiedError:
-          "Der Text konnte nicht kopiert werden.",
-        templateName:
-          "Vorlagenname:",
-        templateDefault:
-          "Meine Vorlage",
-        retryLimit:
-          "❌ ⚠️ AI-Limit vorübergehend erreicht.",
-        retryAvailable:
-          "Erneuter Versuch in",
-        seconds:
-          "Sek.",
-        limitRemoved:
-          "Das Limit wurde aufgehoben. Du kannst eine neue Anfrage senden.",
-        aiPreparing:
-          "AI bereitet die Antwort vor...",
-        unknownError:
-          "Ein unbekannter Fehler ist aufgetreten.",
-        serverError:
-          "Der Server hat eine ungültige Antwort zurückgegeben.",
-        noAiAnswer:
-          "AI hat keine Textantwort zurückgegeben.",
-        fallback:
-          "✦ AI"
-      },
-      fr: {
-        pageTitle:
-          "✦ Assistant IA",
-        subtitle:
-          "Écris un texte — l’IA t’aidera à l’améliorer, le créer, le traduire ou le reformuler.",
-        actionLabel:
-          "ACTION",
-        improve:
-          "✨ Améliorer le texte",
-        polish:
-          "🇵🇱 Traduire en polonais",
-        english:
-          "🇬🇧 Traduire en anglais",
-        tiktok:
-          "🎵 Créer un texte TikTok",
-        shorten:
-          "✂️ Raccourcir le texte",
-        write:
-          "📝 Écrire un texte",
-        reply:
-          "💬 Répondre au message",
-        business:
-          "📧 Texte professionnel",
-        summarize:
-          "📋 Résumé court",
-        placeholder:
-          "Écris ton texte ici...",
-        counter:
-          "0 / 10 000",
-        process:
-          "✨ Traiter",
-        processing:
-          "⏳ L’IA traite...",
-        result:
-          "✦ RÉSULTAT IA",
-        copy:
-          "📋 Copier",
-        copied:
-          "✓ Copié",
-        retry:
-          "🔄 Réessayer",
-        templates:
-          "★ MES MODÈLES",
-        add:
-          "＋ Ajouter",
-        history:
-          "✦ HISTORIQUE",
-        clear:
-          "🧹 Effacer",
-        all:
-          "Tous",
-        favorites:
-          "⭐ Favoris",
-        useAgain:
-          "🔄 Réutiliser",
-        copyAction:
-          "📋 Copier",
-        favorite:
-          "☆ Ajouter aux favoris",
-        favoriteActive:
-          "★ Dans les favoris",
-        delete:
-          "🗑 Supprimer",
-        featureFast:
-          "Rapide",
-        featureFastText:
-          "En quelques secondes",
-        featureAi:
-          "Plusieurs IA",
-        featureAiText:
-          "Fallback automatique",
-        featureLanguages:
-          "Multilingue",
-        featureLanguagesText:
-          "Traduction et édition",
-        templateEmpty:
-          "Tes requêtes fréquentes apparaîtront ici. Écris un texte et clique sur « ＋ Ajouter ».",
-        historyEmpty:
-          "Tes dernières requêtes apparaîtront ici.",
-        favoritesEmpty:
-          "Aucun favori pour le moment.",
-        request:
-          "Requête : ",
-        confirmClear:
-          "Supprimer tout l’historique ?",
-        enterText:
-          "⚠️ Écris d’abord un texte.",
-        tooLong:
-          "⚠️ Le texte est trop long.",
-        copiedError:
-          "Impossible de copier le texte.",
-        templateName:
-          "Nom du modèle :",
-        templateDefault:
-          "Mon modèle",
-        retryLimit:
-          "❌ ⚠️ Limite IA temporairement atteinte.",
-        retryAvailable:
-          "Réessayer dans",
-        seconds:
-          "s.",
-        limitRemoved:
-          "La limite est levée. Tu peux envoyer une nouvelle requête.",
-        aiPreparing:
-          "L’IA prépare la réponse...",
-        unknownError:
-          "Une erreur inconnue est survenue.",
-        serverError:
-          "Le serveur a renvoyé une réponse incorrecte.",
-        noAiAnswer:
-          "L’IA n’a pas renvoyé de réponse textuelle.",
-        fallback:
-          "✦ IA"
-      },
-      es: {
-        pageTitle:
-          "✦ Asistente IA",
-        subtitle:
-          "Escribe un texto — la IA te ayudará a mejorarlo, crearlo, traducirlo o reformularlo.",
-        actionLabel:
-          "ACCIÓN",
-        improve:
-          "✨ Mejorar texto",
-        polish:
-          "🇵🇱 Traducir al polaco",
-        english:
-          "🇬🇧 Traducir al inglés",
-        tiktok:
-          "🎵 Crear texto para TikTok",
-        shorten:
-          "✂️ Acortar texto",
-        write:
-          "📝 Escribir texto",
-        reply:
-          "💬 Responder a un mensaje",
-        business:
-          "📧 Texto profesional",
-        summarize:
-          "📋 Resumen breve",
-        placeholder:
-          "Escribe aquí tu texto...",
-        counter:
-          "0 / 10.000",
-        process:
-          "✨ Procesar",
-        processing:
-          "⏳ La IA está procesando...",
-        result:
-          "✦ RESULTADO IA",
-        copy:
-          "📋 Copiar",
-        copied:
-          "✓ Copiado",
-        retry:
-          "🔄 Intentar de nuevo",
-        templates:
-          "★ MIS PLANTILLAS",
-        add:
-          "＋ Añadir",
-        history:
-          "✦ HISTORIAL",
-        clear:
-          "🧹 Limpiar",
-        all:
-          "Todos",
-        favorites:
-          "⭐ Favoritos",
-        useAgain:
-          "🔄 Usar de nuevo",
-        copyAction:
-          "📋 Copiar",
-        favorite:
-          "☆ Añadir a favoritos",
-        favoriteActive:
-          "★ En favoritos",
-        delete:
-          "🗑 Eliminar",
-        featureFast:
-          "Rápido",
-        featureFastText:
-          "En pocos segundos",
-        featureAi:
-          "Varias IA",
-        featureAiText:
-          "Fallback automático",
-        featureLanguages:
-          "Muchos idiomas",
-        featureLanguagesText:
-          "Traducción y edición",
-        templateEmpty:
-          "Aquí aparecerán tus consultas frecuentes. Escribe un texto y pulsa «＋ Añadir».",
-        historyEmpty:
-          "Aquí aparecerán tus últimas consultas.",
-        favoritesEmpty:
-          "Todavía no hay favoritos.",
-        request:
-          "Solicitud: ",
-        confirmClear:
-          "¿Eliminar todo el historial?",
-        enterText:
-          "⚠️ Primero escribe un texto.",
-        tooLong:
-          "⚠️ El texto es demasiado largo.",
-        copiedError:
-          "No se pudo copiar el texto.",
-        templateName:
-          "Nombre de la plantilla:",
-        templateDefault:
-          "Mi plantilla",
-        retryLimit:
-          "❌ ⚠️ Límite de IA alcanzado temporalmente.",
-        retryAvailable:
-          "Inténtalo de nuevo en",
-        seconds:
-          "seg.",
-        limitRemoved:
-          "El límite se ha eliminado. Puedes enviar otra solicitud.",
-        aiPreparing:
-          "La IA está preparando la respuesta...",
-        unknownError:
-          "Ha ocurrido un error desconocido.",
-        serverError:
-          "El servidor devolvió una respuesta incorrecta.",
-        noAiAnswer:
-          "La IA no devolvió una respuesta de texto.",
-        fallback:
-          "✦ IA"
-      },
-      it: {
-        pageTitle:
-          "✦ Assistente AI",
-        subtitle:
-          "Scrivi un testo — l’AI ti aiuterà a migliorarlo, crearlo, tradurlo o riscriverlo.",
-        actionLabel:
-          "AZIONE",
-        improve:
-          "✨ Migliora testo",
-        polish:
-          "🇵🇱 Traduci in polacco",
-        english:
-          "🇬🇧 Traduci in inglese",
-        tiktok:
-          "🎵 Crea testo per TikTok",
-        shorten:
-          "✂️ Accorcia testo",
-        write:
-          "📝 Scrivi testo",
-        reply:
-          "💬 Rispondi a un messaggio",
-        business:
-          "📧 Testo professionale",
-        summarize:
-          "📋 Breve riepilogo",
-        placeholder:
-          "Scrivi qui il tuo testo...",
-        counter:
-          "0 / 10.000",
-        process:
-          "✨ Elabora",
-        processing:
-          "⏳ L’AI sta elaborando...",
-        result:
-          "✦ RISULTATO AI",
-        copy:
-          "📋 Copia",
-        copied:
-          "✓ Copiato",
-        retry:
-          "🔄 Riprova",
-        templates:
-          "★ I MIEI MODELLI",
-        add:
-          "＋ Aggiungi",
-        history:
-          "✦ CRONOLOGIA",
-        clear:
-          "🧹 Cancella",
-        all:
-          "Tutti",
-        favorites:
-          "⭐ Preferiti",
-        useAgain:
-          "🔄 Usa di nuovo",
-        copyAction:
-          "📋 Copia",
-        favorite:
-          "☆ Aggiungi ai preferiti",
-        favoriteActive:
-          "★ Nei preferiti",
-        delete:
-          "🗑 Elimina",
-        featureFast:
-          "Veloce",
-        featureFastText:
-          "In pochi secondi",
-        featureAi:
-          "Più AI",
-        featureAiText:
-          "Fallback automatico",
-        featureLanguages:
-          "Molte lingue",
-        featureLanguagesText:
-          "Traduzione e modifica",
-        templateEmpty:
-          "Qui appariranno le richieste usate più spesso. Inserisci un testo e premi «＋ Aggiungi».",
-        historyEmpty:
-          "Qui appariranno le tue ultime richieste.",
-        favoritesEmpty:
-          "Nessun preferito.",
-        request:
-          "Richiesta: ",
-        confirmClear:
-          "Eliminare tutta la cronologia?",
-        enterText:
-          "⚠️ Inserisci prima un testo.",
-        tooLong:
-          "⚠️ Il testo è troppo lungo.",
-        copiedError:
-          "Impossibile copiare il testo.",
-        templateName:
-          "Nome del modello:",
-        templateDefault:
-          "Il mio modello",
-        retryLimit:
-          "❌ ⚠️ Limite AI temporaneamente raggiunto.",
-        retryAvailable:
-          "Riprova tra",
-        seconds:
-          "sec.",
-        limitRemoved:
-          "Il limite è stato rimosso. Puoi inviare una nuova richiesta.",
-        aiPreparing:
-          "L’AI sta preparando la risposta...",
-        unknownError:
-          "Si è verificato un errore sconosciuto.",
-        serverError:
-          "Il server ha restituito una risposta non valida.",
-        noAiAnswer:
-          "L’AI non ha restituito una risposta testuale.",
-        fallback:
-          "✦ AI"
-      },
-      pt: {
-        pageTitle:
-          "✦ Assistente IA",
-        subtitle:
-          "Escreva um texto — a IA ajudará a melhorar, criar, traduzir ou reformular.",
-        actionLabel:
-          "AÇÃO",
-        improve:
-          "✨ Melhorar texto",
-        polish:
-          "🇵🇱 Traduzir para polaco",
-        english:
-          "🇬🇧 Traduzir para inglês",
-        tiktok:
-          "🎵 Criar texto para TikTok",
-        shorten:
-          "✂️ Encurtar texto",
-        write:
-          "📝 Escrever texto",
-        reply:
-          "💬 Responder a uma mensagem",
-        business:
-          "📧 Texto profissional",
-        summarize:
-          "📋 Resumo curto",
-        placeholder:
-          "Escreva o seu texto aqui...",
-        counter:
-          "0 / 10.000",
-        process:
-          "✨ Processar",
-        processing:
-          "⏳ A IA está a processar...",
-        result:
-          "✦ RESULTADO IA",
-        copy:
-          "📋 Copiar",
-        copied:
-          "✓ Copiado",
-        retry:
-          "🔄 Tentar novamente",
-        templates:
-          "★ OS MEUS MODELOS",
-        add:
-          "＋ Adicionar",
-        history:
-          "✦ HISTÓRICO",
-        clear:
-          "🧹 Limpar",
-        all:
-          "Todos",
-        favorites:
-          "⭐ Favoritos",
-        useAgain:
-          "🔄 Usar novamente",
-        copyAction:
-          "📋 Copiar",
-        favorite:
-          "☆ Adicionar aos favoritos",
-        favoriteActive:
-          "★ Nos favoritos",
-        delete:
-          "🗑 Eliminar",
-        featureFast:
-          "Rápido",
-        featureFastText:
-          "Em poucos segundos",
-        featureAi:
-          "Várias IA",
-        featureAiText:
-          "Fallback automático",
-        featureLanguages:
-          "Vários idiomas",
-        featureLanguagesText:
-          "Tradução e edição",
-        templateEmpty:
-          "Os teus pedidos frequentes aparecerão aqui. Escreve um texto e toca em «＋ Adicionar».",
-        historyEmpty:
-          "Os teus últimos pedidos aparecerão aqui.",
-        favoritesEmpty:
-          "Ainda não há favoritos.",
-        request:
-          "Pedido: ",
-        confirmClear:
-          "Eliminar todo o histórico?",
-        enterText:
-          "⚠️ Primeiro escreve um texto.",
-        tooLong:
-          "⚠️ O texto é demasiado longo.",
-        copiedError:
-          "Não foi possível copiar o texto.",
-        templateName:
-          "Nome do modelo:",
-        templateDefault:
-          "O meu modelo",
-        retryLimit:
-          "❌ ⚠️ Limite de IA temporariamente atingido.",
-        retryAvailable:
-          "Tenta novamente em",
-        seconds:
-          "seg.",
-        limitRemoved:
-          "O limite foi removido. Podes enviar outro pedido.",
-        aiPreparing:
-          "A IA está a preparar a resposta...",
-        unknownError:
-          "Ocorreu um erro desconhecido.",
-        serverError:
-          "O servidor devolveu uma resposta inválida.",
-        noAiAnswer:
-          "A IA não devolveu uma resposta de texto.",
-        fallback:
-          "✦ IA"
-      },
-      cs: {
-        pageTitle:
-          "✦ AI Asistent",
-        subtitle:
-          "Napiš text — AI ti pomůže ho vylepšit, vytvořit, přeložit nebo přepracovat.",
-        actionLabel:
-          "AKCE",
-        improve:
-          "✨ Vylepšit text",
-        polish:
-          "🇵🇱 Přeložit do polštiny",
-        english:
-          "🇬🇧 Přeložit do angličtiny",
-        tiktok:
-          "🎵 Vytvořit text pro TikTok",
-        shorten:
-          "✂️ Zkrátit text",
-        write:
-          "📝 Napsat text",
-        reply:
-          "💬 Odpovědět na zprávu",
-        business:
-          "📧 Obchodní text",
-        summarize:
-          "📋 Krátké shrnutí",
-        placeholder:
-          "Napiš sem svůj text...",
-        counter:
-          "0 / 10 000",
-        process:
-          "✨ Zpracovat",
-        processing:
-          "⏳ AI zpracovává...",
-        result:
-          "✦ VÝSLEDEK AI",
-        copy:
-          "📋 Kopírovat",
-        copied:
-          "✓ Zkopírováno",
-        retry:
-          "🔄 Zkusit znovu",
-        templates:
-          "★ MOJE ŠABLONY",
-        add:
-          "＋ Přidat",
-        history:
-          "✦ HISTORIE",
-        clear:
-          "🧹 Vymazat",
-        all:
-          "Vše",
-        favorites:
-          "⭐ Oblíbené",
-        useAgain:
-          "🔄 Použít znovu",
-        copyAction:
-          "📋 Kopírovat",
-        favorite:
-          "☆ Přidat do oblíbených",
-        favoriteActive:
-          "★ V oblíbených",
-        delete:
-          "🗑 Smazat",
-        featureFast:
-          "Rychle",
-        featureFastText:
-          "Během několika sekund",
-        featureAi:
-          "Více AI",
-        featureAiText:
-          "Automatický fallback",
-        featureLanguages:
-          "Více jazyků",
-        featureLanguagesText:
-          "Překlad a úprava",
-        templateEmpty:
-          "Zde se zobrazí často používané požadavky. Zadej text a klikni na „＋ Přidat“.",
-        historyEmpty:
-          "Zde se zobrazí poslední požadavky.",
-        favoritesEmpty:
-          "Zatím žádné oblíbené.",
-        request:
-          "Požadavek: ",
-        confirmClear:
-          "Smazat celou historii?",
-        enterText:
-          "⚠️ Nejprve zadej text.",
-        tooLong:
-          "⚠️ Text je příliš dlouhý.",
-        copiedError:
-          "Text se nepodařilo zkopírovat.",
-        templateName:
-          "Název šablony:",
-        templateDefault:
-          "Moje šablona",
-        retryLimit:
-          "❌ ⚠️ Limit AI byl dočasně vyčerpán.",
-        retryAvailable:
-          "Zkusit znovu za",
-        seconds:
-          "s.",
-        limitRemoved:
-          "Limit byl odstraněn. Nyní můžeš odeslat další požadavek.",
-        aiPreparing:
-          "AI připravuje odpověď...",
-        unknownError:
-          "Došlo k neznámé chybě.",
-        serverError:
-          "Server vrátil neplatnou odpověď.",
-        noAiAnswer:
-          "AI nevrátilo textovou odpověď.",
-        fallback:
-          "✦ AI"
-      }
-    };
-    /*
-     * ================================
-     * AKTUÁLNÍ JAZYK
-     * ================================
-     */
-    function getCurrentLanguage() {
-      try {
-        const saved =
-          localStorage.getItem(
-            LANGUAGE_KEY
-          );
-        if (
-          saved &&
-          translations[saved]
-        ) {
-          return saved;
-        }
-      } catch {}
-      const browserLanguage =
-        (
-          navigator.language ||
-          "ru"
-        )
-          .toLowerCase()
-          .split("-")[0];
-      if (
-        translations[browserLanguage]
-      ) {
-        return browserLanguage;
-      }
-      return "ru";
-    }
-    let currentLanguage =
-      getCurrentLanguage();
-    function t(key) {
-      return (
-        translations[currentLanguage]?.[key] ||
-        translations.ru[key] ||
-        key
-      );
-    }
-    /*
-     * ================================
-     * ПЕРЕВОД ИНТЕРФЕЙСА
-     * ================================
-     */
-    function applyLanguage() {
-      interfaceLanguage.value =
-        currentLanguage;
-      document.documentElement.lang =
-        currentLanguage;
-      document.title =
-        t("pageTitle")
-          .replace(
-            "✦ ",
-            ""
-          );
-      document.getElementById(
-        "pageTitle"
-      ).textContent =
-        t("pageTitle");
-      document.getElementById(
-        "pageSubtitle"
-      ).textContent =
-        t("subtitle");
-      document.getElementById(
-        "actionLabel"
-      ).textContent =
-        t("actionLabel");
-      const options = {
-        improve: "improve",
-        polish: "polish",
-        english: "english",
-        tiktok: "tiktok",
-        shorten: "shorten",
-        write: "write",
-        reply: "reply",
-        business: "business",
-        summarize: "summarize"
-      };
-      Object.entries(options).forEach(
-        ([value, key]) => {
-          const option =
-            actionSelect.querySelector(
-              `option[value="${value}"]`
-            );
-          if (option) {
-            option.textContent =
-              t(key);
-          }
-        }
-      );
-      document.getElementById(
-        "resultTitle"
-      ).textContent =
-        t("result");
-      document.getElementById(
-        "copyButton"
-      ).textContent =
-        t("copy");
-      document.getElementById(
-        "retryButton"
-      ).textContent =
-        t("retry");
-      document.getElementById(
-        "templatesTitle"
-      ).textContent =
-        t("templates");
-      addTemplateButton.textContent =
-        t("add");
-      document.getElementById(
-        "historyTitle"
-      ).textContent =
-        t("history");
-      clearHistoryButton.textContent =
-        t("clear");
-      allHistoryTab.textContent =
-        t("all");
-      favoriteHistoryTab.textContent =
-        t("favorites");
-      document.getElementById(
-        "featureFastTitle"
-      ).textContent =
-        t("featureFast");
-      document.getElementById(
-        "featureFastText"
-      ).textContent =
-        t("featureFastText");
-      document.getElementById(
-        "featureAiTitle"
-      ).textContent =
-        t("featureAi");
-      document.getElementById(
-        "featureAiText"
-      ).textContent =
-        t("featureAiText");
-      document.getElementById(
-        "featureLangTitle"
-      ).textContent =
-        t("featureLanguages");
-      document.getElementById(
-        "featureLangText"
-      ).textContent =
-        t("featureLanguagesText");
-      document.getElementById(
-        "footerText"
-      ).textContent =
-        currentLanguage === "ru"
-          ? "AI Помощник · Gemini · Groq · OpenRouter"
-          : "AI Assistant · Gemini · Groq · OpenRouter";
-      updatePlaceholder();
+
+  </main>
+
+<script>
+"use strict";
+
+const textInput = document.getElementById("text");
+const counter = document.getElementById("counter");
+const processButton = document.getElementById("process");
+const resultBox = document.getElementById("resultBox");
+const resultText = document.getElementById("resultText");
+const provider = document.getElementById("provider");
+const retryButton = document.getElementById("retryButton");
+const copyButton = document.getElementById("copyButton");
+const speakButton = document.getElementById("speakButton");
+const stopSpeakButton = document.getElementById("stopSpeakButton");
+const actionSelect = document.getElementById("action");
+const interfaceLanguage = document.getElementById("interfaceLanguage");
+
+const fileInput = document.getElementById("fileInput");
+const fileButton = document.getElementById("fileButton");
+const removeFile = document.getElementById("removeFile");
+const fileInfo = document.getElementById("fileInfo");
+const fileName = document.getElementById("fileName");
+const voiceButton = document.getElementById("voiceButton");
+const clearButton = document.getElementById("clearButton");
+
+const historyList = document.getElementById("historyList");
+const clearHistoryButton = document.getElementById("clearHistoryButton");
+const allHistoryTab = document.getElementById("allHistoryTab");
+const favoriteHistoryTab = document.getElementById("favoriteHistoryTab");
+const templatesList = document.getElementById("templatesList");
+const addTemplateButton = document.getElementById("addTemplateButton");
+
+const HISTORY_KEY = "ai_helper_history_v2";
+const TEMPLATES_KEY = "ai_helper_templates_v2";
+const LANGUAGE_KEY = "ai_helper_interface_language_v2";
+
+const MAX_HISTORY = 20;
+const MAX_TEMPLATES = 30;
+const MAX_TEXT = 10000;
+
+let historyFilter = "all";
+let rateLimited = false;
+let retryTimer = null;
+let recognition = null;
+
+const translations = {
+  ru: {
+    subtitle: "Напиши, вставь, загрузи или продиктуй текст — AI поможет его улучшить, создать, перевести или объяснить.",
+    action: "Действие",
+    improve: "✨ Улучшить текст",
+    polish: "🇵🇱 Перевести на польский",
+    english: "🇬🇧 Перевести на английский",
+    shorten: "✂️ Сократить текст",
+    summarize: "📋 Краткое содержание",
+    explain: "🧠 Объяснить простыми словами",
+    write: "✍️ Написать текст",
+    reply: "💬 Ответить на сообщение",
+    business: "💼 Сделать деловым",
+    tiktok: "🎵 Создать текст для TikTok",
+    process: "✨ Обработать",
+    processing: "⏳ AI работает...",
+    copy: "📋 Скопировать",
+    copied: "✓ Скопировано",
+    retry: "🔄 Повторить",
+    speak: "🔊 Озвучить",
+    stop: "⏹ Стоп",
+    file: "📎 Файл",
+    voice: "🎙 Голос",
+    clear: "Очистить",
+    templates: "ШАБЛОНЫ",
+    history: "ИСТОРИЯ",
+    all: "Все",
+    favorites: "⭐ Избранное",
+    clearHistory: "Очистить",
+    addTemplate: "＋ Добавить шаблон",
+    emptyHistory: "История пока пуста.",
+    emptyFavorites: "Избранных записей пока нет.",
+    emptyTemplates: "Шаблонов пока нет.",
+    useAgain: "Использовать",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Удалить",
+    enterText: "Введите текст.",
+    tooLong: "Текст слишком длинный. Максимум 10 000 символов.",
+    serverError: "Произошла ошибка сервера.",
+    noAnswer: "AI не вернул ответ.",
+    limit: "⚠️ Лимит AI временно исчерпан.",
+    retryIn: "Попробуйте снова через",
+    seconds: "сек.",
+    fileLoaded: "Файл загружен",
+    unsupportedFile: "Поддерживаются только TXT, MD и CSV.",
+    fileTooLarge: "Файл слишком большой. Максимум 1 МБ.",
+    microphoneUnavailable: "Голосовой ввод не поддерживается этим браузером.",
+    listening: "🔴 Слушаю...",
+    explainPlaceholder: "Вставь сложный текст, термин или описание — AI объяснит это простыми словами.",
+    placeholder: "Напиши здесь свой текст..."
+  },
+
+  en: {
+    subtitle: "Write, paste, upload or dictate text — AI can improve, create, translate or explain it.",
+    action: "Action",
+    improve: "✨ Improve text",
+    polish: "🇵🇱 Translate to Polish",
+    english: "🇬🇧 Translate to English",
+    shorten: "✂️ Shorten text",
+    summarize: "📋 Summarize",
+    explain: "🧠 Explain simply",
+    write: "✍️ Write text",
+    reply: "💬 Reply to message",
+    business: "💼 Make professional",
+    tiktok: "🎵 Create TikTok text",
+    process: "✨ Process",
+    processing: "⏳ AI is working...",
+    copy: "📋 Copy",
+    copied: "✓ Copied",
+    retry: "🔄 Retry",
+    speak: "🔊 Read aloud",
+    stop: "⏹ Stop",
+    file: "📎 File",
+    voice: "🎙 Voice",
+    clear: "Clear",
+    templates: "TEMPLATES",
+    history: "HISTORY",
+    all: "All",
+    favorites: "⭐ Favorites",
+    clearHistory: "Clear",
+    addTemplate: "＋ Add template",
+    emptyHistory: "History is empty.",
+    emptyFavorites: "No favorites yet.",
+    emptyTemplates: "No templates yet.",
+    useAgain: "Use",
+    favorite: "☆",
+    favoriteActive: "★",
+    delete: "Delete",
+    enterText: "Enter some text.",
+    tooLong: "Text is too long. Maximum 10,000 characters.",
+    serverError: "Server error.",
+    noAnswer: "AI returned no answer.",
+    limit: "⚠️ AI limit reached.",
+    retryIn: "Try again in",
+    seconds: "sec.",
+    fileLoaded: "File loaded",
+    unsupportedFile: "Only TXT, MD and CSV files are supported.",
+    fileTooLarge: "File is too large. Maximum 1 MB.",
+    microphoneUnavailable: "Voice input is not supported by this browser.",
+    listening: "🔴 Listening...",
+    explainPlaceholder: "Paste a difficult text, term or description — AI will explain it simply.",
+    placeholder: "Write your text here..."
+  }
+};
+
+function t(key) {
+  const lang = translations[interfaceLanguage.value] || translations.ru;
+  return lang[key] || translations.ru[key] || key;
+}
+
+function getLanguage() {
+  return interfaceLanguage.value || "ru";
+}
+
+function applyLanguage() {
+  document.documentElement.lang = getLanguage();
+
+  document.querySelector('label[for="action"]').textContent = t("action");
+
+  document.querySelector("#action option[value='improve']").textContent = t("improve");
+  document.querySelector("#action option[value='polish']").textContent = t("polish");
+  document.querySelector("#action option[value='english']").textContent = t("english");
+  document.querySelector("#action option[value='shorten']").textContent = t("shorten");
+  document.querySelector("#action option[value='summarize']").textContent = t("summarize");
+  document.querySelector("#action option[value='explain']").textContent = t("explain");
+  document.querySelector("#action option[value='write']").textContent = t("write");
+  document.querySelector("#action option[value='reply']").textContent = t("reply");
+  document.querySelector("#action option[value='business']").textContent = t("business");
+  document.querySelector("#action option[value='tiktok']").textContent = t("tiktok");
+
+  processButton.textContent = rateLimited ? processButton.textContent : t("process");
+  copyButton.textContent = t("copy");
+  retryButton.textContent = t("retry");
+  speakButton.textContent = t("speak");
+  stopSpeakButton.textContent = t("stop");
+  fileButton.textContent = t("file");
+  voiceButton.textContent = t("voice");
+  clearButton.textContent = t("clear");
+
+  document.querySelector(".section:nth-of-type(1) .section-title").textContent = t("templates");
+  document.querySelector(".section:nth-of-type(2) .section-title").textContent = t("history");
+
+  addTemplateButton.textContent = t("addTemplate");
+  allHistoryTab.textContent = t("all");
+  favoriteHistoryTab.textContent = t("favorites");
+  clearHistoryButton.textContent = t("clearHistory");
+
+  updatePlaceholder();
+  updateCounter();
+  renderHistory();
+  renderTemplates();
+}
+
+function updatePlaceholder() {
+  if (actionSelect.value === "explain") {
+    textInput.placeholder = t("explainPlaceholder");
+  } else {
+    textInput.placeholder = t("placeholder");
+  }
+}
+
+function updateCounter() {
+  counter.textContent =
+    textInput.value.length.toLocaleString(getLanguage()) +
+    " / 10 000";
+}
+
+function showResult(message) {
+  resultBox.classList.add("show");
+  resultText.textContent = message;
+}
+
+function resetResult() {
+  resultBox.classList.remove("show");
+  resultText.textContent = "";
+  provider.textContent = "";
+}
+
+function getProviderName(name) {
+  if (name === "gemini") return "✦ Gemini";
+  if (name === "groq") return "⚡ Groq";
+  if (name === "openrouter") return "◈ OpenRouter";
+  return "✦ AI";
+}
+
+function loadHistory() {
+  try {
+    const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    return Array.isArray(data) ? data.slice(0, MAX_HISTORY) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(data) {
+  localStorage.setItem(
+    HISTORY_KEY,
+    JSON.stringify(data.slice(0, MAX_HISTORY))
+  );
+}
+
+function addHistory(source, result, mode, providerName) {
+  const history = loadHistory();
+
+  history.unshift({
+    id: crypto.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now() + Math.random()),
+    sourceText: source.slice(0, MAX_TEXT),
+    resultText: result.slice(0, 15000),
+    mode,
+    provider: providerName,
+    createdAt: Date.now(),
+    favorite: false
+  });
+
+  saveHistory(history);
+  renderHistory();
+}
+
+function getModeLabel(mode) {
+  const map = {
+    improve: "improve",
+    polish: "polish",
+    english: "english",
+    shorten: "shorten",
+    summarize: "summarize",
+    explain: "explain",
+    write: "write",
+    reply: "reply",
+    business: "business",
+    tiktok: "tiktok"
+  };
+
+  return t(map[mode] || "improve");
+}
+
+function renderHistory() {
+  const history = loadHistory();
+
+  const filtered = historyFilter === "favorites"
+    ? history.filter(item => item.favorite)
+    : history;
+
+  historyList.innerHTML = "";
+
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent =
+      historyFilter === "favorites"
+        ? t("emptyFavorites")
+        : t("emptyHistory");
+
+    historyList.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("div");
+    title.className = "card-title";
+    title.textContent = getModeLabel(item.mode);
+
+    const preview = document.createElement("div");
+    preview.className = "card-preview";
+    preview.textContent = item.sourceText.slice(0, 180);
+
+    const actions = document.createElement("div");
+    actions.className = "card-actions";
+
+    const use = document.createElement("button");
+    use.className = "action-btn";
+    use.textContent = t("useAgain");
+    use.onclick = () => {
+      actionSelect.value = item.mode;
+      textInput.value = item.sourceText;
       updateCounter();
-      renderTemplates();
-      renderHistory();
-    }
-    /*
-     * ================================
-     * СМЕНА ЯЗЫКА
-     * ================================
-     */
-    interfaceLanguage.addEventListener(
-      "change",
-      () => {
-        const selected =
-          interfaceLanguage.value;
-        if (
-          !translations[selected]
-        ) {
-          return;
-        }
-        currentLanguage =
-          selected;
-        try {
-          localStorage.setItem(
-            LANGUAGE_KEY,
-            currentLanguage
-          );
-        } catch {}
-        applyLanguage();
-      }
-    );
-    /*
-     * ================================
-     * РЕЖИМЫ
-     * ================================
-     */
-    const placeholders = {
-      ru: {
-        improve:
-          "Напиши здесь свой текст...",
-        polish:
-          "Введи текст, который нужно перевести на польский...",
-        english:
-          "Введи текст, который нужно перевести на английский...",
-        tiktok:
-          "Введи текст или факт, который нужно превратить в TikTok-текст...",
-        shorten:
-          "Вставь длинный текст, который нужно сократить...",
-        write:
-          "Например: Напиши пост о том, почему стоит посетить Гданьск...",
-        reply:
-          "Вставь сообщение, на которое нужно ответить...",
-        business:
-          "Введи сообщение, которое нужно сделать деловым и профессиональным...",
-        summarize:
-          "Вставь текст, который нужно кратко пересказать..."
-      },
-      pl: {
-        improve:
-          "Napisz tutaj swój tekst...",
-        polish:
-          "Wpisz tekst, który chcesz przetłumaczyć na polski...",
-        english:
-          "Wpisz tekst, który chcesz przetłumaczyć na angielski...",
-        tiktok:
-          "Wpisz tekst lub fakt, który ma zostać przekształcony w tekst na TikTok...",
-        shorten:
-          "Wklej długi tekst, który chcesz skrócić...",
-        write:
-          "Np. Napisz post o tym, dlaczego warto odwiedzić Gdańsk...",
-        reply:
-          "Wklej wiadomość, na którą chcesz odpowiedzieć...",
-        business:
-          "Wpisz wiadomość, którą chcesz przygotować w profesjonalnym stylu...",
-        summarize:
-          "Wklej tekst, który chcesz krótko podsumować..."
-      },
-      en: {
-        improve:
-          "Write your text here...",
-        polish:
-          "Enter the text you want to translate into Polish...",
-        english:
-          "Enter the text you want to translate into English...",
-        tiktok:
-          "Enter text or a fact you want to turn into TikTok content...",
-        shorten:
-          "Paste the long text you want to shorten...",
-        write:
-          "For example: Write a post about why people should visit Gdańsk...",
-        reply:
-          "Paste the message you want to reply to...",
-        business:
-          "Enter the message you want to make professional and business-like...",
-        summarize:
-          "Paste the text you want to summarize..."
-      },
-      uk: {
-        improve:
-          "Напиши тут свій текст...",
-        polish:
-          "Введи текст, який потрібно перекласти польською...",
-        english:
-          "Введи текст, який потрібно перекласти англійською...",
-        tiktok:
-          "Введи текст або факт, який потрібно перетворити на TikTok-текст...",
-        shorten:
-          "Встав довгий текст, який потрібно скоротити...",
-        write:
-          "Наприклад: Напиши пост про те, чому варто відвідати Гданськ...",
-        reply:
-          "Встав повідомлення, на яке потрібно відповісти...",
-        business:
-          "Введи повідомлення, яке потрібно зробити діловим і професійним...",
-        summarize:
-          "Встав текст, який потрібно коротко переказати..."
-      },
-      de: {
-        improve:
-          "Schreibe hier deinen Text...",
-        polish:
-          "Gib den Text ein, den du ins Polnische übersetzen möchtest...",
-        english:
-          "Gib den Text ein, den du ins Englische übersetzen möchtest...",
-        tiktok:
-          "Gib einen Text oder Fakt ein, der in TikTok-Content umgewandelt werden soll...",
-        shorten:
-          "Füge den langen Text ein, den du kürzen möchtest...",
-        write:
-          "Zum Beispiel: Schreibe einen Beitrag darüber, warum man Danzig besuchen sollte...",
-        reply:
-          "Füge die Nachricht ein, auf die du antworten möchtest...",
-        business:
-          "Gib die Nachricht ein, die professionell formuliert werden soll...",
-        summarize:
-          "Füge den Text ein, den du zusammenfassen möchtest..."
-      },
-      fr: {
-        improve:
-          "Écris ton texte ici...",
-        polish:
-          "Entre le texte que tu veux traduire en polonais...",
-        english:
-          "Entre le texte que tu veux traduire en anglais...",
-        tiktok:
-          "Entre un texte ou un fait à transformer en contenu TikTok...",
-        shorten:
-          "Colle le texte long que tu veux raccourcir...",
-        write:
-          "Par exemple : écris un post sur les raisons de visiter Gdańsk...",
-        reply:
-          "Colle le message auquel tu veux répondre...",
-        business:
-          "Entre le message que tu veux rendre professionnel...",
-        summarize:
-          "Colle le texte que tu veux résumer..."
-      },
-      es: {
-        improve:
-          "Escribe aquí tu texto...",
-        polish:
-          "Introduce el texto que quieres traducir al polaco...",
-        english:
-          "Introduce el texto que quieres traducir al inglés...",
-        tiktok:
-          "Introduce un texto o dato para convertirlo en contenido de TikTok...",
-        shorten:
-          "Pega el texto largo que quieres acortar...",
-        write:
-          "Por ejemplo: escribe un post sobre por qué visitar Gdansk...",
-        reply:
-          "Pega el mensaje al que quieres responder...",
-        business:
-          "Introduce el mensaje que quieres convertir en un texto profesional...",
-        summarize:
-          "Pega el texto que quieres resumir..."
-      },
-      it: {
-        improve:
-          "Scrivi qui il tuo testo...",
-        polish:
-          "Inserisci il testo che vuoi tradurre in polacco...",
-        english:
-          "Inserisci il testo che vuoi tradurre in inglese...",
-        tiktok:
-          "Inserisci un testo o un fatto da trasformare in contenuto TikTok...",
-        shorten:
-          "Incolla il testo lungo che vuoi accorciare...",
-        write:
-          "Ad esempio: scrivi un post sul perché visitare Danzica...",
-        reply:
-          "Incolla il messaggio a cui vuoi rispondere...",
-        business:
-          "Inserisci il messaggio da rendere professionale...",
-        summarize:
-          "Incolla il testo che vuoi riassumere..."
-      },
-      pt: {
-        improve:
-          "Escreva aqui o seu texto...",
-        polish:
-          "Introduza o texto que pretende traduzir para polaco...",
-        english:
-          "Introduza o texto que pretende traduzir para inglês...",
-        tiktok:
-          "Introduza um texto ou facto para transformar em conteúdo TikTok...",
-        shorten:
-          "Cole o texto longo que pretende encurtar...",
-        write:
-          "Por exemplo: escreva um post sobre porque visitar Gdańsk...",
-        reply:
-          "Cole a mensagem à qual pretende responder...",
-        business:
-          "Introduza a mensagem que pretende tornar profissional...",
-        summarize:
-          "Cole o texto que pretende resumir..."
-      },
-      cs: {
-        improve:
-          "Napiš sem svůj text...",
-        polish:
-          "Zadej text, který chceš přeložit do polštiny...",
-        english:
-          "Zadej text, který chceš přeložit do angličtiny...",
-        tiktok:
-          "Zadej text nebo fakt, který chceš změnit na TikTok obsah...",
-        shorten:
-          "Vlož dlouhý text, který chceš zkrátit...",
-        write:
-          "Například: Napiš příspěvek o tom, proč navštívit Gdaňsk...",
-        reply:
-          "Vlož zprávu, na kterou chceš odpovědět...",
-        business:
-          "Zadej zprávu, kterou chceš upravit do profesionálního stylu...",
-        summarize:
-          "Vlož text, který chceš shrnout..."
+      updatePlaceholder();
+      resetResult();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const favorite = document.createElement("button");
+    favorite.className = "action-btn";
+    favorite.textContent = item.favorite
+      ? t("favoriteActive")
+      : t("favorite");
+
+    favorite.onclick = () => {
+      const data = loadHistory();
+      const target = data.find(x => x.id === item.id);
+
+      if (target) {
+        target.favorite = !target.favorite;
+        saveHistory(data);
+        renderHistory();
       }
     };
-    function updatePlaceholder() {
-      const language =
-        placeholders[currentLanguage] ||
-        placeholders.ru;
-      textInput.placeholder =
-        language[actionSelect.value] ||
-        language.improve;
-    }
-    /*
-     * ================================
-     * СЧЁТЧИК
-     * ================================
-     */
-    function updateCounter() {
-      const length =
-        textInput.value.length;
-      const formatted =
-        currentLanguage === "en" ||
-        currentLanguage === "de" ||
-        currentLanguage === "es" ||
-        currentLanguage === "it" ||
-        currentLanguage === "pt"
-          ? length.toLocaleString("en-US")
-          : length.toLocaleString("ru-RU");
-      const max =
-        currentLanguage === "en"
-          ? "10,000"
-          : "10 000";
-      counter.textContent =
-        `${formatted} / ${max}`;
-    }
-    textInput.addEventListener(
-      "input",
-      updateCounter
-    );
-    /*
-     * ================================
-     * СМЕНА РЕЖИМА
-     * ================================
-     */
-    actionSelect.addEventListener(
-      "change",
-      () => {
-        updatePlaceholder();
-      }
-    );
-    /*
-     * ================================
-     * ПРОВАЙДЕР
-     * ================================
-     */
-    function getProviderName(name) {
-      const providers = {
-        gemini:
-          "✦ Gemini",
-        groq:
-          "⚡ Groq",
-        openrouter:
-          "◈ OpenRouter"
-      };
-      return (
-        providers[name] ||
-        t("fallback")
+
+    const copy = document.createElement("button");
+    copy.className = "action-btn";
+    copy.textContent = t("copy");
+
+    copy.onclick = () => copyText(item.resultText, copy);
+
+    const remove = document.createElement("button");
+    remove.className = "action-btn";
+    remove.textContent = t("delete");
+
+    remove.onclick = () => {
+      saveHistory(loadHistory().filter(x => x.id !== item.id));
+      renderHistory();
+    };
+
+    actions.append(use, favorite, copy, remove);
+    card.append(title, preview, actions);
+    historyList.appendChild(card);
+  });
+}
+
+function loadTemplates() {
+  try {
+    const data = JSON.parse(localStorage.getItem(TEMPLATES_KEY) || "[]");
+    return Array.isArray(data) ? data.slice(0, MAX_TEMPLATES) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveTemplates(data) {
+  localStorage.setItem(
+    TEMPLATES_KEY,
+    JSON.stringify(data.slice(0, MAX_TEMPLATES))
+  );
+}
+
+function renderTemplates() {
+  const templates = loadTemplates();
+
+  templatesList.innerHTML = "";
+
+  if (!templates.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = t("emptyTemplates");
+    templatesList.appendChild(empty);
+    return;
+  }
+
+  templates.forEach(template => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("div");
+    title.className = "card-title";
+    title.textContent = template.name;
+
+    const preview = document.createElement("div");
+    preview.className = "card-preview";
+    preview.textContent = template.text.slice(0, 160);
+
+    const actions = document.createElement("div");
+    actions.className = "card-actions";
+
+    const use = document.createElement("button");
+    use.className = "action-btn";
+    use.textContent = t("useAgain");
+
+    use.onclick = () => {
+      actionSelect.value = template.mode;
+      textInput.value = template.text;
+      updateCounter();
+      updatePlaceholder();
+      resetResult();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const remove = document.createElement("button");
+    remove.className = "action-btn";
+    remove.textContent = t("delete");
+
+    remove.onclick = () => {
+      saveTemplates(
+        loadTemplates().filter(x => x.id !== template.id)
       );
-    }
-    /*
-     * ================================
-     * HISTORY
-     * ================================
-     */
-    function loadHistory() {
-      try {
-        const raw =
-          localStorage.getItem(
-            HISTORY_KEY
-          );
-        if (!raw) {
-          return [];
-        }
-        const parsed =
-          JSON.parse(raw);
-        if (!Array.isArray(parsed)) {
-          return [];
-        }
-        return parsed
-          .filter(
-            item =>
-              item &&
-              typeof item === "object" &&
-              typeof item.sourceText === "string" &&
-              typeof item.resultText === "string" &&
-              typeof item.mode === "string"
-          )
-          .slice(
-            0,
-            MAX_HISTORY
-          );
-      } catch {
-        return [];
-      }
-    }
-    function saveHistory(history) {
-      try {
-        localStorage.setItem(
-          HISTORY_KEY,
-          JSON.stringify(
-            history.slice(
-              0,
-              MAX_HISTORY
-            )
-          )
-        );
-        return true;
-      } catch {
-        return false;
-      }
-    }
-    function createHistoryId() {
-      if (
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-      ) {
-        return crypto.randomUUID();
-      }
-      return (
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2)
+      renderTemplates();
+    };
+
+    actions.append(use, remove);
+    card.append(title, preview, actions);
+    templatesList.appendChild(card);
+  });
+}
+
+async function copyText(text, button = copyButton) {
+  try {
+    await navigator.clipboard.writeText(text);
+
+    const old = button.textContent;
+    button.textContent = t("copied");
+
+    setTimeout(() => {
+      button.textContent = old;
+    }, 1400);
+  } catch {
+    alert("Не удалось скопировать текст.");
+  }
+}
+
+async function processText() {
+  if (rateLimited) return;
+
+  const message = textInput.value.trim();
+  const mode = actionSelect.value;
+
+  if (!message) {
+    showResult(t("enterText"));
+    return;
+  }
+
+  if (message.length > MAX_TEXT) {
+    showResult(t("tooLong"));
+    return;
+  }
+
+  processButton.disabled = true;
+  processButton.textContent = t("processing");
+
+  retryButton.style.display = "none";
+  copyButton.style.display = "none";
+  speakButton.style.display = "none";
+  stopSpeakButton.style.display = "none";
+
+  showResult(t("processing"));
+  provider.textContent = "";
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message,
+        mode
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.status === 429) {
+      const seconds = Number(data.retryAfter) || 60;
+
+      startRetryTimer(seconds);
+      showResult(
+        t("limit") +
+        "\n\n" +
+        t("retryIn") +
+        " " +
+        seconds +
+        " " +
+        t("seconds")
       );
+
+      return;
     }
-    function addToHistory(
-      sourceText,
-      resultTextValue,
+
+    if (!response.ok) {
+      throw new Error(data.error || t("serverError"));
+    }
+
+    if (!data.answer || typeof data.answer !== "string") {
+      throw new Error(t("noAnswer"));
+    }
+
+    resultText.textContent = data.answer;
+    resultBox.classList.add("show");
+
+    provider.textContent = getProviderName(data.provider);
+
+    copyButton.style.display = "inline-block";
+    speakButton.style.display = "inline-block";
+    retryButton.style.display = "inline-block";
+
+    addHistory(
+      message,
+      data.answer,
       mode,
-      providerName
-    ) {
-      const history =
-        loadHistory();
-      history.unshift({
-        id:
-          createHistoryId(),
-        mode:
-          mode,
-        sourceText:
-          sourceText,
-        resultText:
-          resultTextValue,
-        provider:
-          providerName || "",
-        createdAt:
-          Date.now(),
-        favorite:
-          false
-      });
-      saveHistory(history);
-      renderHistory();
-    }
-    function formatHistoryTime(
-      timestamp
-    ) {
-      const date =
-        new Date(timestamp);
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return "";
-      }
-      return date.toLocaleString(
-        currentLanguage,
-        {
-          day: "2-digit",
-          month: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
-        }
-      );
-    }
-    function previewText(
-      text,
-      maxLength
-    ) {
-      if (
-        text.length <=
-        maxLength
-      ) {
-        return text;
-      }
-      return (
-        text.slice(
-          0,
-          maxLength
-        ) +
-        "…"
-      );
-    }
-    function getModeLabel(mode) {
-      const map = {
-        improve:
-          "improve",
-        polish:
-          "polish",
-        english:
-          "english",
-        tiktok:
-          "tiktok",
-        shorten:
-          "shorten",
-        write:
-          "write",
-        reply:
-          "reply",
-        business:
-          "business",
-        summarize:
-          "summarize"
-      };
-      return t(
-        map[mode] ||
-        "fallback"
-      );
-    }
-    function renderHistory() {
-      const history =
-        loadHistory();
-      historyList.textContent =
-        "";
-      let visibleHistory =
-        history;
-      if (
-        historyFilter ===
-        "favorites"
-      ) {
-        visibleHistory =
-          history.filter(
-            item =>
-              item.favorite ===
-              true
-          );
-      }
-      if (
-        visibleHistory.length ===
-        0
-      ) {
-        const empty =
-          document.createElement(
-            "div"
-          );
-        empty.className =
-          "history-empty";
-        empty.textContent =
-          history.length === 0
-            ? t("historyEmpty")
-            : t("favoritesEmpty");
-        historyList.appendChild(
-          empty
-        );
-        return;
-      }
-      visibleHistory.forEach(
-        item => {
-          const card =
-            document.createElement(
-              "article"
-            );
-          card.className =
-            "history-item";
-          const top =
-            document.createElement(
-              "div"
-            );
-          top.className =
-            "history-item-top";
-          const mode =
-            document.createElement(
-              "div"
-            );
-          mode.className =
-            "history-mode";
-          mode.textContent =
-            getModeLabel(
-              item.mode
-            );
-          const time =
-            document.createElement(
-              "div"
-            );
-          time.className =
-            "history-time";
-          time.textContent =
-            formatHistoryTime(
-              item.createdAt
-            );
-          top.appendChild(mode);
-          top.appendChild(time);
-          const source =
-            document.createElement(
-              "div"
-            );
-          source.className =
-            "history-source";
-          source.textContent =
-            t("request") +
-            previewText(
-              item.sourceText,
-              500
-            );
-          const result =
-            document.createElement(
-              "div"
-            );
-          result.className =
-            "history-result";
-          result.textContent =
-            previewText(
-              item.resultText,
-              1000
-            );
-          const actions =
-            document.createElement(
-              "div"
-            );
-          actions.className =
-            "history-actions";
-          const useButton =
-            document.createElement(
-              "button"
-            );
-          useButton.type =
-            "button";
-          useButton.className =
-            "history-action";
-          useButton.textContent =
-            t("useAgain");
-          useButton.addEventListener(
-            "click",
-            () => {
-              useHistoryItem(
-                item
-              );
-            }
-          );
-          const copyHistoryButton =
-            document.createElement(
-              "button"
-            );
-          copyHistoryButton.type =
-            "button";
-          copyHistoryButton.className =
-            "history-action";
-          copyHistoryButton.textContent =
-            t("copyAction");
-          copyHistoryButton.addEventListener(
-            "click",
-            () => {
-              copyText(
-                item.resultText,
-                copyHistoryButton
-              );
-            }
-          );
-          const favoriteButton =
-            document.createElement(
-              "button"
-            );
-          favoriteButton.type =
-            "button";
-          favoriteButton.className =
-            "history-action";
-          if (
-            item.favorite
-          ) {
-            favoriteButton.classList.add(
-              "favorite"
-            );
-            favoriteButton.textContent =
-              t("favoriteActive");
-          } else {
-            favoriteButton.textContent =
-              t("favorite");
-          }
-          favoriteButton.addEventListener(
-            "click",
-            () => {
-              toggleFavorite(
-                item.id
-              );
-            }
-          );
-          const deleteButton =
-            document.createElement(
-              "button"
-            );
-          deleteButton.type =
-            "button";
-          deleteButton.className =
-            "history-action";
-          deleteButton.textContent =
-            t("delete");
-          deleteButton.addEventListener(
-            "click",
-            () => {
-              deleteHistoryItem(
-                item.id
-              );
-            }
-          );
-          actions.appendChild(
-            useButton
-          );
-          actions.appendChild(
-            copyHistoryButton
-          );
-          actions.appendChild(
-            favoriteButton
-          );
-          actions.appendChild(
-            deleteButton
-          );
-          card.appendChild(top);
-          card.appendChild(source);
-          card.appendChild(result);
-          card.appendChild(actions);
-          historyList.appendChild(card);
-        }
-      );
-    }
-    function useHistoryItem(item) {
-      if (!item) {
-        return;
-      }
-      actionSelect.value =
-        item.mode;
-      textInput.value =
-        item.sourceText;
-      updatePlaceholder();
-      updateCounter();
-      resultBox.classList.remove(
-        "show"
-      );
-      window.scrollTo({
-        top:
-          document.querySelector(
-            ".app"
-          ).offsetTop - 15,
-        behavior:
-          "smooth"
-      });
-    }
-    function toggleFavorite(id) {
-      const history =
-        loadHistory();
-      const item =
-        history.find(
-          entry =>
-            entry.id === id
-        );
-      if (!item) {
-        return;
-      }
-      item.favorite =
-        !item.favorite;
-      saveHistory(history);
-      renderHistory();
-    }
-    function deleteHistoryItem(id) {
-      const history =
-        loadHistory();
-      const updated =
-        history.filter(
-          item =>
-            item.id !== id
-        );
-      saveHistory(updated);
-      renderHistory();
-    }
-    clearHistoryButton.addEventListener(
-      "click",
-      () => {
-        const history =
-          loadHistory();
-        if (
-          history.length === 0
-        ) {
-          return;
-        }
-        const confirmed =
-          window.confirm(
-            t("confirmClear")
-          );
-        if (!confirmed) {
-          return;
-        }
-        try {
-          localStorage.removeItem(
-            HISTORY_KEY
-          );
-        } catch {}
-        renderHistory();
-      }
+      data.provider
     );
-    allHistoryTab.addEventListener(
-      "click",
-      () => {
-        historyFilter =
-          "all";
-        allHistoryTab.classList.add(
-          "active"
-        );
-        favoriteHistoryTab.classList.remove(
-          "active"
-        );
-        renderHistory();
-      }
-    );
-    favoriteHistoryTab.addEventListener(
-      "click",
-      () => {
-        historyFilter =
-          "favorites";
-        favoriteHistoryTab.classList.add(
-          "active"
-        );
-        allHistoryTab.classList.remove(
-          "active"
-        );
-        renderHistory();
-      }
-    );
-    /*
-     * ================================
-     * COPY
-     * ================================
-     */
-    async function copyText(
-      text,
-      button
+
+  } catch (error) {
+    showResult(error.message || t("serverError"));
+    retryButton.style.display = "inline-block";
+  } finally {
+    if (!rateLimited) {
+      processButton.disabled = false;
+      processButton.textContent = t("process");
+    }
+  }
+}
+
+function startRetryTimer(seconds) {
+  clearInterval(retryTimer);
+
+  rateLimited = true;
+  processButton.disabled = true;
+
+  let remaining = Math.max(1, Math.floor(seconds));
+
+  processButton.textContent =
+    "⏳ " + t("retryIn") + " " + remaining + " " + t("seconds");
+
+  retryTimer = setInterval(() => {
+    remaining--;
+
+    if (remaining <= 0) {
+      clearInterval(retryTimer);
+      retryTimer = null;
+      rateLimited = false;
+      processButton.disabled = false;
+      processButton.textContent = t("process");
+      return;
+    }
+
+    processButton.textContent =
+      "⏳ " + t("retryIn") + " " + remaining + " " + t("seconds");
+  }, 1000);
+}
+
+/* ФАЙЛ */
+
+fileButton.addEventListener("click", () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener("change", async () => {
+  const file = fileInput.files?.[0];
+
+  if (!file) return;
+
+  if (file.size > 1024 * 1024) {
+    showResult(t("fileTooLarge"));
+    fileInput.value = "";
+    return;
+  }
+
+  const extension = file.name
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  if (!["txt", "md", "csv"].includes(extension)) {
+    showResult(t("unsupportedFile"));
+    fileInput.value = "";
+    return;
+  }
+
+  try {
+    const content = await file.text();
+
+    textInput.value = content.slice(0, MAX_TEXT);
+
+    updateCounter();
+
+    fileName.textContent =
+      "📄 " + file.name + " · " + t("fileLoaded");
+
+    fileInfo.classList.add("show");
+
+    resetResult();
+
+  } catch {
+    showResult("Не удалось прочитать файл.");
+  }
+});
+
+removeFile.addEventListener("click", () => {
+  fileInput.value = "";
+  fileInfo.classList.remove("show");
+  fileName.textContent = "";
+});
+
+/* ГОЛОС */
+
+function setupVoice() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    voiceButton.addEventListener("click", () => {
+      showResult(t("microphoneUnavailable"));
+    });
+
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = getLanguage();
+
+  recognition.onstart = () => {
+    voiceButton.textContent = t("listening");
+  };
+
+  recognition.onresult = event => {
+    let text = "";
+
+    for (
+      let i = event.resultIndex;
+      i < event.results.length;
+      i++
     ) {
-      if (!text) {
-        return;
-      }
+      text += event.results[i][0].transcript;
+    }
+
+    textInput.value = text.slice(0, MAX_TEXT);
+    updateCounter();
+  };
+
+  recognition.onerror = () => {
+    voiceButton.textContent = t("voice");
+  };
+
+  recognition.onend = () => {
+    voiceButton.textContent = t("voice");
+  };
+
+  voiceButton.addEventListener("click", () => {
+    recognition.lang = getLanguage();
+
+    try {
+      recognition.start();
+    } catch {
       try {
-        await navigator.clipboard.writeText(
-          text
-        );
-        const oldText =
-          button.textContent;
-        button.textContent =
-          t("copied");
-        setTimeout(
-          () => {
-            button.textContent =
-              oldText;
-          },
-          1800
-        );
-      } catch {
-        alert(
-          t("copiedError")
-        );
-      }
+        recognition.stop();
+      } catch {}
     }
-    /*
-     * ================================
-     * ШАБЛОНЫ
-     * ================================
-     */
-    function loadTemplates() {
-      try {
-        const raw =
-          localStorage.getItem(
-            TEMPLATES_KEY
-          );
-        if (!raw) {
-          return [];
-        }
-        const parsed =
-          JSON.parse(raw);
-        if (!Array.isArray(parsed)) {
-          return [];
-        }
-        return parsed
-          .filter(
-            item =>
-              item &&
-              typeof item === "object" &&
-              typeof item.name === "string" &&
-              typeof item.text === "string" &&
-              typeof item.mode === "string"
-          )
-          .slice(
-            0,
-            MAX_TEMPLATES
-          );
-      } catch {
-        return [];
-      }
-    }
-    function saveTemplates(
-      templates
-    ) {
-      try {
-        localStorage.setItem(
-          TEMPLATES_KEY,
-          JSON.stringify(
-            templates.slice(
-              0,
-              MAX_TEMPLATES
-            )
-          )
-        );
-        return true;
-      } catch {
-        return false;
-      }
-    }
-    function createTemplateId() {
-      if (
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-      ) {
-        return crypto.randomUUID();
-      }
-      return (
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2)
-      );
-    }
-    function addTemplate() {
-      const currentText =
-        textInput.value.trim();
-      if (!currentText) {
-        showResult(
-          t("enterText")
-        );
-        return;
-      }
-      const mode =
-        actionSelect.value;
-      const name =
-        window.prompt(
-          t("templateName"),
-          t("templateDefault")
-        );
-      if (
-        !name ||
-        !name.trim()
-      ) {
-        return;
-      }
-      const templates =
-        loadTemplates();
-      templates.unshift({
-        id:
-          createTemplateId(),
-        name:
-          name
-            .trim()
-            .slice(
-              0,
-              100
-            ),
-        mode:
-          mode,
-        text:
-          currentText.slice(
-            0,
-            10000
-          ),
-        createdAt:
-          Date.now()
-      });
-      saveTemplates(
-        templates
-      );
-      renderTemplates();
-    }
-    function renderTemplates() {
-      const templates =
-        loadTemplates();
-      templatesList.textContent =
-        "";
-      if (
-        templates.length ===
-        0
-      ) {
-        const empty =
-          document.createElement(
-            "div"
-          );
-        empty.className =
-          "templates-empty";
-        empty.textContent =
-          t("templateEmpty");
-        templatesList.appendChild(
-          empty
-        );
-        return;
-      }
-      templates.forEach(
-        template => {
-          const card =
-            document.createElement(
-              "article"
-            );
-          card.className =
-            "template-item";
-          const top =
-            document.createElement(
-              "div"
-            );
-          top.className =
-            "template-top";
-          const info =
-            document.createElement(
-              "div"
-            );
-          const name =
-            document.createElement(
-              "div"
-            );
-          name.className =
-            "template-name";
-          name.textContent =
-            template.name;
-          const mode =
-            document.createElement(
-              "div"
-            );
-          mode.className =
-            "template-mode";
-          mode.textContent =
-            getModeLabel(
-              template.mode
-            );
-          info.appendChild(name);
-          info.appendChild(mode);
-          top.appendChild(info);
-          const text =
-            document.createElement(
-              "div"
-            );
-          text.className =
-            "template-text";
-          text.textContent =
-            template.text.length > 500
-              ? template.text.slice(
-                  0,
-                  500
-                ) + "…"
-              : template.text;
-          const actions =
-            document.createElement(
-              "div"
-            );
-          actions.className =
-            "template-actions";
-          const useButton =
-            document.createElement(
-              "button"
-            );
-          useButton.type =
-            "button";
-          useButton.className =
-            "template-action";
-          useButton.textContent =
-            "▶ " +
-            (
-              currentLanguage === "ru"
-                ? "Использовать"
-                : currentLanguage === "pl"
-                  ? "Użyj"
-                  : currentLanguage === "en"
-                    ? "Use"
-                    : "Use"
-            );
-          useButton.addEventListener(
-            "click",
-            () => {
-              useTemplate(
-                template
-              );
-            }
-          );
-          const deleteButton =
-            document.createElement(
-              "button"
-            );
-          deleteButton.type =
-            "button";
-          deleteButton.className =
-            "template-action";
-          deleteButton.textContent =
-            t("delete");
-          deleteButton.addEventListener(
-            "click",
-            () => {
-              deleteTemplate(
-                template.id
-              );
-            }
-          );
-          actions.appendChild(
-            useButton
-          );
-          actions.appendChild(
-            deleteButton
-          );
-          card.appendChild(top);
-          card.appendChild(text);
-          card.appendChild(actions);
-          templatesList.appendChild(card);
-        }
-      );
-    }
-    function useTemplate(
-      template
-    ) {
-      if (!template) {
-        return;
-      }
-      actionSelect.value =
-        template.mode;
-      textInput.value =
-        template.text;
-      updatePlaceholder();
-      updateCounter();
-      resultBox.classList.remove(
-        "show"
-      );
-      window.scrollTo({
-        top:
-          document.querySelector(
-            ".app"
-          ).offsetTop - 15,
-        behavior:
-          "smooth"
-      });
-    }
-    function deleteTemplate(id) {
-      const templates =
-        loadTemplates();
-      const updated =
-        templates.filter(
-          template =>
-            template.id !== id
-        );
-      saveTemplates(
-        updated
-      );
-      renderTemplates();
-    }
-    addTemplateButton.addEventListener(
-      "click",
-      addTemplate
-    );
-    /*
-     * ================================
-     * ОБРАБОТКА AI
-     * ================================
-     */
-    async function processText() {
-      if (rateLimited) {
-        return;
-      }
-      const text =
-        textInput.value.trim();
-      const mode =
-        actionSelect.value;
-      if (!text) {
-        showResult(
-          t("enterText")
-        );
-        return;
-      }
-      if (
-        text.length >
-        10000
-      ) {
-        showResult(
-          t("tooLong")
-        );
-        return;
-      }
-      processButton.disabled =
-        true;
-      processButton.textContent =
-        t("processing");
-      retryButton.classList.remove(
-        "show"
-      );
-      retryButton.disabled =
-        false;
-      copyButton.style.display =
-        "none";
-      resultBox.classList.add(
-        "show"
-      );
-      provider.style.display =
-        "none";
-      resultText.textContent =
-        t("aiPreparing");
-      let requestRateLimited =
-        false;
-      try {
-        const response =
-          await fetch(
-            "/api/chat",
-            {
-              method:
-                "POST",
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-              body:
-                JSON.stringify({
-                  message:
-                    text,
-                  mode:
-                    mode
-                })
-            }
-          );
-        let data;
-        try {
-          data =
-            await response.json();
-        } catch {
-          throw new Error(
-            t("serverError")
-          );
-        }
-        if (
-          response.status ===
-          429
-        ) {
-          requestRateLimited =
-            true;
-          rateLimited =
-            true;
-          const retryAfter =
-            Number.isFinite(
-              Number(
-                data.retryAfter
-              )
-            )
-              ? Math.max(
-                  1,
-                  Math.ceil(
-                    Number(
-                      data.retryAfter
-                    )
-                  )
-                )
-              : 60;
-          resultText.textContent =
-            `${t("retryLimit")}\n\n${t("retryAvailable")} ${retryAfter} ${t("seconds")}`;
-          provider.style.display =
-            "none";
-          copyButton.style.display =
-            "none";
-          retryButton.classList.remove(
-            "show"
-          );
-          startRetryTimer(
-            retryAfter
-          );
-          return;
-        }
-        if (!response.ok) {
-          throw new Error(
-            data.error ||
-            `${t("serverError")} (${response.status})`
-          );
-        }
-        if (
-          !data ||
-          typeof data.answer !==
-            "string" ||
-          !data.answer.trim()
-        ) {
-          throw new Error(
-            t("noAiAnswer")
-          );
-        }
-        const finalAnswer =
-          data.answer.trim();
-        resultText.textContent =
-          finalAnswer;
-        let providerName =
-          "";
-        if (
-          typeof data.provider ===
-          "string"
-        ) {
-          providerName =
-            data.provider;
-          provider.textContent =
-            getProviderName(
-              data.provider
-            );
-          provider.style.display =
-            "inline-block";
-        }
-        copyButton.style.display =
-          "block";
-        addToHistory(
-          text,
-          finalAnswer,
-          mode,
-          providerName
-        );
-      } catch (error) {
-        resultText.textContent =
-          "❌ " +
-          (
-            error &&
-            error.message
-              ? error.message
-              : t("unknownError")
-          );
-        provider.style.display =
-          "none";
-        copyButton.style.display =
-          "none";
-        retryButton.classList.add(
-          "show"
-        );
-      } finally {
-        if (
-          !requestRateLimited &&
-          !rateLimited
-        ) {
-          processButton.disabled =
-            false;
-          processButton.textContent =
-            t("process");
-        }
-      }
-    }
-    /*
-     * ================================
-     * RESULT
-     * ================================
-     */
-    function showResult(text) {
-      resultBox.classList.add(
-        "show"
-      );
-      provider.style.display =
-        "none";
-      copyButton.style.display =
-        "none";
-      retryButton.classList.remove(
-        "show"
-      );
-      resultText.textContent =
-        text;
-    }
-    /*
-     * ================================
-     * RATE LIMIT TIMER
-     * ================================
-     */
-    function startRetryTimer(
-      seconds
-    ) {
-      if (retryTimer) {
-        clearInterval(
-          retryTimer
-        );
-        retryTimer =
-          null;
-      }
-      let remaining =
-        Math.max(
-          1,
-          Math.ceil(
-            Number(seconds) ||
-            60
-          )
-        );
-      processButton.disabled =
-        true;
-      processButton.textContent =
-        "⏳ " +
-        t("retryAvailable") +
-        "...";
-      retryButton.classList.remove(
-        "show"
-      );
-      retryButton.disabled =
-        true;
-      retryTimer =
-        setInterval(
-          () => {
-            remaining--;
-            if (
-              remaining <= 0
-            ) {
-              clearInterval(
-                retryTimer
-              );
-              retryTimer =
-                null;
-              rateLimited =
-                false;
-              processButton.disabled =
-                false;
-              processButton.textContent =
-                t("process");
-              retryButton.disabled =
-                false;
-              retryButton.textContent =
-                t("retry");
-              retryButton.classList.add(
-                "show"
-              );
-              resultText.textContent =
-                t("limitRemoved");
-              return;
-            }
-            resultText.textContent =
-              `${t("retryLimit")}\n\n${t("retryAvailable")} ${remaining} ${t("seconds")}`;
-          },
-          1000
-        );
-    }
-    /*
-     * ================================
-     * COPY RESULT
-     * ================================
-     */
-    async function copyResult() {
-      const text =
-        resultText.textContent;
-      if (!text) {
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(
-          text
-        );
-        copyButton.textContent =
-          t("copied");
-        setTimeout(
-          () => {
-            copyButton.textContent =
-              t("copy");
-          },
-          1800
-        );
-      } catch {
-        alert(
-          t("copiedError")
-        );
-      }
-    }
-    /*
-     * ================================
-     * START
-     * ================================
-     */
-    applyLanguage();
-  </script>
+  });
+}
+
+setupVoice();
+
+/* ОЗВУЧИВАНИЕ */
+
+speakButton.addEventListener("click", () => {
+  const text = resultText.textContent.trim();
+
+  if (!text || !("speechSynthesis" in window)) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  const languages = {
+    ru: "ru-RU",
+    pl: "pl-PL",
+    en: "en-US",
+    uk: "uk-UA",
+    de: "de-DE",
+    fr: "fr-FR",
+    es: "es-ES",
+    it: "it-IT",
+    pt: "pt-PT",
+    cs: "cs-CZ"
+  };
+
+  utterance.lang = languages[getLanguage()] || "ru-RU";
+  utterance.rate = 0.95;
+
+  window.speechSynthesis.speak(utterance);
+});
+
+stopSpeakButton.addEventListener("click", () => {
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+});
+
+/* КНОПКИ */
+
+processButton.addEventListener("click", processText);
+
+retryButton.addEventListener("click", processText);
+
+copyButton.addEventListener("click", () => {
+  copyText(resultText.textContent);
+});
+
+clearButton.addEventListener("click", () => {
+  textInput.value = "";
+  fileInput.value = "";
+  fileInfo.classList.remove("show");
+  resetResult();
+  updateCounter();
+});
+
+actionSelect.addEventListener("change", () => {
+  updatePlaceholder();
+});
+
+textInput.addEventListener("input", () => {
+  updateCounter();
+
+  if (textInput.value.length > MAX_TEXT) {
+    textInput.value = textInput.value.slice(0, MAX_TEXT);
+  }
+});
+
+interfaceLanguage.addEventListener("change", () => {
+  localStorage.setItem(
+    LANGUAGE_KEY,
+    interfaceLanguage.value
+  );
+
+  if (recognition) {
+    recognition.lang = getLanguage();
+  }
+
+  applyLanguage();
+});
+
+allHistoryTab.addEventListener("click", () => {
+  historyFilter = "all";
+  renderHistory();
+});
+
+favoriteHistoryTab.addEventListener("click", () => {
+  historyFilter = "favorites";
+  renderHistory();
+});
+
+clearHistoryButton.addEventListener("click", () => {
+  if (confirm("Удалить всю историю?")) {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+  }
+});
+
+addTemplateButton.addEventListener("click", () => {
+  const text = textInput.value.trim();
+
+  if (!text) {
+    showResult(t("enterText"));
+    return;
+  }
+
+  const name = prompt("Название шаблона:");
+
+  if (!name || !name.trim()) return;
+
+  const templates = loadTemplates();
+
+  templates.unshift({
+    id: crypto.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now()),
+    name: name.trim().slice(0, 100),
+    text: text.slice(0, MAX_TEXT),
+    mode: actionSelect.value
+  });
+
+  saveTemplates(templates);
+  renderTemplates();
+});
+
+/* ЯЗЫК ПО УМОЛЧАНИЮ */
+
+const savedLanguage =
+  localStorage.getItem(LANGUAGE_KEY);
+
+if (savedLanguage && translations[savedLanguage]) {
+  interfaceLanguage.value = savedLanguage;
+} else {
+  const browserLanguage =
+    (navigator.language || "ru").slice(0, 2);
+
+  if (translations[browserLanguage]) {
+    interfaceLanguage.value = browserLanguage;
+  } else {
+    interfaceLanguage.value = "ru";
+  }
+}
+
+applyLanguage();
+</script>
+
 </body>
 </html>
