@@ -38,25 +38,33 @@ function securityHeaders() {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "no-referrer",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Permissions-Policy":
+      "camera=(), microphone=(), geolocation=()",
   };
 }
 
 function send(res, status, data, extraHeaders = {}) {
-  return res
-    .status(status)
-    .set({
-      ...securityHeaders(),
-      ...extraHeaders,
-    })
-    .json(data);
+  const headers = {
+    ...securityHeaders(),
+    ...extraHeaders,
+  };
+
+  for (const [key, value] of Object.entries(headers)) {
+    res.setHeader(key, value);
+  }
+
+  res.status(status);
+
+  return res.json(data);
 }
 
 function getClientIp(req) {
   const forwarded = req.headers["x-forwarded-for"];
 
   if (forwarded) {
-    return String(forwarded).split(",")[0].trim();
+    return String(forwarded)
+      .split(",")[0]
+      .trim();
   }
 
   return (
@@ -104,31 +112,44 @@ function normalizeText(value) {
 }
 
 function byteLength(value) {
-  return Buffer.byteLength(String(value || ""), "utf8");
+  return Buffer.byteLength(
+    String(value || ""),
+    "utf8"
+  );
 }
 
 function getRequestBodySize(req) {
-  const length = req.headers["content-length"];
+  const length =
+    req.headers["content-length"];
 
   if (!length) return 0;
 
   const parsed = Number(length);
 
-  if (!Number.isFinite(parsed) || parsed < 0) {
+  if (
+    !Number.isFinite(parsed) ||
+    parsed < 0
+  ) {
     return 0;
   }
 
   return parsed;
 }
 
-function withTimeout(promise, timeout = AI_TIMEOUT) {
+function withTimeout(
+  promise,
+  timeout = AI_TIMEOUT
+) {
   let timer;
 
-  const timeoutPromise = new Promise((_, reject) => {
-    timer = setTimeout(() => {
-      reject(new Error("AI request timeout"));
-    }, timeout);
-  });
+  const timeoutPromise =
+    new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        reject(
+          new Error("AI request timeout")
+        );
+      }, timeout);
+    });
 
   return Promise.race([
     promise,
@@ -139,14 +160,19 @@ function withTimeout(promise, timeout = AI_TIMEOUT) {
 }
 
 function cleanAnswer(text) {
-  if (typeof text !== "string") return "";
+  if (typeof text !== "string") {
+    return "";
+  }
 
   return text
     .replace(/\u0000/g, "")
     .trim();
 }
 
-function safeProviderError(error, fallback) {
+function safeProviderError(
+  error,
+  fallback
+) {
   const message =
     typeof error?.message === "string"
       ? error.message
@@ -163,7 +189,9 @@ function safeProviderError(error, fallback) {
    ATTACHMENTS
 ========================= */
 
-function validateAttachments(attachments) {
+function validateAttachments(
+  attachments
+) {
   if (attachments === undefined) {
     return {
       ok: true,
@@ -174,15 +202,20 @@ function validateAttachments(attachments) {
   if (!Array.isArray(attachments)) {
     return {
       ok: false,
-      error: "Некорректный формат вложений.",
+      error:
+        "Некорректный формат вложений.",
     };
   }
 
-  if (attachments.length > MAX_ATTACHMENTS) {
+  if (
+    attachments.length >
+    MAX_ATTACHMENTS
+  ) {
     return {
       ok: false,
       error:
-        `Можно прикрепить максимум ${MAX_ATTACHMENTS} файлов.`,
+        `Можно прикрепить максимум ` +
+        `${MAX_ATTACHMENTS} файлов.`,
     };
   }
 
@@ -197,10 +230,14 @@ function validateAttachments(attachments) {
   let totalBytes = 0;
 
   for (const file of attachments) {
-    if (!file || typeof file !== "object") {
+    if (
+      !file ||
+      typeof file !== "object"
+    ) {
       return {
         ok: false,
-        error: "Некорректное вложение.",
+        error:
+          "Некорректное вложение.",
       };
     }
 
@@ -223,7 +260,8 @@ function validateAttachments(attachments) {
       return {
         ok: false,
         error:
-          `Файл "${name}" имеет тип ${type || "неизвестный"}. ` +
+          `Файл "${name}" имеет тип ` +
+          `${type || "неизвестный"}. ` +
           "Поддерживаются JPG, PNG, WEBP и GIF.",
       };
     }
@@ -236,7 +274,8 @@ function validateAttachments(attachments) {
       };
     }
 
-    const commaIndex = data.indexOf(",");
+    const commaIndex =
+      data.indexOf(",");
 
     if (commaIndex === -1) {
       return {
@@ -254,11 +293,14 @@ function validateAttachments(attachments) {
       .slice(commaIndex + 1)
       .replace(/\s/g, "");
 
-    if (!header.includes(";base64")) {
+    if (
+      !header.includes(";base64")
+    ) {
       return {
         ok: false,
         error:
-          `Файл "${name}" должен передаваться в Base64.`,
+          `Файл "${name}" должен ` +
+          "передаваться в Base64.",
       };
     }
 
@@ -270,17 +312,23 @@ function validateAttachments(attachments) {
       };
     }
 
-    // Проверяем Base64
-    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
+    if (
+      !/^[A-Za-z0-9+/]*={0,2}$/.test(
+        base64
+      )
+    ) {
       return {
         ok: false,
         error:
-          `Некорректный Base64 у файла "${name}".`,
+          `Некорректный Base64 у ` +
+          `файла "${name}".`,
       };
     }
 
     const decodedBytes =
-      Math.floor((base64.length * 3) / 4) -
+      Math.floor(
+        (base64.length * 3) / 4
+      ) -
       (base64.endsWith("==")
         ? 2
         : base64.endsWith("=")
@@ -295,45 +343,62 @@ function validateAttachments(attachments) {
       };
     }
 
-    if (decodedBytes > MAX_ATTACHMENT_BYTES) {
+    if (
+      decodedBytes >
+      MAX_ATTACHMENT_BYTES
+    ) {
       return {
         ok: false,
         error:
           `Файл "${name}" слишком большой. ` +
           `Максимум ${Math.floor(
-            MAX_ATTACHMENT_BYTES / 1024 / 1024
+            MAX_ATTACHMENT_BYTES /
+              1024 /
+              1024
           )} MB.`,
       };
     }
 
     totalBytes += decodedBytes;
 
-    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+    if (
+      totalBytes >
+      MAX_TOTAL_ATTACHMENT_BYTES
+    ) {
       return {
         ok: false,
         error:
-          `Общий размер изображений слишком большой. ` +
+          "Общий размер изображений " +
+          "слишком большой. " +
           `Максимум ${Math.floor(
-            MAX_TOTAL_ATTACHMENT_BYTES / 1024 / 1024
+            MAX_TOTAL_ATTACHMENT_BYTES /
+              1024 /
+              1024
           )} MB.`,
       };
     }
 
-    // Проверяем соответствие MIME в data URL
-    const expectedHeader = `data:${type};base64`;
+    const expectedHeader =
+      `data:${type};base64`;
 
-    if (!header.startsWith(expectedHeader)) {
+    if (
+      !header.startsWith(
+        expectedHeader
+      )
+    ) {
       return {
         ok: false,
         error:
-          `Тип файла "${name}" не соответствует его данным.`,
+          `Тип файла "${name}" ` +
+          "не соответствует его данным.",
       };
     }
 
     result.push({
       name,
       type,
-      data: `data:${type};base64,${base64}`,
+      data:
+        `data:${type};base64,${base64}`,
       bytes: decodedBytes,
     });
   }
@@ -373,29 +438,37 @@ async function checkRateLimit(req) {
   const ip = getClientIp(req);
   const hash = hashIp(ip);
 
-  const key = `ai-helper:rate:${hash}`;
+  const key =
+    `ai-helper:rate:${hash}`;
 
-  const current = await redis.incr(key);
+  const current =
+    await redis.incr(key);
 
   if (current === 1) {
-    await redis.expire(key, RATE_WINDOW);
+    await redis.expire(
+      key,
+      RATE_WINDOW
+    );
   }
 
-  const ttl = await redis.ttl(key);
+  const ttl =
+    await redis.ttl(key);
 
   if (current > RATE_LIMIT) {
     return {
       allowed: false,
-      retryAfter: Math.max(ttl, 1),
+      retryAfter:
+        Math.max(ttl, 1),
     };
   }
 
   return {
     allowed: true,
-    remaining: Math.max(
-      RATE_LIMIT - current,
-      0
-    ),
+    remaining:
+      Math.max(
+        RATE_LIMIT - current,
+        0
+      ),
   };
 }
 
@@ -404,7 +477,8 @@ async function checkRateLimit(req) {
 ========================= */
 
 async function askGemini(message) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey =
+    process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
     throw new Error(
@@ -412,37 +486,42 @@ async function askGemini(message) {
     );
   }
 
-  const response = await withTimeout(
-    fetch(GEMINI_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        model: GEMINI_MODEL,
-        store: false,
-        input: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text:
-                  `${buildSafetyInstruction()}\n\n${message}`,
-              },
-            ],
-          },
-        ],
-      }),
-    })
-  );
+  const response =
+    await withTimeout(
+      fetch(GEMINI_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+          "x-goog-api-key":
+            apiKey,
+        },
+        body: JSON.stringify({
+          model: GEMINI_MODEL,
+          store: false,
+          input: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text:
+                    `${buildSafetyInstruction()}\n\n${message}`,
+                },
+              ],
+            },
+          ],
+        }),
+      })
+    );
 
-  const raw = await response.text();
+  const raw =
+    await response.text();
 
   if (!response.ok) {
     throw new Error(
-      `Gemini ${response.status}: ${raw.slice(0, 500)}`
+      `Gemini ${response.status}: ` +
+      raw.slice(0, 500)
     );
   }
 
@@ -458,17 +537,33 @@ async function askGemini(message) {
 
   let text = "";
 
-  if (typeof data.output_text === "string") {
+  if (
+    typeof data.output_text ===
+    "string"
+  ) {
     text = data.output_text;
   }
 
-  if (!text && Array.isArray(data.steps)) {
-    for (const step of data.steps) {
-      const content = step?.content;
+  if (
+    !text &&
+    Array.isArray(data.steps)
+  ) {
+    for (
+      const step of data.steps
+    ) {
+      const content =
+        step?.content;
 
-      if (Array.isArray(content)) {
-        for (const item of content) {
-          if (typeof item?.text === "string") {
+      if (
+        Array.isArray(content)
+      ) {
+        for (
+          const item of content
+        ) {
+          if (
+            typeof item?.text ===
+            "string"
+          ) {
             text += item.text;
           }
         }
@@ -476,15 +571,35 @@ async function askGemini(message) {
     }
   }
 
-  if (!text && Array.isArray(data.model_output)) {
-    for (const item of data.model_output) {
-      if (typeof item?.text === "string") {
+  if (
+    !text &&
+    Array.isArray(
+      data.model_output
+    )
+  ) {
+    for (
+      const item of data.model_output
+    ) {
+      if (
+        typeof item?.text ===
+        "string"
+      ) {
         text += item.text;
       }
 
-      if (Array.isArray(item?.content)) {
-        for (const content of item.content) {
-          if (typeof content?.text === "string") {
+      if (
+        Array.isArray(
+          item?.content
+        )
+      ) {
+        for (
+          const content of
+            item.content
+        ) {
+          if (
+            typeof content?.text ===
+            "string"
+          ) {
             text += content.text;
           }
         }
@@ -492,7 +607,8 @@ async function askGemini(message) {
     }
   }
 
-  text = cleanAnswer(text);
+  text =
+    cleanAnswer(text);
 
   if (!text) {
     throw new Error(
@@ -508,7 +624,8 @@ async function askGemini(message) {
 ========================= */
 
 async function askGroq(message) {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey =
+    process.env.GROQ_API_KEY;
 
   if (!apiKey) {
     throw new Error(
@@ -516,35 +633,41 @@ async function askGroq(message) {
     );
   }
 
-  const response = await withTimeout(
-    fetch(GROQ_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        temperature: 0.4,
-        messages: [
-          {
-            role: "system",
-            content: buildSafetyInstruction(),
-          },
-          {
-            role: "user",
-            content: message,
-          },
-        ],
-      }),
-    })
-  );
+  const response =
+    await withTimeout(
+      fetch(GROQ_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+          Authorization:
+            `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          temperature: 0.4,
+          messages: [
+            {
+              role: "system",
+              content:
+                buildSafetyInstruction(),
+            },
+            {
+              role: "user",
+              content: message,
+            },
+          ],
+        }),
+      })
+    );
 
-  const raw = await response.text();
+  const raw =
+    await response.text();
 
   if (!response.ok) {
     throw new Error(
-      `Groq ${response.status}: ${raw.slice(0, 500)}`
+      `Groq ${response.status}: ` +
+      raw.slice(0, 500)
     );
   }
 
@@ -559,9 +682,11 @@ async function askGroq(message) {
   }
 
   const text =
-    data?.choices?.[0]?.message?.content || "";
+    data?.choices?.[0]
+      ?.message?.content || "";
 
-  const answer = cleanAnswer(text);
+  const answer =
+    cleanAnswer(text);
 
   if (!answer) {
     throw new Error(
@@ -576,8 +701,11 @@ async function askGroq(message) {
    OPENROUTER TEXT
 ========================= */
 
-async function askOpenRouterText(message) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+async function askOpenRouterText(
+  message
+) {
+  const apiKey =
+    process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
     throw new Error(
@@ -585,37 +713,46 @@ async function askOpenRouterText(message) {
     );
   }
 
-  const response = await withTimeout(
-    fetch(OPENROUTER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": PRODUCTION_ORIGIN,
-        "X-Title": "AI Помощник",
-      },
-      body: JSON.stringify({
-        model: OPENROUTER_MODEL,
-        temperature: 0.4,
-        messages: [
-          {
-            role: "system",
-            content: buildSafetyInstruction(),
-          },
-          {
-            role: "user",
-            content: message,
-          },
-        ],
-      }),
-    })
-  );
+  const response =
+    await withTimeout(
+      fetch(OPENROUTER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+          Authorization:
+            `Bearer ${apiKey}`,
+          "HTTP-Referer":
+            PRODUCTION_ORIGIN,
+          "X-Title":
+            "AI Помощник",
+        },
+        body: JSON.stringify({
+          model:
+            OPENROUTER_MODEL,
+          temperature: 0.4,
+          messages: [
+            {
+              role: "system",
+              content:
+                buildSafetyInstruction(),
+            },
+            {
+              role: "user",
+              content: message,
+            },
+          ],
+        }),
+      })
+    );
 
-  const raw = await response.text();
+  const raw =
+    await response.text();
 
   if (!response.ok) {
     throw new Error(
-      `OpenRouter ${response.status}: ${raw.slice(0, 700)}`
+      `OpenRouter ${response.status}: ` +
+      raw.slice(0, 700)
     );
   }
 
@@ -630,9 +767,11 @@ async function askOpenRouterText(message) {
   }
 
   const text =
-    data?.choices?.[0]?.message?.content || "";
+    data?.choices?.[0]
+      ?.message?.content || "";
 
-  const answer = cleanAnswer(text);
+  const answer =
+    cleanAnswer(text);
 
   if (!answer) {
     throw new Error(
@@ -651,7 +790,8 @@ async function askOpenRouterVision(
   message,
   attachments
 ) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey =
+    process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
     throw new Error(
@@ -672,7 +812,9 @@ async function askOpenRouterVision(
       ),
   });
 
-  for (const file of attachments) {
+  for (
+    const file of attachments
+  ) {
     content.push({
       type: "image_url",
       image_url: {
@@ -681,35 +823,43 @@ async function askOpenRouterVision(
     });
   }
 
-  const response = await withTimeout(
-    fetch(OPENROUTER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": PRODUCTION_ORIGIN,
-        "X-Title": "AI Помощник",
-      },
-      body: JSON.stringify({
-        model: OPENROUTER_MODEL,
-        temperature: 0.3,
-        messages: [
-          {
-            role: "user",
-            content,
-          },
-        ],
-      }),
-    })
-  );
+  const response =
+    await withTimeout(
+      fetch(OPENROUTER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+          Authorization:
+            `Bearer ${apiKey}`,
+          "HTTP-Referer":
+            PRODUCTION_ORIGIN,
+          "X-Title":
+            "AI Помощник",
+        },
+        body: JSON.stringify({
+          model:
+            OPENROUTER_MODEL,
+          temperature: 0.3,
+          messages: [
+            {
+              role: "user",
+              content,
+            },
+          ],
+        }),
+      })
+    );
 
-  const raw = await response.text();
+  const raw =
+    await response.text();
 
   if (!response.ok) {
     let providerMessage = "";
 
     try {
-      const errorData = JSON.parse(raw);
+      const errorData =
+        JSON.parse(raw);
 
       providerMessage =
         errorData?.error?.message ||
@@ -721,7 +871,10 @@ async function askOpenRouterVision(
 
     throw new Error(
       `OpenRouter Vision ${response.status}: ` +
-      `${providerMessage || raw.slice(0, 500)}`
+      `${
+        providerMessage ||
+        raw.slice(0, 500)
+      }`
     );
   }
 
@@ -736,21 +889,34 @@ async function askOpenRouterVision(
   }
 
   const messageContent =
-    data?.choices?.[0]?.message?.content;
+    data?.choices?.[0]
+      ?.message?.content;
 
   let text = "";
 
-  if (typeof messageContent === "string") {
+  if (
+    typeof messageContent ===
+    "string"
+  ) {
     text = messageContent;
-  } else if (Array.isArray(messageContent)) {
-    for (const item of messageContent) {
-      if (typeof item?.text === "string") {
+  } else if (
+    Array.isArray(messageContent)
+  ) {
+    for (
+      const item of
+        messageContent
+    ) {
+      if (
+        typeof item?.text ===
+        "string"
+      ) {
         text += item.text;
       }
     }
   }
 
-  const answer = cleanAnswer(text);
+  const answer =
+    cleanAnswer(text);
 
   if (!answer) {
     throw new Error(
@@ -765,13 +931,17 @@ async function askOpenRouterVision(
    MAIN HANDLER
 ========================= */
 
-export default async function handler(req, res) {
+export default async function handler(
+  req,
+  res
+) {
   if (req.method !== "POST") {
     return send(
       res,
       405,
       {
-        error: "Method Not Allowed",
+        error:
+          "Method Not Allowed",
       },
       {
         Allow: "POST",
@@ -780,35 +950,57 @@ export default async function handler(req, res) {
   }
 
   if (!isAllowedOrigin(req)) {
-    return send(res, 403, {
-      error: "Доступ запрещён.",
-    });
+    return send(
+      res,
+      403,
+      {
+        error:
+          "Доступ запрещён.",
+      }
+    );
   }
 
   const contentType =
-    req.headers["content-type"] || "";
+    req.headers["content-type"] ||
+    "";
 
   if (
     !contentType
       .toLowerCase()
-      .includes("application/json")
+      .includes(
+        "application/json"
+      )
   ) {
-    return send(res, 415, {
-      error: "Ожидается application/json.",
-    });
+    return send(
+      res,
+      415,
+      {
+        error:
+          "Ожидается application/json.",
+      }
+    );
   }
 
   const requestSize =
     getRequestBodySize(req);
 
-  if (requestSize > MAX_BODY_BYTES) {
-    return send(res, 413, {
-      error: "Запрос слишком большой.",
-    });
+  if (
+    requestSize >
+    MAX_BODY_BYTES
+  ) {
+    return send(
+      res,
+      413,
+      {
+        error:
+          "Запрос слишком большой.",
+      }
+    );
   }
 
   try {
-    const rate = await checkRateLimit(req);
+    const rate =
+      await checkRateLimit(req);
 
     if (!rate.allowed) {
       return send(
@@ -822,29 +1014,40 @@ export default async function handler(req, res) {
         },
         {
           "Retry-After":
-            String(rate.retryAfter),
+            String(
+              rate.retryAfter
+            ),
         }
       );
     }
 
-    const body = req.body || {};
+    const body =
+      req.body || {};
 
     const message =
-      normalizeText(body.message);
+      normalizeText(
+        body.message
+      );
 
     const mode =
-      normalizeText(body.mode)
-        .slice(0, 100);
+      normalizeText(
+        body.mode
+      ).slice(0, 100);
 
     if (
       message.length >
       MAX_MESSAGE_LENGTH
     ) {
-      return send(res, 400, {
-        error:
-          `Текст слишком длинный. ` +
-          `Максимум ${MAX_MESSAGE_LENGTH} символов.`,
-      });
+      return send(
+        res,
+        400,
+        {
+          error:
+            `Текст слишком длинный. ` +
+            `Максимум ` +
+            `${MAX_MESSAGE_LENGTH} символов.`,
+        }
+      );
     }
 
     const attachmentValidation =
@@ -852,11 +1055,17 @@ export default async function handler(req, res) {
         body.attachments
       );
 
-    if (!attachmentValidation.ok) {
-      return send(res, 400, {
-        error:
-          attachmentValidation.error,
-      });
+    if (
+      !attachmentValidation.ok
+    ) {
+      return send(
+        res,
+        400,
+        {
+          error:
+            attachmentValidation.error,
+        }
+      );
     }
 
     const attachments =
@@ -866,16 +1075,23 @@ export default async function handler(req, res) {
       !message &&
       attachments.length === 0
     ) {
-      return send(res, 400, {
-        error:
-          "Введите текст или прикрепите файл.",
-      });
+      return send(
+        res,
+        400,
+        {
+          error:
+            "Введите текст или прикрепите файл.",
+        }
+      );
     }
 
     let attachmentBytes = 0;
 
-    for (const file of attachments) {
-      attachmentBytes += file.bytes;
+    for (
+      const file of attachments
+    ) {
+      attachmentBytes +=
+        file.bytes;
     }
 
     if (
@@ -883,17 +1099,23 @@ export default async function handler(req, res) {
         byteLength(message) >
       MAX_BODY_BYTES
     ) {
-      return send(res, 413, {
-        error:
-          "Общий размер запроса слишком большой.",
-      });
+      return send(
+        res,
+        413,
+        {
+          error:
+            "Общий размер запроса слишком большой.",
+        }
+      );
     }
 
     /* =========================
        IMAGE REQUEST
     ========================= */
 
-    if (attachments.length > 0) {
+    if (
+      attachments.length > 0
+    ) {
       try {
         const answer =
           await askOpenRouterVision(
@@ -901,25 +1123,36 @@ export default async function handler(req, res) {
             attachments
           );
 
-        return send(res, 200, {
-          answer,
-          provider: "OpenRouter",
-        });
-      } catch (visionError) {
+        return send(
+          res,
+          200,
+          {
+            answer,
+            provider:
+              "OpenRouter",
+          }
+        );
+      } catch (
+        visionError
+      ) {
         console.error(
           "OpenRouter Vision error:",
           visionError?.message
         );
 
-        return send(res, 502, {
-          error:
-            "Не удалось обработать изображение.",
-          details:
-            safeProviderError(
-              visionError,
-              "OpenRouter Vision недоступен."
-            ),
-        });
+        return send(
+          res,
+          502,
+          {
+            error:
+              "Не удалось обработать изображение.",
+            details:
+              safeProviderError(
+                visionError,
+                "OpenRouter Vision недоступен."
+              ),
+          }
+        );
       }
     }
 
@@ -929,7 +1162,11 @@ export default async function handler(req, res) {
     ========================= */
 
     const finalMessage =
-      `${mode ? `Режим: ${mode}\n\n` : ""}${message}`;
+      `${
+        mode
+          ? `Режим: ${mode}\n\n`
+          : ""
+      }${message}`;
 
     let answer;
     let provider;
@@ -941,7 +1178,9 @@ export default async function handler(req, res) {
         );
 
       provider = "Gemini";
-    } catch (geminiError) {
+    } catch (
+      geminiError
+    ) {
       console.error(
         "Gemini error:",
         geminiError?.message
@@ -954,7 +1193,9 @@ export default async function handler(req, res) {
           );
 
         provider = "Groq";
-      } catch (groqError) {
+      } catch (
+        groqError
+      ) {
         console.error(
           "Groq error:",
           groqError?.message
@@ -966,34 +1207,49 @@ export default async function handler(req, res) {
               finalMessage
             );
 
-          provider = "OpenRouter";
-        } catch (openRouterError) {
+          provider =
+            "OpenRouter";
+        } catch (
+          openRouterError
+        ) {
           console.error(
             "OpenRouter error:",
             openRouterError?.message
           );
 
-          return send(res, 503, {
-            error:
-              "Все AI-провайдеры временно недоступны.",
-          });
+          return send(
+            res,
+            503,
+            {
+              error:
+                "Все AI-провайдеры временно недоступны.",
+            }
+          );
         }
       }
     }
 
-    return send(res, 200, {
-      answer,
-      provider,
-    });
+    return send(
+      res,
+      200,
+      {
+        answer,
+        provider,
+      }
+    );
   } catch (error) {
     console.error(
       "API error:",
       error
     );
 
-    return send(res, 500, {
-      error:
-        "Внутренняя ошибка сервера.",
-    });
+    return send(
+      res,
+      500,
+      {
+        error:
+          "Внутренняя ошибка сервера.",
+      }
+    );
   }
 }
