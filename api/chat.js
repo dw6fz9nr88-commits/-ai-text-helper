@@ -119,37 +119,27 @@ function byteLength(value) {
 }
 
 function getRequestBodySize(req) {
-  const length =
-    req.headers["content-length"];
+  const length = req.headers["content-length"];
 
   if (!length) return 0;
 
   const parsed = Number(length);
 
-  if (
-    !Number.isFinite(parsed) ||
-    parsed < 0
-  ) {
+  if (!Number.isFinite(parsed) || parsed < 0) {
     return 0;
   }
 
   return parsed;
 }
 
-function withTimeout(
-  promise,
-  timeout = AI_TIMEOUT
-) {
+function withTimeout(promise, timeout = AI_TIMEOUT) {
   let timer;
 
-  const timeoutPromise =
-    new Promise((_, reject) => {
-      timer = setTimeout(() => {
-        reject(
-          new Error("AI request timeout")
-        );
-      }, timeout);
-    });
+  const timeoutPromise = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error("AI request timeout"));
+    }, timeout);
+  });
 
   return Promise.race([
     promise,
@@ -160,19 +150,14 @@ function withTimeout(
 }
 
 function cleanAnswer(text) {
-  if (typeof text !== "string") {
-    return "";
-  }
+  if (typeof text !== "string") return "";
 
   return text
     .replace(/\u0000/g, "")
     .trim();
 }
 
-function safeProviderError(
-  error,
-  fallback
-) {
+function safeProviderError(error, fallback) {
   const message =
     typeof error?.message === "string"
       ? error.message
@@ -186,12 +171,75 @@ function safeProviderError(
 }
 
 /* =========================
+   MIME
+========================= */
+
+function detectMimeType(data, declaredType, name) {
+  if (
+    typeof declaredType === "string" &&
+    declaredType.trim()
+  ) {
+    const normalized =
+      declaredType.trim().toLowerCase();
+
+    if (
+      normalized === "image/jpeg" ||
+      normalized === "image/png" ||
+      normalized === "image/webp" ||
+      normalized === "image/gif"
+    ) {
+      return normalized;
+    }
+  }
+
+  if (typeof data === "string") {
+    const match = data.match(
+      /^data:([^;,]+)(?:;[^,]*)?,/i
+    );
+
+    if (match?.[1]) {
+      const detected =
+        match[1].toLowerCase().trim();
+
+      if (
+        detected === "image/jpeg" ||
+        detected === "image/png" ||
+        detected === "image/webp" ||
+        detected === "image/gif"
+      ) {
+        return detected;
+      }
+    }
+  }
+
+  if (typeof name === "string") {
+    const extension =
+      name
+        .split(".")
+        .pop()
+        ?.toLowerCase();
+
+    const extensionMap = {
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      png: "image/png",
+      webp: "image/webp",
+      gif: "image/gif",
+    };
+
+    if (extensionMap[extension]) {
+      return extensionMap[extension];
+    }
+  }
+
+  return "";
+}
+
+/* =========================
    ATTACHMENTS
 ========================= */
 
-function validateAttachments(
-  attachments
-) {
+function validateAttachments(attachments) {
   if (attachments === undefined) {
     return {
       ok: true,
@@ -202,20 +250,15 @@ function validateAttachments(
   if (!Array.isArray(attachments)) {
     return {
       ok: false,
-      error:
-        "Некорректный формат вложений.",
+      error: "Некорректный формат вложений.",
     };
   }
 
-  if (
-    attachments.length >
-    MAX_ATTACHMENTS
-  ) {
+  if (attachments.length > MAX_ATTACHMENTS) {
     return {
       ok: false,
       error:
-        `Можно прикрепить максимум ` +
-        `${MAX_ATTACHMENTS} файлов.`,
+        `Можно прикрепить максимум ${MAX_ATTACHMENTS} файлов.`,
     };
   }
 
@@ -230,14 +273,10 @@ function validateAttachments(
   let totalBytes = 0;
 
   for (const file of attachments) {
-    if (
-      !file ||
-      typeof file !== "object"
-    ) {
+    if (!file || typeof file !== "object") {
       return {
         ok: false,
-        error:
-          "Некорректное вложение.",
+        error: "Некорректное вложение.",
       };
     }
 
@@ -246,9 +285,9 @@ function validateAttachments(
         ? file.name.slice(0, 200)
         : "image";
 
-    const type =
+    const rawType =
       typeof file.type === "string"
-        ? file.type.toLowerCase()
+        ? file.type
         : "";
 
     const data =
@@ -256,12 +295,17 @@ function validateAttachments(
         ? file.data
         : "";
 
+    const type = detectMimeType(
+      data,
+      rawType,
+      name
+    );
+
     if (!allowedTypes.has(type)) {
       return {
         ok: false,
         error:
-          `Файл "${name}" имеет тип ` +
-          `${type || "неизвестный"}. ` +
+          `Файл "${name}" имеет неподдерживаемый тип. ` +
           "Поддерживаются JPG, PNG, WEBP и GIF.",
       };
     }
@@ -274,8 +318,7 @@ function validateAttachments(
       };
     }
 
-    const commaIndex =
-      data.indexOf(",");
+    const commaIndex = data.indexOf(",");
 
     if (commaIndex === -1) {
       return {
@@ -285,22 +328,20 @@ function validateAttachments(
       };
     }
 
-    const header = data
-      .slice(0, commaIndex)
-      .toLowerCase();
+    const header = data.slice(
+      0,
+      commaIndex
+    );
 
     const base64 = data
       .slice(commaIndex + 1)
       .replace(/\s/g, "");
 
-    if (
-      !header.includes(";base64")
-    ) {
+    if (!header.toLowerCase().includes(";base64")) {
       return {
         ok: false,
         error:
-          `Файл "${name}" должен ` +
-          "передаваться в Base64.",
+          `Файл "${name}" должен передаваться в Base64.`,
       };
     }
 
@@ -312,23 +353,16 @@ function validateAttachments(
       };
     }
 
-    if (
-      !/^[A-Za-z0-9+/]*={0,2}$/.test(
-        base64
-      )
-    ) {
+    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
       return {
         ok: false,
         error:
-          `Некорректный Base64 у ` +
-          `файла "${name}".`,
+          `Некорректный Base64 у файла "${name}".`,
       };
     }
 
     const decodedBytes =
-      Math.floor(
-        (base64.length * 3) / 4
-      ) -
+      Math.floor((base64.length * 3) / 4) -
       (base64.endsWith("==")
         ? 2
         : base64.endsWith("=")
@@ -343,62 +377,42 @@ function validateAttachments(
       };
     }
 
-    if (
-      decodedBytes >
-      MAX_ATTACHMENT_BYTES
-    ) {
+    if (decodedBytes > MAX_ATTACHMENT_BYTES) {
       return {
         ok: false,
         error:
           `Файл "${name}" слишком большой. ` +
           `Максимум ${Math.floor(
-            MAX_ATTACHMENT_BYTES /
-              1024 /
-              1024
+            MAX_ATTACHMENT_BYTES / 1024 / 1024
           )} MB.`,
       };
     }
 
     totalBytes += decodedBytes;
 
-    if (
-      totalBytes >
-      MAX_TOTAL_ATTACHMENT_BYTES
-    ) {
+    if (totalBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
       return {
         ok: false,
         error:
-          "Общий размер изображений " +
-          "слишком большой. " +
+          `Общий размер изображений слишком большой. ` +
           `Максимум ${Math.floor(
-            MAX_TOTAL_ATTACHMENT_BYTES /
-              1024 /
-              1024
+            MAX_TOTAL_ATTACHMENT_BYTES / 1024 / 1024
           )} MB.`,
       };
     }
 
-    const expectedHeader =
-      `data:${type};base64`;
-
-    if (
-      !header.startsWith(
-        expectedHeader
-      )
-    ) {
-      return {
-        ok: false,
-        error:
-          `Тип файла "${name}" ` +
-          "не соответствует его данным.",
-      };
-    }
+    /*
+     * Нормализуем Data URL.
+     * Даже если frontend прислал неправильный
+     * или пустой type, здесь будет правильный MIME.
+     */
+    const normalizedData =
+      `data:${type};base64,${base64}`;
 
     result.push({
       name,
       type,
-      data:
-        `data:${type};base64,${base64}`,
+      data: normalizedData,
       bytes: decodedBytes,
     });
   }
@@ -438,11 +452,9 @@ async function checkRateLimit(req) {
   const ip = getClientIp(req);
   const hash = hashIp(ip);
 
-  const key =
-    `ai-helper:rate:${hash}`;
+  const key = `ai-helper:rate:${hash}`;
 
-  const current =
-    await redis.incr(key);
+  const current = await redis.incr(key);
 
   if (current === 1) {
     await redis.expire(
@@ -451,24 +463,21 @@ async function checkRateLimit(req) {
     );
   }
 
-  const ttl =
-    await redis.ttl(key);
+  const ttl = await redis.ttl(key);
 
   if (current > RATE_LIMIT) {
     return {
       allowed: false,
-      retryAfter:
-        Math.max(ttl, 1),
+      retryAfter: Math.max(ttl, 1),
     };
   }
 
   return {
     allowed: true,
-    remaining:
-      Math.max(
-        RATE_LIMIT - current,
-        0
-      ),
+    remaining: Math.max(
+      RATE_LIMIT - current,
+      0
+    ),
   };
 }
 
@@ -486,42 +495,39 @@ async function askGemini(message) {
     );
   }
 
-  const response =
-    await withTimeout(
-      fetch(GEMINI_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-          "x-goog-api-key":
-            apiKey,
-        },
-        body: JSON.stringify({
-          model: GEMINI_MODEL,
-          store: false,
-          input: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text:
-                    `${buildSafetyInstruction()}\n\n${message}`,
-                },
-              ],
-            },
-          ],
-        }),
-      })
-    );
+  const response = await withTimeout(
+    fetch(GEMINI_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+        "x-goog-api-key":
+          apiKey,
+      },
+      body: JSON.stringify({
+        model: GEMINI_MODEL,
+        store: false,
+        input: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text:
+                  `${buildSafetyInstruction()}\n\n${message}`,
+              },
+            ],
+          },
+        ],
+      }),
+    })
+  );
 
-  const raw =
-    await response.text();
+  const raw = await response.text();
 
   if (!response.ok) {
     throw new Error(
-      `Gemini ${response.status}: ` +
-      raw.slice(0, 500)
+      `Gemini ${response.status}: ${raw.slice(0, 500)}`
     );
   }
 
@@ -537,33 +543,17 @@ async function askGemini(message) {
 
   let text = "";
 
-  if (
-    typeof data.output_text ===
-    "string"
-  ) {
+  if (typeof data.output_text === "string") {
     text = data.output_text;
   }
 
-  if (
-    !text &&
-    Array.isArray(data.steps)
-  ) {
-    for (
-      const step of data.steps
-    ) {
-      const content =
-        step?.content;
+  if (!text && Array.isArray(data.steps)) {
+    for (const step of data.steps) {
+      const content = step?.content;
 
-      if (
-        Array.isArray(content)
-      ) {
-        for (
-          const item of content
-        ) {
-          if (
-            typeof item?.text ===
-            "string"
-          ) {
+      if (Array.isArray(content)) {
+        for (const item of content) {
+          if (typeof item?.text === "string") {
             text += item.text;
           }
         }
@@ -573,33 +563,16 @@ async function askGemini(message) {
 
   if (
     !text &&
-    Array.isArray(
-      data.model_output
-    )
+    Array.isArray(data.model_output)
   ) {
-    for (
-      const item of data.model_output
-    ) {
-      if (
-        typeof item?.text ===
-        "string"
-      ) {
+    for (const item of data.model_output) {
+      if (typeof item?.text === "string") {
         text += item.text;
       }
 
-      if (
-        Array.isArray(
-          item?.content
-        )
-      ) {
-        for (
-          const content of
-            item.content
-        ) {
-          if (
-            typeof content?.text ===
-            "string"
-          ) {
+      if (Array.isArray(item?.content)) {
+        for (const content of item.content) {
+          if (typeof content?.text === "string") {
             text += content.text;
           }
         }
@@ -607,8 +580,7 @@ async function askGemini(message) {
     }
   }
 
-  text =
-    cleanAnswer(text);
+  text = cleanAnswer(text);
 
   if (!text) {
     throw new Error(
@@ -633,41 +605,38 @@ async function askGroq(message) {
     );
   }
 
-  const response =
-    await withTimeout(
-      fetch(GROQ_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-          Authorization:
-            `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: GROQ_MODEL,
-          temperature: 0.4,
-          messages: [
-            {
-              role: "system",
-              content:
-                buildSafetyInstruction(),
-            },
-            {
-              role: "user",
-              content: message,
-            },
-          ],
-        }),
-      })
-    );
+  const response = await withTimeout(
+    fetch(GROQ_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+        Authorization:
+          `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        temperature: 0.4,
+        messages: [
+          {
+            role: "system",
+            content:
+              buildSafetyInstruction(),
+          },
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+      }),
+    })
+  );
 
-  const raw =
-    await response.text();
+  const raw = await response.text();
 
   if (!response.ok) {
     throw new Error(
-      `Groq ${response.status}: ` +
-      raw.slice(0, 500)
+      `Groq ${response.status}: ${raw.slice(0, 500)}`
     );
   }
 
@@ -682,11 +651,10 @@ async function askGroq(message) {
   }
 
   const text =
-    data?.choices?.[0]
-      ?.message?.content || "";
+    data?.choices?.[0]?.message?.content ||
+    "";
 
-  const answer =
-    cleanAnswer(text);
+  const answer = cleanAnswer(text);
 
   if (!answer) {
     throw new Error(
@@ -701,9 +669,7 @@ async function askGroq(message) {
    OPENROUTER TEXT
 ========================= */
 
-async function askOpenRouterText(
-  message
-) {
+async function askOpenRouterText(message) {
   const apiKey =
     process.env.OPENROUTER_API_KEY;
 
@@ -713,46 +679,43 @@ async function askOpenRouterText(
     );
   }
 
-  const response =
-    await withTimeout(
-      fetch(OPENROUTER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-          Authorization:
-            `Bearer ${apiKey}`,
-          "HTTP-Referer":
-            PRODUCTION_ORIGIN,
-          "X-Title":
-            "AI Помощник",
-        },
-        body: JSON.stringify({
-          model:
-            OPENROUTER_MODEL,
-          temperature: 0.4,
-          messages: [
-            {
-              role: "system",
-              content:
-                buildSafetyInstruction(),
-            },
-            {
-              role: "user",
-              content: message,
-            },
-          ],
-        }),
-      })
-    );
+  const response = await withTimeout(
+    fetch(OPENROUTER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+        Authorization:
+          `Bearer ${apiKey}`,
+        "HTTP-Referer":
+          PRODUCTION_ORIGIN,
+        "X-Title":
+          "AI Помощник",
+      },
+      body: JSON.stringify({
+        model:
+          OPENROUTER_MODEL,
+        temperature: 0.4,
+        messages: [
+          {
+            role: "system",
+            content:
+              buildSafetyInstruction(),
+          },
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+      }),
+    })
+  );
 
-  const raw =
-    await response.text();
+  const raw = await response.text();
 
   if (!response.ok) {
     throw new Error(
-      `OpenRouter ${response.status}: ` +
-      raw.slice(0, 700)
+      `OpenRouter ${response.status}: ${raw.slice(0, 700)}`
     );
   }
 
@@ -767,11 +730,10 @@ async function askOpenRouterText(
   }
 
   const text =
-    data?.choices?.[0]
-      ?.message?.content || "";
+    data?.choices?.[0]?.message?.content ||
+    "";
 
-  const answer =
-    cleanAnswer(text);
+  const answer = cleanAnswer(text);
 
   if (!answer) {
     throw new Error(
@@ -812,9 +774,7 @@ async function askOpenRouterVision(
       ),
   });
 
-  for (
-    const file of attachments
-  ) {
+  for (const file of attachments) {
     content.push({
       type: "image_url",
       image_url: {
@@ -823,36 +783,34 @@ async function askOpenRouterVision(
     });
   }
 
-  const response =
-    await withTimeout(
-      fetch(OPENROUTER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-          Authorization:
-            `Bearer ${apiKey}`,
-          "HTTP-Referer":
-            PRODUCTION_ORIGIN,
-          "X-Title":
-            "AI Помощник",
-        },
-        body: JSON.stringify({
-          model:
-            OPENROUTER_MODEL,
-          temperature: 0.3,
-          messages: [
-            {
-              role: "user",
-              content,
-            },
-          ],
-        }),
-      })
-    );
+  const response = await withTimeout(
+    fetch(OPENROUTER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+        Authorization:
+          `Bearer ${apiKey}`,
+        "HTTP-Referer":
+          PRODUCTION_ORIGIN,
+        "X-Title":
+          "AI Помощник",
+      },
+      body: JSON.stringify({
+        model:
+          OPENROUTER_MODEL,
+        temperature: 0.3,
+        messages: [
+          {
+            role: "user",
+            content,
+          },
+        ],
+      }),
+    })
+  );
 
-  const raw =
-    await response.text();
+  const raw = await response.text();
 
   if (!response.ok) {
     let providerMessage = "";
@@ -871,10 +829,7 @@ async function askOpenRouterVision(
 
     throw new Error(
       `OpenRouter Vision ${response.status}: ` +
-      `${
-        providerMessage ||
-        raw.slice(0, 500)
-      }`
+      `${providerMessage || raw.slice(0, 500)}`
     );
   }
 
@@ -889,34 +844,21 @@ async function askOpenRouterVision(
   }
 
   const messageContent =
-    data?.choices?.[0]
-      ?.message?.content;
+    data?.choices?.[0]?.message?.content;
 
   let text = "";
 
-  if (
-    typeof messageContent ===
-    "string"
-  ) {
+  if (typeof messageContent === "string") {
     text = messageContent;
-  } else if (
-    Array.isArray(messageContent)
-  ) {
-    for (
-      const item of
-        messageContent
-    ) {
-      if (
-        typeof item?.text ===
-        "string"
-      ) {
+  } else if (Array.isArray(messageContent)) {
+    for (const item of messageContent) {
+      if (typeof item?.text === "string") {
         text += item.text;
       }
     }
   }
 
-  const answer =
-    cleanAnswer(text);
+  const answer = cleanAnswer(text);
 
   if (!answer) {
     throw new Error(
@@ -940,8 +882,7 @@ export default async function handler(
       res,
       405,
       {
-        error:
-          "Method Not Allowed",
+        error: "Method Not Allowed",
       },
       {
         Allow: "POST",
@@ -950,52 +891,33 @@ export default async function handler(
   }
 
   if (!isAllowedOrigin(req)) {
-    return send(
-      res,
-      403,
-      {
-        error:
-          "Доступ запрещён.",
-      }
-    );
+    return send(res, 403, {
+      error: "Доступ запрещён.",
+    });
   }
 
   const contentType =
-    req.headers["content-type"] ||
-    "";
+    req.headers["content-type"] || "";
 
   if (
     !contentType
       .toLowerCase()
-      .includes(
-        "application/json"
-      )
+      .includes("application/json")
   ) {
-    return send(
-      res,
-      415,
-      {
-        error:
-          "Ожидается application/json.",
-      }
-    );
+    return send(res, 415, {
+      error:
+        "Ожидается application/json.",
+    });
   }
 
   const requestSize =
     getRequestBodySize(req);
 
-  if (
-    requestSize >
-    MAX_BODY_BYTES
-  ) {
-    return send(
-      res,
-      413,
-      {
-        error:
-          "Запрос слишком большой.",
-      }
-    );
+  if (requestSize > MAX_BODY_BYTES) {
+    return send(res, 413, {
+      error:
+        "Запрос слишком большой.",
+    });
   }
 
   try {
@@ -1014,40 +936,29 @@ export default async function handler(
         },
         {
           "Retry-After":
-            String(
-              rate.retryAfter
-            ),
+            String(rate.retryAfter),
         }
       );
     }
 
-    const body =
-      req.body || {};
+    const body = req.body || {};
 
     const message =
-      normalizeText(
-        body.message
-      );
+      normalizeText(body.message);
 
     const mode =
-      normalizeText(
-        body.mode
-      ).slice(0, 100);
+      normalizeText(body.mode)
+        .slice(0, 100);
 
     if (
       message.length >
       MAX_MESSAGE_LENGTH
     ) {
-      return send(
-        res,
-        400,
-        {
-          error:
-            `Текст слишком длинный. ` +
-            `Максимум ` +
-            `${MAX_MESSAGE_LENGTH} символов.`,
-        }
-      );
+      return send(res, 400, {
+        error:
+          `Текст слишком длинный. ` +
+          `Максимум ${MAX_MESSAGE_LENGTH} символов.`,
+      });
     }
 
     const attachmentValidation =
@@ -1055,17 +966,11 @@ export default async function handler(
         body.attachments
       );
 
-    if (
-      !attachmentValidation.ok
-    ) {
-      return send(
-        res,
-        400,
-        {
-          error:
-            attachmentValidation.error,
-        }
-      );
+    if (!attachmentValidation.ok) {
+      return send(res, 400, {
+        error:
+          attachmentValidation.error,
+      });
     }
 
     const attachments =
@@ -1075,23 +980,16 @@ export default async function handler(
       !message &&
       attachments.length === 0
     ) {
-      return send(
-        res,
-        400,
-        {
-          error:
-            "Введите текст или прикрепите файл.",
-        }
-      );
+      return send(res, 400, {
+        error:
+          "Введите текст или прикрепите файл.",
+      });
     }
 
     let attachmentBytes = 0;
 
-    for (
-      const file of attachments
-    ) {
-      attachmentBytes +=
-        file.bytes;
+    for (const file of attachments) {
+      attachmentBytes += file.bytes;
     }
 
     if (
@@ -1099,23 +997,17 @@ export default async function handler(
         byteLength(message) >
       MAX_BODY_BYTES
     ) {
-      return send(
-        res,
-        413,
-        {
-          error:
-            "Общий размер запроса слишком большой.",
-        }
-      );
+      return send(res, 413, {
+        error:
+          "Общий размер запроса слишком большой.",
+      });
     }
 
     /* =========================
        IMAGE REQUEST
     ========================= */
 
-    if (
-      attachments.length > 0
-    ) {
+    if (attachments.length > 0) {
       try {
         const answer =
           await askOpenRouterVision(
@@ -1123,36 +1015,25 @@ export default async function handler(
             attachments
           );
 
-        return send(
-          res,
-          200,
-          {
-            answer,
-            provider:
-              "OpenRouter",
-          }
-        );
-      } catch (
-        visionError
-      ) {
+        return send(res, 200, {
+          answer,
+          provider: "OpenRouter",
+        });
+      } catch (visionError) {
         console.error(
           "OpenRouter Vision error:",
           visionError?.message
         );
 
-        return send(
-          res,
-          502,
-          {
-            error:
-              "Не удалось обработать изображение.",
-            details:
-              safeProviderError(
-                visionError,
-                "OpenRouter Vision недоступен."
-              ),
-          }
-        );
+        return send(res, 502, {
+          error:
+            "Не удалось обработать изображение.",
+          details:
+            safeProviderError(
+              visionError,
+              "OpenRouter Vision недоступен."
+            ),
+        });
       }
     }
 
@@ -1178,9 +1059,7 @@ export default async function handler(
         );
 
       provider = "Gemini";
-    } catch (
-      geminiError
-    ) {
+    } catch (geminiError) {
       console.error(
         "Gemini error:",
         geminiError?.message
@@ -1193,9 +1072,7 @@ export default async function handler(
           );
 
         provider = "Groq";
-      } catch (
-        groqError
-      ) {
+      } catch (groqError) {
         console.error(
           "Groq error:",
           groqError?.message
@@ -1207,49 +1084,34 @@ export default async function handler(
               finalMessage
             );
 
-          provider =
-            "OpenRouter";
-        } catch (
-          openRouterError
-        ) {
+          provider = "OpenRouter";
+        } catch (openRouterError) {
           console.error(
             "OpenRouter error:",
             openRouterError?.message
           );
 
-          return send(
-            res,
-            503,
-            {
-              error:
-                "Все AI-провайдеры временно недоступны.",
-            }
-          );
+          return send(res, 503, {
+            error:
+              "Все AI-провайдеры временно недоступны.",
+          });
         }
       }
     }
 
-    return send(
-      res,
-      200,
-      {
-        answer,
-        provider,
-      }
-    );
+    return send(res, 200, {
+      answer,
+      provider,
+    });
   } catch (error) {
     console.error(
       "API error:",
       error
     );
 
-    return send(
-      res,
-      500,
-      {
-        error:
-          "Внутренняя ошибка сервера.",
-      }
-    );
+    return send(res, 500, {
+      error:
+        "Внутренняя ошибка сервера.",
+    });
   }
 }
