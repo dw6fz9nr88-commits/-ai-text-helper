@@ -31,6 +31,10 @@ const GEMINI_MODEL = "gemini-3.7-flash";
 const GROQ_MODEL = "openai/gpt-oss-20b";
 const OPENROUTER_MODEL = "openrouter/free";
 
+/* =========================
+   SECURITY HEADERS
+========================= */
+
 function securityHeaders() {
   return {
     "Content-Type": "application/json; charset=utf-8",
@@ -57,6 +61,10 @@ function send(res, status, data, extraHeaders = {}) {
 
   return res.json(data);
 }
+
+/* =========================
+   IP / ORIGIN
+========================= */
 
 function getClientIp(req) {
   const forwarded = req.headers["x-forwarded-for"];
@@ -102,6 +110,10 @@ function isAllowedOrigin(req) {
     return false;
   }
 }
+
+/* =========================
+   HELPERS
+========================= */
 
 function normalizeText(value) {
   if (typeof value !== "string") return "";
@@ -171,7 +183,7 @@ function safeProviderError(error, fallback) {
 }
 
 /* =========================
-   MIME
+   MIME DETECTION
 ========================= */
 
 function detectMimeType(data, declaredType, name) {
@@ -401,11 +413,6 @@ function validateAttachments(attachments) {
       };
     }
 
-    /*
-     * Нормализуем Data URL.
-     * Даже если frontend прислал неправильный
-     * или пустой type, здесь будет правильный MIME.
-     */
     const normalizedData =
       `data:${type};base64,${base64}`;
 
@@ -687,10 +694,15 @@ async function askOpenRouterText(message) {
           "application/json",
         Authorization:
           `Bearer ${apiKey}`,
+
+        // ВАЖНО:
+        // Здесь только ASCII.
+        // Кириллица в HTTP-заголовке вызывает ByteString error.
         "HTTP-Referer":
           PRODUCTION_ORIGIN,
+
         "X-Title":
-          "AI Помощник",
+          "AI Assistant",
       },
       body: JSON.stringify({
         model:
@@ -789,12 +801,17 @@ async function askOpenRouterVision(
       headers: {
         "Content-Type":
           "application/json",
+
         Authorization:
           `Bearer ${apiKey}`,
+
         "HTTP-Referer":
           PRODUCTION_ORIGIN,
+
+        // ВАЖНО:
+        // Только ASCII — без кириллицы.
         "X-Title":
-          "AI Помощник",
+          "AI Assistant",
       },
       body: JSON.stringify({
         model:
@@ -1004,7 +1021,7 @@ export default async function handler(
     }
 
     /* =========================
-       IMAGE REQUEST
+       IMAGE → OPENROUTER VISION
     ========================= */
 
     if (attachments.length > 0) {
@@ -1038,8 +1055,7 @@ export default async function handler(
     }
 
     /* =========================
-       TEXT REQUEST
-       Gemini → Groq → OpenRouter
+       TEXT → GEMINI → GROQ → OPENROUTER
     ========================= */
 
     const finalMessage =
@@ -1084,7 +1100,8 @@ export default async function handler(
               finalMessage
             );
 
-          provider = "OpenRouter";
+          provider =
+            "OpenRouter";
         } catch (openRouterError) {
           console.error(
             "OpenRouter error:",
