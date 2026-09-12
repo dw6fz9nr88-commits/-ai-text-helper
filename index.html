@@ -1,1874 +1,1918 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#08090d">
-  <title>AI Помощник</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08090d">
+<title>AI Помощник</title>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  background:#08090d;
+  color:#f5f7fb;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif
+}
 
-    html {
-      scroll-behavior: smooth;
-    }
+body{
+  padding:20px 12px 40px
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #08090d;
-      color: #f5f7fb;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    }
+.container{
+  width:100%;
+  max-width:760px;
+  margin:0 auto
+}
 
-    button,
-    textarea,
-    select,
-    input {
-      font: inherit;
-    }
+.header{
+  text-align:center;
+  padding:20px 0 24px
+}
 
-    .app {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
+.badge{
+  display:inline-block;
+  padding:7px 12px;
+  border:1px solid #303442;
+  border-radius:999px;
+  color:#9da5b8;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.4px;
+  margin-bottom:14px
+}
 
-    .hero {
-      text-align: center;
-      padding: 24px 0 28px;
-    }
+h1{
+  margin:0;
+  font-size:34px;
+  line-height:1.1;
+  letter-spacing:-1px
+}
 
-    .badge {
-      display: inline-block;
-      padding: 7px 12px;
-      border: 1px solid #30364d;
-      border-radius: 999px;
-      color: #aeb8ff;
-      background: #11131d;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-    }
+.subtitle{
+  margin:10px auto 0;
+  max-width:560px;
+  color:#9299aa;
+  font-size:15px;
+  line-height:1.5
+}
 
-    h1 {
-      margin: 18px 0 8px;
-      font-size: clamp(32px, 8vw, 56px);
-      line-height: 1;
-      letter-spacing: -2px;
-    }
+.card{
+  background:#111319;
+  border:1px solid #252936;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px
+}
 
-    .subtitle {
-      margin: 0 auto;
-      max-width: 600px;
-      color: #8e94a6;
-      font-size: 15px;
-      line-height: 1.6;
-    }
+.label{
+  display:block;
+  margin-bottom:9px;
+  color:#8e96a8;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.3px
+}
 
-    .panel {
-      background: #101219;
-      border: 1px solid #202431;
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, .22);
-    }
+select,
+textarea,
+input{
+  width:100%;
+  border:1px solid #2b303c;
+  background:#0c0e13;
+  color:#f5f7fb;
+  border-radius:12px;
+  outline:none;
+  font:inherit
+}
 
-    .label {
-      display: block;
-      margin-bottom: 8px;
-      color: #8e94a6;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1.3px;
-    }
+select{
+  padding:13px
+}
 
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid #292e3c;
-      border-radius: 14px;
-      background: #0a0c11;
-      color: #f5f7fb;
-      outline: none;
-    }
+textarea{
+  min-height:210px;
+  resize:vertical;
+  padding:15px;
+  line-height:1.55;
+  font-size:15px
+}
 
-    select {
-      min-height: 48px;
-      padding: 0 14px;
-      margin-bottom: 14px;
-    }
+textarea:focus,
+select:focus{
+  border-color:#5864ff
+}
 
-    textarea {
-      min-height: 180px;
-      padding: 16px;
-      resize: vertical;
-      line-height: 1.55;
-      font-size: 16px;
-    }
+.counter{
+  text-align:right;
+  margin-top:6px;
+  color:#687082;
+  font-size:11px
+}
 
-    textarea:focus,
-    select:focus {
-      border-color: #6571ff;
-    }
+.tools{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px
+}
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
+button{
+  border:1px solid #2a2f3b;
+  background:#171a22;
+  color:#e8ebf2;
+  border-radius:10px;
+  padding:10px 13px;
+  font-size:13px;
+  cursor:pointer
+}
 
-    button {
-      border: 0;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: transform .15s ease, opacity .15s ease;
-    }
+button:active{
+  transform:scale(.98)
+}
 
-    button:active {
-      transform: scale(.98);
-    }
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
 
-    button:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
+.primary{
+  width:100%;
+  margin-top:14px;
+  padding:14px 16px;
+  border:0;
+  background:linear-gradient(135deg,#5967ff,#9b4dff);
+  color:white;
+  font-weight:800;
+  font-size:15px
+}
 
-    .main-btn {
-      flex: 1;
-      min-height: 52px;
-      color: white;
-      font-weight: 800;
-      background: linear-gradient(135deg, #5965ff, #a149ff);
-    }
+.file-input{
+  display:none
+}
 
-    .secondary-btn {
-      min-height: 52px;
-      padding: 0 16px;
-      color: #dfe3f2;
-      background: #191d28;
-      border: 1px solid #292e3c;
-    }
+.file-drop{
+  margin-top:12px;
+  border:1px dashed #343947;
+  border-radius:14px;
+  padding:14px;
+  text-align:center;
+  color:#7e8799;
+  font-size:13px;
+  cursor:pointer
+}
 
-    .file-zone {
-      margin-top: 12px;
-      padding: 15px;
-      border: 1px dashed #353b4d;
-      border-radius: 15px;
-      background: #0b0d13;
-      text-align: center;
-      cursor: pointer;
-    }
+.file-drop.drag{
+  border-color:#6875ff;
+  background:#171927
+}
 
-    .file-zone.dragover {
-      border-color: #6874ff;
-      background: #111522;
-    }
+.file-list{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px
+}
 
-    .file-zone-title {
-      color: #dce1ef;
-      font-weight: 700;
-      font-size: 14px;
-    }
+.file-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#0c0e13;
+  border:1px solid #262b37;
+  border-radius:12px;
+  padding:10px
+}
 
-    .file-zone-subtitle {
-      margin-top: 5px;
-      color: #707789;
-      font-size: 12px;
-    }
+.file-icon{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#171b26;
+  flex:none
+}
 
-    #fileInput {
-      display: none;
-    }
+.file-info{
+  min-width:0;
+  flex:1
+}
 
-    .files {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
+.file-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13px
+}
 
-    .file-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #151822;
-      border: 1px solid #272c3a;
-      border-radius: 12px;
-    }
+.file-meta{
+  margin-top:3px;
+  color:#6f7788;
+  font-size:11px
+}
 
-    .file-icon {
-      width: 36px;
-      height: 36px;
-      flex: 0 0 36px;
-      display: grid;
-      place-items: center;
-      border-radius: 9px;
-      background: #202538;
-      font-size: 18px;
-    }
+.file-status{
+  margin-top:4px;
+  font-size:11px
+}
 
-    .file-info {
-      min-width: 0;
-      flex: 1;
-    }
+.ok{
+  color:#72d69b
+}
 
-    .file-name {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      font-size: 13px;
-      color: #e9ebf3;
-    }
+.warn{
+  color:#e9bd66
+}
 
-    .file-size {
-      margin-top: 3px;
-      color: #747b8d;
-      font-size: 11px;
-    }
+.error{
+  color:#ff7272
+}
 
-    .remove-file {
-      width: 32px;
-      height: 32px;
-      background: transparent;
-      color: #858c9e;
-      font-size: 18px;
-    }
+.remove-file{
+  width:30px;
+  height:30px;
+  padding:0;
+  border-radius:8px;
+  flex:none
+}
 
-    .status {
-      min-height: 20px;
-      margin-top: 10px;
-      color: #7f8799;
-      font-size: 12px;
-      line-height: 1.4;
-    }
+.result{
+  display:none
+}
 
-    .result {
-      display: none;
-      margin-top: 18px;
-    }
+.result.visible{
+  display:block
+}
 
-    .result.show {
-      display: block;
-    }
+.result-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px
+}
 
-    .result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+.result-title{
+  color:#9da5b8;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.3px
+}
 
-    .result-title {
-      color: #bfc6ff;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 1.4px;
-    }
+.provider{
+  color:#737c8f;
+  font-size:11px
+}
 
-    .result-actions {
-      display: flex;
-      gap: 7px;
-    }
+.result-text{
+  white-space:pre-wrap;
+  word-break:break-word;
+  line-height:1.6;
+  color:#eef1f7;
+  font-size:15px;
+  background:#0c0e13;
+  border:1px solid #252a35;
+  border-radius:12px;
+  padding:15px;
+  min-height:80px
+}
 
-    .small-btn {
-      padding: 8px 10px;
-      border-radius: 10px;
-      color: #cbd0df;
-      background: #181c27;
-      border: 1px solid #292e3c;
-      font-size: 12px;
-    }
+.result-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px
+}
 
-    .answer {
-      min-height: 100px;
-      padding: 17px;
-      border: 1px solid #292e3c;
-      border-radius: 15px;
-      background: #0a0c11;
-      color: #e9ebf3;
-      white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.65;
-      font-size: 15px;
-    }
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  color:#a6adbd;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1px
+}
 
-    .provider {
-      margin-top: 9px;
-      color: #666e82;
-      font-size: 11px;
-    }
+.history-item{
+  border-top:1px solid #252a34;
+  padding:12px 0
+}
 
-    .section {
-      margin-top: 18px;
-    }
+.history-item:first-child{
+  border-top:0
+}
 
-    .section-title {
-      margin-bottom: 9px;
-      color: #8e94a6;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1.3px;
-    }
+.history-mode{
+  color:#727b8e;
+  font-size:10px;
+  text-transform:uppercase;
+  margin-bottom:5px
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
+.history-text{
+  color:#e6e9ef;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
 
-    .card {
-      padding: 15px;
-      border: 1px solid #202431;
-      border-radius: 16px;
-      background: #101219;
-    }
+.history-date{
+  color:#697183;
+  font-size:10px;
+  margin-top:4px
+}
 
-    .card-title {
-      font-weight: 800;
-      font-size: 14px;
-    }
+.history-actions{
+  display:flex;
+  gap:7px;
+  margin-top:8px;
+  flex-wrap:wrap
+}
 
-    .card-text {
-      margin-top: 5px;
-      color: #737b8e;
-      font-size: 12px;
-      line-height: 1.4;
-    }
+.empty{
+  color:#60697b;
+  text-align:center;
+  padding:12px 0;
+  font-size:13px
+}
 
-    .history-list,
-    .templates-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:14px
+}
 
-    .history-item,
-    .template-item {
-      padding: 12px;
-      border: 1px solid #202431;
-      border-radius: 13px;
-      background: #101219;
-      cursor: pointer;
-    }
+.feature{
+  background:#111319;
+  border:1px solid #252936;
+  border-radius:14px;
+  padding:14px
+}
 
-    .history-item:hover,
-    .template-item:hover {
-      border-color: #343b50;
-    }
+.feature b{
+  display:block;
+  font-size:13px;
+  margin-bottom:5px
+}
 
-    .history-text,
-    .template-text {
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      color: #cbd0dc;
-      font-size: 13px;
-      line-height: 1.45;
-    }
+.feature span{
+  color:#737b8d;
+  font-size:11px;
+  line-height:1.4
+}
 
-    .history-meta {
-      margin-top: 6px;
-      color: #656d80;
-      font-size: 10px;
-    }
+footer{
+  text-align:center;
+  color:#50586a;
+  font-size:11px;
+  padding:25px 0 5px
+}
 
-    footer {
-      padding: 30px 0 10px;
-      text-align: center;
-      color: #555c6c;
-      font-size: 11px;
-    }
+.loading{
+  display:inline-flex;
+  align-items:center;
+  gap:7px
+}
 
-    .hidden {
-      display: none !important;
-    }
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#9b4dff;
+  animation:pulse 1s infinite
+}
 
-    @media (max-width: 650px) {
-      .app {
-        padding: 16px 12px 30px;
-      }
+@keyframes pulse{
+  0%,100%{opacity:.3}
+  50%{opacity:1}
+}
 
-      .hero {
-        padding-top: 18px;
-      }
+@media(max-width:600px){
+  body{
+    padding:12px 10px 30px
+  }
 
-      .panel {
-        padding: 13px;
-        border-radius: 18px;
-      }
+  h1{
+    font-size:29px
+  }
 
-      .cards {
-        grid-template-columns: 1fr;
-      }
+  .features{
+    grid-template-columns:1fr
+  }
 
-      .actions {
-        flex-direction: column;
-      }
+  .card{
+    padding:13px
+  }
 
-      .secondary-btn {
-        width: 100%;
-      }
-
-      .result-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-    }
-  </style>
+  textarea{
+    min-height:190px
+  }
+}
+</style>
 </head>
 
 <body>
-  <main class="app">
 
-    <section class="hero">
-      <div class="badge">● AI POWERED</div>
+<div class="container">
 
-      <h1>✦ AI Помощник</h1>
+  <header class="header">
+    <div class="badge">● AI POWERED</div>
+    <h1>✦ AI Помощник</h1>
+    <div class="subtitle">
+      Напиши текст — AI поможет его улучшить, перевести или переработать.
+    </div>
+  </header>
 
-      <p class="subtitle">
-        Напиши текст или прикрепи файл — AI поможет его улучшить,
-        перевести, переработать или проанализировать.
-      </p>
-    </section>
+  <section class="card">
 
-    <section class="panel">
+    <label class="label" for="mode">ДЕЙСТВИЕ</label>
 
-      <label class="label" for="mode">ДЕЙСТВИЕ</label>
+    <select id="mode">
+      <optgroup label="Текст">
+        <option value="improve">Исправить и улучшить</option>
+        <option value="polish">Сделать естественнее</option>
+        <option value="english">Перевести на английский</option>
+        <option value="shorten">Сократить</option>
+        <option value="summarize">Сделать краткое резюме</option>
+        <option value="explain">Объяснить текст</option>
+      </optgroup>
 
-      <select id="mode">
-        <optgroup label="ТЕКСТ">
-          <option value="improve">Улучшить текст</option>
-          <option value="polish">Исправить ошибки</option>
-          <option value="english">Перевести на английский</option>
-          <option value="shorten">Сократить</option>
-          <option value="summarize">Сделать краткое содержание</option>
-          <option value="explain">Объяснить</option>
-        </optgroup>
+      <optgroup label="Создание">
+        <option value="write">Написать текст</option>
+        <option value="reply">Написать ответ</option>
+        <option value="business">Деловой текст</option>
+        <option value="tiktok">Текст для TikTok</option>
+      </optgroup>
+    </select>
 
-        <optgroup label="СОЗДАНИЕ">
-          <option value="write">Написать текст</option>
-          <option value="reply">Написать ответ</option>
-          <option value="business">Деловой текст</option>
-          <option value="tiktok">Текст для TikTok</option>
-        </optgroup>
+    <br><br>
 
-        <optgroup label="ФАЙЛЫ">
-          <option value="analyze">Проанализировать файл</option>
-        </optgroup>
-      </select>
+    <textarea
+      id="message"
+      maxlength="10000"
+      placeholder="Введите текст..."
+    ></textarea>
 
-      <textarea
-        id="textInput"
-        maxlength="10000"
-        placeholder="Напиши здесь текст..."
-        autocomplete="off"
-        spellcheck="true"
-      ></textarea>
+    <div class="counter">
+      <span id="counter">0</span> / 10000
+    </div>
 
-      <div
-        class="file-zone"
-        id="fileZone"
-        role="button"
-        tabindex="0"
-      >
-        <div class="file-zone-title">
-          📎 Добавить файлы
-        </div>
+    <div class="tools">
+      <button type="button" id="pasteBtn">📋 Вставить</button>
+      <button type="button" id="voiceBtn">🎙 Голос</button>
+      <button type="button" id="clearBtn">✕ Очистить</button>
+      <button type="button" id="fileBtn">📎 Файлы</button>
+    </div>
 
-        <div class="file-zone-subtitle">
-          Можно выбрать несколько файлов любого формата
-        </div>
-
-        <input
-          id="fileInput"
-          type="file"
-          multiple
-          accept="*/*"
-        >
-      </div>
-
-      <div class="files" id="filesList"></div>
-
-      <div class="status" id="status"></div>
-
-      <div class="actions">
-        <button
-          class="main-btn"
-          id="processBtn"
-          type="button"
-        >
-          ✨ Обработать
-        </button>
-
-        <button
-          class="secondary-btn"
-          id="clearBtn"
-          type="button"
-        >
-          Очистить
-        </button>
-      </div>
-
-      <section class="result" id="result">
-
-        <div class="result-header">
-          <div class="result-title">
-            ✦ РЕЗУЛЬТАТ AI
-          </div>
-
-          <div class="result-actions">
-            <button
-              class="small-btn"
-              id="copyBtn"
-              type="button"
-            >
-              📋 Скопировать
-            </button>
-
-            <button
-              class="small-btn"
-              id="retryBtn"
-              type="button"
-            >
-              ↻ Повторить
-            </button>
-
-            <button
-              class="small-btn"
-              id="speakBtn"
-              type="button"
-            >
-              🔊
-            </button>
-
-            <button
-              class="small-btn hidden"
-              id="stopSpeakBtn"
-              type="button"
-            >
-              ■
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="answer"
-          id="answer"
-        ></div>
-
-        <div
-          class="provider"
-          id="provider"
-        ></div>
-
-      </section>
-    </section>
-
-    <section class="section">
-      <div class="section-title">ВОЗМОЖНОСТИ</div>
-
-      <div class="cards">
-        <div class="card">
-          <div class="card-title">⚡ Быстро</div>
-          <div class="card-text">
-            Обработка за считанные секунды.
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">🧠 Умно</div>
-          <div class="card-text">
-            Gemini · Groq · OpenRouter
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">📎 Файлы</div>
-          <div class="card-text">
-            Текст, документы, таблицы и изображения.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="section hidden"
-      id="historySection"
+    <input
+      id="fileInput"
+      class="file-input"
+      type="file"
+      multiple
+      accept="*/*"
     >
-      <div class="section-title">ИСТОРИЯ</div>
-      <div
-        class="history-list"
-        id="historyList"
-      ></div>
-    </section>
 
-    <section
-      class="section hidden"
-      id="templatesSection"
-    >
-      <div class="section-title">ШАБЛОНЫ</div>
-      <div
-        class="templates-list"
-        id="templatesList"
-      ></div>
-    </section>
+    <div id="fileDrop" class="file-drop">
+      Можно выбрать файлы любого формата<br>
+      <strong>+ Добавить</strong>
+    </div>
 
-    <footer>
-      AI Помощник · Gemini · Groq · OpenRouter
-    </footer>
+    <div id="fileList" class="file-list"></div>
 
-  </main>
+    <button id="processBtn" class="primary" type="button">
+      ✨ Обработать
+    </button>
 
-  <script>
-    "use strict";
+  </section>
 
-    const API_URL = "/api/chat";
+  <section id="resultCard" class="card result">
 
-    const MAX_FILES = 5;
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
-    const MAX_TOTAL_EXTRACTED = 8500;
-    const MAX_MESSAGE_LENGTH = 10000;
+    <div class="result-header">
+      <div class="result-title">✦ РЕЗУЛЬТАТ AI</div>
+      <div id="provider" class="provider"></div>
+    </div>
 
-    const HISTORY_KEY = "ai_helper_history_v3";
-    const TEMPLATES_KEY = "ai_helper_templates_v3";
+    <div id="resultText" class="result-text"></div>
 
-    const modeEl = document.getElementById("mode");
-    const textInput = document.getElementById("textInput");
-    const fileInput = document.getElementById("fileInput");
-    const fileZone = document.getElementById("fileZone");
-    const filesList = document.getElementById("filesList");
-    const processBtn = document.getElementById("processBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const statusEl = document.getElementById("status");
+    <div class="result-actions">
+      <button id="copyBtn" type="button">📋 Скопировать</button>
+      <button id="retryBtn" type="button">↻ Повторить</button>
+      <button id="speakBtn" type="button">🔊 Озвучить</button>
+      <button id="stopSpeakBtn" type="button">⏹ Стоп</button>
+    </div>
 
-    const result = document.getElementById("result");
-    const answerEl = document.getElementById("answer");
-    const providerEl = document.getElementById("provider");
+  </section>
 
-    const copyBtn = document.getElementById("copyBtn");
-    const retryBtn = document.getElementById("retryBtn");
-    const speakBtn = document.getElementById("speakBtn");
-    const stopSpeakBtn = document.getElementById("stopSpeakBtn");
+  <section class="card">
 
-    const historySection =
-      document.getElementById("historySection");
+    <div class="section-title">
+      <span>История</span>
+      <button id="clearHistoryBtn" type="button">Очистить</button>
+    </div>
 
-    const historyList =
-      document.getElementById("historyList");
+    <div id="history"></div>
 
-    const templatesSection =
-      document.getElementById("templatesSection");
+  </section>
 
-    const templatesList =
-      document.getElementById("templatesList");
+  <section class="card">
 
-    let selectedFiles = [];
-    let lastRequest = null;
-    let retryTimer = null;
+    <div class="section-title">
+      <span>Шаблоны</span>
+      <button id="createTemplateBtn" type="button">+ Создать</button>
+    </div>
 
-    /*
-     * -----------------------------
-     * FILE HELPERS
-     * -----------------------------
-     */
+    <div id="templates"></div>
 
-    function formatBytes(bytes) {
-      if (!Number.isFinite(bytes)) return "";
+  </section>
 
-      if (bytes < 1024) {
-        return `${bytes} B`;
-      }
+  <div class="features">
 
-      if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(1)} KB`;
-      }
+    <div class="feature">
+      <b>⚡ Быстро</b>
+      <span>За считанные секунды</span>
+    </div>
 
-      return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-    }
+    <div class="feature">
+      <b>🧠 Умно</b>
+      <span>Gemini · Groq · OpenRouter</span>
+    </div>
 
-    function getExtension(name) {
-      const index = name.lastIndexOf(".");
+    <div class="feature">
+      <b>🌍 Много языков</b>
+      <span>Перевод и редактура</span>
+    </div>
 
-      if (index === -1) return "";
+  </div>
 
-      return name.slice(index + 1).toLowerCase();
-    }
+  <footer>
+    AI Помощник · Gemini · Groq · OpenRouter
+  </footer>
 
-    function isImage(file) {
-      return [
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-        "image/gif"
-      ].includes(file.type);
-    }
+</div>
 
-    function isTextFile(file) {
-      const ext = getExtension(file.name);
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
-      const textExtensions = new Set([
-        "txt",
-        "md",
-        "csv",
-        "tsv",
-        "json",
-        "jsonl",
-        "xml",
-        "html",
-        "htm",
-        "css",
-        "scss",
-        "less",
-        "js",
-        "jsx",
-        "ts",
-        "tsx",
-        "py",
-        "java",
-        "c",
-        "cpp",
-        "h",
-        "hpp",
-        "cs",
-        "go",
-        "rs",
-        "php",
-        "rb",
-        "swift",
-        "kt",
-        "kts",
-        "sql",
-        "sh",
-        "bash",
-        "bat",
-        "ps1",
-        "yaml",
-        "yml",
-        "toml",
-        "ini",
-        "cfg",
-        "log",
-        "srt",
-        "vtt",
-        "tex",
-        "svg"
-      ]);
+<script>
+"use strict";
 
-      return (
-        file.type.startsWith("text/") ||
-        textExtensions.has(ext)
-      );
-    }
+/* =========================
+   НАСТРОЙКИ
+========================= */
 
-    function isPdf(file) {
-      return (
-        file.type === "application/pdf" ||
-        getExtension(file.name) === "pdf"
-      );
-    }
+const MAX_TEXT = 10000;
+const MAX_FILES = 5;
+const MAX_IMAGE_BYTES = 6 * 1024 * 1024;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TOTAL_EXTRACTED = 8500;
 
-    function isDocx(file) {
-      return (
-        file.type ===
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-        getExtension(file.name) === "docx"
-      );
-    }
+const HISTORY_KEY = "ai_helper_history_v4";
+const TEMPLATES_KEY = "ai_helper_templates_v4";
 
-    function isSpreadsheet(file) {
-      const ext = getExtension(file.name);
+const messageEl = document.getElementById("message");
+const counterEl = document.getElementById("counter");
+const modeEl = document.getElementById("mode");
 
-      return [
-        "xls",
-        "xlsx",
-        "xlsm",
-        "ods"
-      ].includes(ext);
-    }
+const fileInput = document.getElementById("fileInput");
+const fileBtn = document.getElementById("fileBtn");
+const fileDrop = document.getElementById("fileDrop");
+const fileList = document.getElementById("fileList");
 
-    function fileIcon(file) {
-      if (isImage(file)) return "🖼️";
-      if (isPdf(file)) return "📕";
-      if (isDocx(file)) return "📘";
-      if (isSpreadsheet(file)) return "📊";
-      if (isTextFile(file)) return "📄";
+const processBtn = document.getElementById("processBtn");
+const resultCard = document.getElementById("resultCard");
+const resultText = document.getElementById("resultText");
+const providerEl = document.getElementById("provider");
 
-      return "📎";
-    }
+const pasteBtn = document.getElementById("pasteBtn");
+const voiceBtn = document.getElementById("voiceBtn");
+const clearBtn = document.getElementById("clearBtn");
 
-    /*
-     * -----------------------------
-     * FILE LIST
-     * -----------------------------
-     */
+const copyBtn = document.getElementById("copyBtn");
+const retryBtn = document.getElementById("retryBtn");
+const speakBtn = document.getElementById("speakBtn");
+const stopSpeakBtn = document.getElementById("stopSpeakBtn");
 
-    function renderFiles() {
-      filesList.innerHTML = "";
+const historyEl = document.getElementById("history");
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 
-      selectedFiles.forEach((file, index) => {
-        const item = document.createElement("div");
-        item.className = "file-item";
+const templatesEl = document.getElementById("templates");
+const createTemplateBtn = document.getElementById("createTemplateBtn");
 
-        const icon = document.createElement("div");
-        icon.className = "file-icon";
-        icon.textContent = fileIcon(file);
+let selectedFiles = [];
+let lastRequest = null;
+let recognition = null;
 
-        const info = document.createElement("div");
-        info.className = "file-info";
+/* =========================
+   PDF WORKER
+========================= */
 
-        const name = document.createElement("div");
-        name.className = "file-name";
-        name.textContent = file.name;
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
 
-        const size = document.createElement("div");
-        size.className = "file-size";
-        size.textContent =
-          `${formatBytes(file.size)} · ${file.type || "неизвестный формат"}`;
+/* =========================
+   UTILITIES
+========================= */
 
-        info.appendChild(name);
-        info.appendChild(size);
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes)) return "";
 
-        const remove = document.createElement("button");
-        remove.className = "remove-file";
-        remove.type = "button";
-        remove.textContent = "×";
-        remove.setAttribute(
-          "aria-label",
-          `Удалить ${file.name}`
-        );
+  if (bytes < 1024) {
+    return bytes + " Б";
+  }
 
-        remove.addEventListener("click", (event) => {
-          event.stopPropagation();
+  if (bytes < 1024 * 1024) {
+    return (bytes / 1024).toFixed(1) + " КБ";
+  }
 
-          selectedFiles.splice(index, 1);
+  return (bytes / 1024 / 1024).toFixed(1) + " МБ";
+}
 
-          renderFiles();
-          updateStatus();
-        });
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-        item.appendChild(icon);
-        item.appendChild(info);
-        item.appendChild(remove);
+function getModeName(mode) {
+  const option = [...modeEl.options].find(x => x.value === mode);
+  return option ? option.textContent : mode;
+}
 
-        filesList.appendChild(item);
-      });
-    }
+function updateCounter() {
+  counterEl.textContent = messageEl.value.length;
+}
 
-    function addFiles(files) {
-      const incoming = Array.from(files);
+function setResult(text, provider = "") {
+  resultCard.classList.add("visible");
+  resultText.textContent = text || "";
+  providerEl.textContent = provider ? "✦ " + provider : "";
+}
 
-      for (const file of incoming) {
-        if (selectedFiles.length >= MAX_FILES) {
-          setStatus(
-            `Можно прикрепить максимум ${MAX_FILES} файлов.`
-          );
-          break;
-        }
+function setLoading(loading) {
+  processBtn.disabled = loading;
 
-        if (file.size > MAX_FILE_SIZE) {
-          setStatus(
-            `Файл "${file.name}" слишком большой. Максимум 10 MB.`
-          );
-          continue;
-        }
+  if (loading) {
+    processBtn.innerHTML =
+      '<span class="loading"><span class="dot"></span> Обрабатываю...</span>';
+  } else {
+    processBtn.textContent = "✨ Обработать";
+  }
+}
 
-        const duplicate = selectedFiles.some(
-          existing =>
-            existing.name === file.name &&
-            existing.size === file.size &&
-            existing.lastModified === file.lastModified
-        );
+/* =========================
+   FILE HELPERS
+========================= */
 
-        if (duplicate) {
-          continue;
-        }
+function isImage(file) {
+  return [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif"
+  ].includes(file.type);
+}
 
-        selectedFiles.push(file);
-      }
+function isTextFile(file) {
+  const type = file.type || "";
+  const name = file.name.toLowerCase();
 
-      renderFiles();
-      updateStatus();
-    }
+  return (
+    type.startsWith("text/") ||
+    /\.(txt|md|csv|json|xml|html|htm|css|js|ts|jsx|tsx|py|java|c|cpp|h|hpp|sql|log|yaml|yml|ini|conf|rtf)$/i.test(name)
+  );
+}
 
-    /*
-     * -----------------------------
-     * STATUS
-     * -----------------------------
-     */
+function isPdf(file) {
+  return file.type === "application/pdf" ||
+    file.name.toLowerCase().endsWith(".pdf");
+}
 
-    function setStatus(text) {
-      statusEl.textContent = text || "";
-    }
+function isDocx(file) {
+  return file.type ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    file.name.toLowerCase().endsWith(".docx");
+}
 
-    function updateStatus() {
-      if (!selectedFiles.length) {
-        setStatus("");
+function isSpreadsheet(file) {
+  const name = file.name.toLowerCase();
+
+  return (
+    /\.(xlsx|xls|xlsm|ods)$/i.test(name) ||
+    file.type.includes("spreadsheet") ||
+    file.type.includes("excel")
+  );
+}
+
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Не удалось прочитать файл"));
+
+    reader.readAsText(file);
+  });
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = String(reader.result || "");
+
+      if (!result.startsWith("data:")) {
+        reject(new Error("Некорректное содержимое изображения"));
         return;
       }
 
-      const imageCount =
-        selectedFiles.filter(isImage).length;
+      resolve(result);
+    };
 
-      const textCount =
-        selectedFiles.filter(isTextFile).length;
+    reader.onerror = () => {
+      reject(new Error("Не удалось прочитать изображение"));
+    };
 
-      const otherCount =
-        selectedFiles.length -
-        imageCount -
-        textCount;
+    reader.readAsDataURL(file);
+  });
+}
 
-      const parts = [
-        `${selectedFiles.length} файл(ов) выбрано`
-      ];
+/* =========================
+   PDF
+========================= */
 
-      if (imageCount) {
-        parts.push(`${imageCount} изображение`);
-      }
+async function extractPdf(file) {
+  if (!window.pdfjsLib) {
+    throw new Error("PDF.js не загрузился");
+  }
 
-      if (textCount) {
-        parts.push(`${textCount} текстовый файл`);
-      }
+  const buffer = await file.arrayBuffer();
 
-      if (otherCount) {
-        parts.push(
-          `${otherCount} файл(ов) потребуют отдельной обработки`
-        );
-      }
+  const pdf = await pdfjsLib.getDocument({
+    data: buffer
+  }).promise;
 
-      setStatus(parts.join(" · "));
+  let output = "";
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    const page = await pdf.getPage(pageNumber);
+    const content = await page.getTextContent();
+
+    const pageText = content.items
+      .map(item => item.str || "")
+      .join(" ");
+
+    output += "\n" + pageText;
+
+    if (output.length >= MAX_TOTAL_EXTRACTED) {
+      break;
+    }
+  }
+
+  return output.trim().slice(0, MAX_TOTAL_EXTRACTED);
+}
+
+/* =========================
+   DOCX
+========================= */
+
+async function extractDocx(file) {
+  if (!window.mammoth) {
+    throw new Error("Mammoth не загрузился");
+  }
+
+  const buffer = await file.arrayBuffer();
+
+  const result = await mammoth.extractRawText({
+    arrayBuffer: buffer
+  });
+
+  return String(result.value || "")
+    .trim()
+    .slice(0, MAX_TOTAL_EXTRACTED);
+}
+
+/* =========================
+   XLS/XLSX/ODS
+========================= */
+
+async function extractSpreadsheet(file) {
+  if (!window.XLSX) {
+    throw new Error("SheetJS не загрузился");
+  }
+
+  const buffer = await file.arrayBuffer();
+
+  const workbook = XLSX.read(buffer, {
+    type: "array"
+  });
+
+  let output = "";
+
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+
+    const csv = XLSX.utils.sheet_to_csv(sheet);
+
+    output +=
+      "\n\n=== ЛИСТ: " +
+      sheetName +
+      " ===\n" +
+      csv;
+
+    if (output.length >= MAX_TOTAL_EXTRACTED) {
+      break;
+    }
+  }
+
+  return output.trim().slice(0, MAX_TOTAL_EXTRACTED);
+}
+
+/* =========================
+   PROCESS ONE FILE
+========================= */
+
+async function processFile(item) {
+
+  const file = item.file;
+
+  item.status = "processing";
+  item.message = "Читаю файл...";
+  renderFiles();
+
+  try {
+
+    if (file.size > MAX_FILE_BYTES) {
+      item.status = "error";
+      item.message =
+        "Файл слишком большой. Максимум 10 МБ.";
+      renderFiles();
+      return;
     }
 
-    /*
-     * -----------------------------
-     * TEXT EXTRACTION
-     * -----------------------------
-     */
+    /* IMAGE */
 
-    async function extractTextFile(file) {
-      return await file.text();
-    }
+    if (isImage(file)) {
 
-    async function extractPdf(file) {
-      if (!window.pdfjsLib) {
-        throw new Error(
-          "PDF.js не загрузился."
-        );
+      if (file.size > MAX_IMAGE_BYTES) {
+        item.status = "error";
+        item.message =
+          "Изображение слишком большое. Максимум 6 МБ.";
+        renderFiles();
+        return;
       }
 
-      const buffer =
-        await file.arrayBuffer();
+      const dataUrl = await readFileAsDataURL(file);
 
-      const pdf =
-        await window.pdfjsLib.getDocument({
-          data: buffer
-        }).promise;
+      if (!dataUrl || !dataUrl.includes(";base64,")) {
+        throw new Error("Не удалось получить Base64 изображения");
+      }
 
-      let resultText = "";
+      item.kind = "image";
+      item.dataUrl = dataUrl;
+      item.extractedText = "";
 
-      const maxPages = Math.min(
-        pdf.numPages,
-        50
+      item.status = "ready";
+      item.message = "🖼️ Готово к анализу";
+
+      renderFiles();
+      return;
+    }
+
+    /* TEXT */
+
+    if (isTextFile(file)) {
+
+      const text = await readFileAsText(file);
+
+      item.kind = "text";
+      item.extractedText = text
+        .slice(0, MAX_TOTAL_EXTRACTED);
+
+      item.status = "ready";
+      item.message =
+        item.extractedText.trim()
+          ? "✓ Текст извлечён"
+          : "⚠ Файл пустой";
+
+      renderFiles();
+      return;
+    }
+
+    /* PDF */
+
+    if (isPdf(file)) {
+
+      const text = await extractPdf(file);
+
+      item.kind = "text";
+      item.extractedText = text;
+
+      item.status = "ready";
+      item.message =
+        text
+          ? "✓ Текст из PDF извлечён"
+          : "⚠ В PDF нет доступного текста";
+
+      renderFiles();
+      return;
+    }
+
+    /* DOCX */
+
+    if (isDocx(file)) {
+
+      const text = await extractDocx(file);
+
+      item.kind = "text";
+      item.extractedText = text;
+
+      item.status = "ready";
+      item.message =
+        text
+          ? "✓ Текст из DOCX извлечён"
+          : "⚠ В DOCX нет доступного текста";
+
+      renderFiles();
+      return;
+    }
+
+    /* SPREADSHEET */
+
+    if (isSpreadsheet(file)) {
+
+      const text = await extractSpreadsheet(file);
+
+      item.kind = "text";
+      item.extractedText = text;
+
+      item.status = "ready";
+      item.message =
+        text
+          ? "✓ Таблица извлечена"
+          : "⚠ Таблица пустая";
+
+      renderFiles();
+      return;
+    }
+
+    /* UNKNOWN */
+
+    item.kind = "unsupported";
+    item.status = "warning";
+    item.message =
+      "⚠ Этот формат выбран, но пока не поддерживается для анализа";
+
+    renderFiles();
+
+  } catch (error) {
+
+    console.error("FILE ERROR:", error);
+
+    item.status = "error";
+    item.message =
+      "❌ " +
+      (error?.message || "Не удалось обработать файл");
+
+    renderFiles();
+  }
+}
+
+/* =========================
+   FILE UI
+========================= */
+
+function renderFiles() {
+
+  fileList.innerHTML = "";
+
+  if (!selectedFiles.length) {
+    return;
+  }
+
+  selectedFiles.forEach((item, index) => {
+
+    const div = document.createElement("div");
+    div.className = "file-item";
+
+    let icon = "📄";
+
+    if (isImage(item.file)) {
+      icon = "🖼️";
+    } else if (isPdf(item.file)) {
+      icon = "📕";
+    } else if (isDocx(item.file)) {
+      icon = "📘";
+    } else if (isSpreadsheet(item.file)) {
+      icon = "📊";
+    }
+
+    let statusClass = "";
+
+    if (item.status === "ready") {
+      statusClass = "ok";
+    } else if (
+      item.status === "warning" ||
+      item.status === "processing"
+    ) {
+      statusClass = "warn";
+    } else if (item.status === "error") {
+      statusClass = "error";
+    }
+
+    div.innerHTML = `
+      <div class="file-icon">${icon}</div>
+
+      <div class="file-info">
+        <div class="file-name">${escapeHtml(item.file.name)}</div>
+
+        <div class="file-meta">
+          ${escapeHtml(item.file.type || "тип неизвестен")}
+          · ${formatBytes(item.file.size)}
+        </div>
+
+        <div class="file-status ${statusClass}">
+          ${escapeHtml(item.message || "Выбран")}
+        </div>
+      </div>
+
+      <button
+        class="remove-file"
+        type="button"
+        data-index="${index}"
+      >×</button>
+    `;
+
+    fileList.appendChild(div);
+  });
+
+  document.querySelectorAll(".remove-file").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const index = Number(button.dataset.index);
+
+      selectedFiles.splice(index, 1);
+
+      renderFiles();
+    });
+
+  });
+}
+
+async function addFiles(files) {
+
+  const incoming = [...files];
+
+  for (const file of incoming) {
+
+    if (selectedFiles.length >= MAX_FILES) {
+      break;
+    }
+
+    const duplicate = selectedFiles.some(
+      item =>
+        item.file.name === file.name &&
+        item.file.size === file.size &&
+        item.file.lastModified === file.lastModified
+    );
+
+    if (duplicate) {
+      continue;
+    }
+
+    selectedFiles.push({
+      file,
+      kind: null,
+      status: "processing",
+      message: "Подготавливаю...",
+      extractedText: "",
+      dataUrl: null
+    });
+  }
+
+  renderFiles();
+
+  const newItems = selectedFiles.filter(
+    item => item.status === "processing"
+  );
+
+  for (const item of newItems) {
+    await processFile(item);
+  }
+}
+
+/* =========================
+   BUILD REQUEST
+========================= */
+
+function buildRequest() {
+
+  let text = messageEl.value.trim();
+
+  const extractedParts = [];
+
+  for (const item of selectedFiles) {
+
+    if (
+      item.kind === "text" &&
+      item.status === "ready" &&
+      item.extractedText
+    ) {
+
+      extractedParts.push(
+        `\n\n===== ФАЙЛ: ${item.file.name} =====\n` +
+        item.extractedText
+      );
+    }
+  }
+
+  if (extractedParts.length) {
+
+    const available =
+      Math.max(
+        0,
+        MAX_TOTAL_EXTRACTED - text.length
       );
 
-      for (let pageNumber = 1; pageNumber <= maxPages; pageNumber++) {
-        const page =
-          await pdf.getPage(pageNumber);
+    text += extractedParts
+      .join("")
+      .slice(0, available);
+  }
 
-        const content =
-          await page.getTextContent();
+  const attachments = [];
 
-        const pageText =
-          content.items
-            .map(item => item.str || "")
-            .join(" ");
+  for (const item of selectedFiles) {
 
-        resultText +=
-          `\n[Страница ${pageNumber}]\n${pageText}\n`;
+    if (
+      item.kind === "image" &&
+      item.status === "ready" &&
+      item.dataUrl
+    ) {
 
-        if (
-          resultText.length >=
-          MAX_TOTAL_EXTRACTED
-        ) {
-          break;
-        }
-      }
-
-      return resultText;
-    }
-
-    async function extractDocx(file) {
-      if (!window.mammoth) {
-        throw new Error(
-          "Mammoth не загрузился."
-        );
-      }
-
-      const buffer =
-        await file.arrayBuffer();
-
-      const result =
-        await window.mammoth.extractRawText({
-          arrayBuffer: buffer
-        });
-
-      return result.value || "";
-    }
-
-    async function extractSpreadsheet(file) {
-      if (!window.XLSX) {
-        throw new Error(
-          "SheetJS не загрузился."
-        );
-      }
-
-      const buffer =
-        await file.arrayBuffer();
-
-      const workbook =
-        window.XLSX.read(buffer, {
-          type: "array"
-        });
-
-      let output = "";
-
-      for (const sheetName of workbook.SheetNames) {
-        const sheet =
-          workbook.Sheets[sheetName];
-
-        const csv =
-          window.XLSX.utils.sheet_to_csv(
-            sheet
-          );
-
-        output +=
-          `\n[Лист: ${sheetName}]\n${csv}\n`;
-
-        if (
-          output.length >=
-          MAX_TOTAL_EXTRACTED
-        ) {
-          break;
-        }
-      }
-
-      return output;
-    }
-
-    async function extractFileText(file) {
-      if (isTextFile(file)) {
-        return await extractTextFile(file);
-      }
-
-      if (isPdf(file)) {
-        return await extractPdf(file);
-      }
-
-      if (isDocx(file)) {
-        return await extractDocx(file);
-      }
-
-      if (isSpreadsheet(file)) {
-        return await extractSpreadsheet(file);
-      }
-
-      return "";
-    }
-
-    /*
-     * -----------------------------
-     * IMAGE → BASE64
-     * -----------------------------
-     */
-
-    function fileToDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        const reader =
-          new FileReader();
-
-        reader.onload = () => {
-          resolve(reader.result);
-        };
-
-        reader.onerror = () => {
-          reject(
-            new Error(
-              `Не удалось прочитать ${file.name}`
-            )
-          );
-        };
-
-        reader.readAsDataURL(file);
+      attachments.push({
+        name: item.file.name,
+        mimeType: item.file.type,
+        data: item.dataUrl
       });
     }
+  }
 
-    /*
-     * -----------------------------
-     * REQUEST PREPARATION
-     * -----------------------------
-     */
+  return {
+    message: text.slice(0, MAX_TEXT),
+    mode: modeEl.value,
+    attachments
+  };
+}
 
-    async function buildRequest() {
-      const typedText =
-        textInput.value.trim();
+/* =========================
+   SEND TO API
+========================= */
 
-      let extractedText = "";
-      const images = [];
+async function processText() {
 
-      for (const file of selectedFiles) {
+  const request = buildRequest();
 
-        if (isImage(file)) {
-          const data =
-            await fileToDataUrl(file);
+  const hasText = request.message.trim().length > 0;
+  const hasImages = request.attachments.length > 0;
 
-          images.push({
-            name: file.name,
-            type: file.type,
-            data
-          });
+  if (!hasText && !hasImages) {
 
-          continue;
-        }
+    setResult(
+      "Введите текст или выберите изображение для анализа."
+    );
 
-        const text =
-          await extractFileText(file);
+    return;
+  }
 
-        if (text) {
-          extractedText +=
-            `\n\n===== ФАЙЛ: ${file.name} =====\n` +
-            text;
-        }
-      }
+  lastRequest = request;
 
-      if (
-        extractedText.length >
-        MAX_TOTAL_EXTRACTED
-      ) {
-        extractedText =
-          extractedText.slice(
-            0,
-            MAX_TOTAL_EXTRACTED
-          ) +
-          "\n\n[Содержимое сокращено из-за ограничения размера.]";
-      }
+  setLoading(true);
 
-      let message = typedText;
+  setResult(
+    "Обрабатываю...",
+    ""
+  );
 
-      if (extractedText) {
-        message +=
-          `${message ? "\n\n" : ""}` +
-          extractedText;
-      }
+  try {
 
-      if (!message && images.length) {
-        message =
-          "Проанализируй прикреплённые изображения. " +
-          "Подробно опиши содержимое, важные детали и дай вывод.";
-      }
+    const response = await fetch("/api/chat", {
 
-      if (!message) {
-        throw new Error(
-          "Введите текст или прикрепите файл."
-        );
-      }
+      method: "POST",
 
-      if (
-        message.length >
-        MAX_MESSAGE_LENGTH
-      ) {
-        message =
-          message.slice(
-            0,
-            MAX_MESSAGE_LENGTH
-          );
-      }
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-      return {
-        message,
-        mode: modeEl.value,
-        attachments: images
-      };
+      body: JSON.stringify(request)
+
+    });
+
+    const raw = await response.text();
+
+    let data = {};
+
+    try {
+      data = raw ? JSON.parse(raw) : {};
+    } catch {
+      data = {};
     }
 
-    /*
-     * -----------------------------
-     * AI REQUEST
-     * -----------------------------
-     */
+    if (!response.ok) {
 
-    async function processText() {
-      processBtn.disabled = true;
-      setStatus("⏳ AI обрабатывает запрос...");
+      let message =
+        data.error ||
+        data.message ||
+        `HTTP ${response.status}`;
 
-      try {
-        const request =
-          await buildRequest();
+      throw new Error(message);
+    }
 
-        lastRequest = request;
+    if (!data.answer) {
+      throw new Error(
+        "AI не вернул текстовый ответ."
+      );
+    }
 
-        const response =
-          await fetch(API_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(request)
-          });
+    setResult(
+      data.answer,
+      data.provider || ""
+    );
 
-        let data = null;
+    saveHistory(
+      request.message || "[Изображение]",
+      request.mode,
+      data.answer
+    );
 
-        try {
-          data = await response.json();
-        } catch {
-          throw new Error(
-            "Сервер вернул некорректный ответ."
-          );
-        }
+  } catch (error) {
 
-        if (!response.ok) {
-          if (response.status === 429) {
-            const retryAfter =
-              Number(
-                response.headers.get(
-                  "Retry-After"
-                )
-              ) || 60;
+    console.error("API ERROR:", error);
 
-            startRetryTimer(
-              retryAfter,
-              data.error ||
-                "Лимит временно исчерпан."
-            );
+    setResult(
+      "❌ " +
+      (error?.message || "Неизвестная ошибка")
+    );
 
-            throw new Error(
-              data.error ||
-                "Лимит временно исчерпан."
-            );
-          }
+  } finally {
 
-          throw new Error(
-            data.error ||
-              `Ошибка сервера: ${response.status}`
-          );
-        }
+    setLoading(false);
+  }
+}
 
-        if (!data.answer) {
-          throw new Error(
-            "AI не вернул текстовый ответ."
-          );
-        }
+/* =========================
+   HISTORY
+========================= */
 
-        answerEl.textContent =
-          data.answer;
+function loadHistory() {
 
-        providerEl.textContent =
-          data.provider
-            ? `✦ Провайдер: ${data.provider}`
-            : "";
+  try {
+    return JSON.parse(
+      localStorage.getItem(HISTORY_KEY) || "[]"
+    );
+  } catch {
+    return [];
+  }
+}
 
-        result.classList.add("show");
+function saveHistory(text, mode, answer) {
 
-        saveHistory({
-          text: request.message,
-          answer: data.answer,
-          provider: data.provider || "",
-          files: selectedFiles.map(
-            file => file.name
-          )
+  try {
+
+    const history = loadHistory();
+
+    history.unshift({
+      id: Date.now(),
+      text: text.slice(0, 500),
+      mode,
+      answer: answer.slice(0, 5000),
+      date: new Date().toISOString(),
+      favorite: false
+    });
+
+    history.splice(20);
+
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(history)
+    );
+
+    renderHistory();
+
+  } catch (error) {
+    console.warn("History save failed:", error);
+  }
+}
+
+function renderHistory() {
+
+  const history = loadHistory();
+
+  if (!history.length) {
+
+    historyEl.innerHTML =
+      '<div class="empty">История пока пуста</div>';
+
+    return;
+  }
+
+  historyEl.innerHTML = history.map(item => {
+
+    const date = new Date(item.date);
+
+    const dateText =
+      date.toLocaleDateString("ru-RU", {
+        day:"2-digit",
+        month:"2-digit"
+      }) +
+      ", " +
+      date.toLocaleTimeString("ru-RU", {
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+
+    return `
+      <div class="history-item">
+
+        <div class="history-mode">
+          ${escapeHtml(getModeName(item.mode))}
+        </div>
+
+        <div class="history-text">
+          ${escapeHtml(item.text)}
+        </div>
+
+        <div class="history-date">
+          ${dateText}
+        </div>
+
+        <div class="history-actions">
+
+          <button
+            type="button"
+            data-history-use="${item.id}"
+          >
+            Использовать снова
+          </button>
+
+          <button
+            type="button"
+            data-history-fav="${item.id}"
+          >
+            ${item.favorite ? "★" : "☆"} Избранное
+          </button>
+
+          <button
+            type="button"
+            data-history-copy="${item.id}"
+          >
+            📋 Копировать
+          </button>
+
+          <button
+            type="button"
+            data-history-delete="${item.id}"
+          >
+            Удалить
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+
+  document.querySelectorAll("[data-history-use]")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const id = Number(button.dataset.historyUse);
+
+        const item =
+          loadHistory().find(x => x.id === id);
+
+        if (!item) return;
+
+        messageEl.value = item.text;
+        modeEl.value = item.mode;
+
+        updateCounter();
+
+        window.scrollTo({
+          top:0,
+          behavior:"smooth"
         });
+      });
 
-        setStatus(
-          "✓ Готово"
-        );
+    });
 
-        result.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+  document.querySelectorAll("[data-history-fav]")
+    .forEach(button => {
 
-      } catch (error) {
-        console.error(error);
+      button.addEventListener("click", () => {
 
-        if (
-          error?.message &&
-          !error.message.includes(
-            "Лимит AI временно исчерпан"
-          )
-        ) {
-          setStatus(
-            `❌ ${error.message}`
-          );
-        }
+        const id = Number(button.dataset.historyFav);
 
-      } finally {
-        if (!retryTimer) {
-          processBtn.disabled = false;
-        }
-      }
-    }
+        const history = loadHistory();
 
-    /*
-     * -----------------------------
-     * RETRY TIMER
-     * -----------------------------
-     */
+        const item = history.find(x => x.id === id);
 
-    function startRetryTimer(seconds, message) {
-      clearInterval(retryTimer);
+        if (!item) return;
 
-      let remaining =
-        Math.max(
-          Number(seconds) || 1,
-          1
-        );
-
-      processBtn.disabled = true;
-
-      const update = () => {
-        setStatus(
-          `⚠️ ${message} Попробуйте снова через ${remaining} сек.`
-        );
-
-        if (remaining <= 0) {
-          clearInterval(retryTimer);
-          retryTimer = null;
-          processBtn.disabled = false;
-          setStatus("");
-          return;
-        }
-
-        remaining--;
-      };
-
-      update();
-
-      retryTimer =
-        setInterval(update, 1000);
-    }
-
-    /*
-     * -----------------------------
-     * COPY
-     * -----------------------------
-     */
-
-    copyBtn.addEventListener(
-      "click",
-      async () => {
-        const text =
-          answerEl.textContent.trim();
-
-        if (!text) return;
-
-        try {
-          await navigator.clipboard.writeText(
-            text
-          );
-
-          copyBtn.textContent =
-            "✓ Скопировано";
-
-          setTimeout(() => {
-            copyBtn.textContent =
-              "📋 Скопировать";
-          }, 1500);
-
-        } catch {
-          setStatus(
-            "❌ Не удалось скопировать."
-          );
-        }
-      }
-    );
-
-    /*
-     * -----------------------------
-     * RETRY
-     * -----------------------------
-     */
-
-    retryBtn.addEventListener(
-      "click",
-      () => {
-        if (!lastRequest) {
-          processText();
-          return;
-        }
-
-        processText();
-      }
-    );
-
-    /*
-     * -----------------------------
-     * SPEECH
-     * -----------------------------
-     */
-
-    speakBtn.addEventListener(
-      "click",
-      () => {
-        const text =
-          answerEl.textContent.trim();
-
-        if (
-          !text ||
-          !("speechSynthesis" in window)
-        ) {
-          return;
-        }
-
-        window.speechSynthesis.cancel();
-
-        const utterance =
-          new SpeechSynthesisUtterance(
-            text
-          );
-
-        utterance.lang = "ru-RU";
-        utterance.rate = 1;
-        utterance.pitch = 1;
-
-        utterance.onstart = () => {
-          speakBtn.classList.add(
-            "hidden"
-          );
-
-          stopSpeakBtn.classList.remove(
-            "hidden"
-          );
-        };
-
-        utterance.onend = () => {
-          speakBtn.classList.remove(
-            "hidden"
-          );
-
-          stopSpeakBtn.classList.add(
-            "hidden"
-          );
-        };
-
-        utterance.onerror = () => {
-          speakBtn.classList.remove(
-            "hidden"
-          );
-
-          stopSpeakBtn.classList.add(
-            "hidden"
-          );
-        };
-
-        window.speechSynthesis.speak(
-          utterance
-        );
-      }
-    );
-
-    stopSpeakBtn.addEventListener(
-      "click",
-      () => {
-        window.speechSynthesis.cancel();
-
-        speakBtn.classList.remove(
-          "hidden"
-        );
-
-        stopSpeakBtn.classList.add(
-          "hidden"
-        );
-      }
-    );
-
-    /*
-     * -----------------------------
-     * FILE PICKER
-     * -----------------------------
-     */
-
-    fileZone.addEventListener(
-      "click",
-      () => {
-        fileInput.click();
-      }
-    );
-
-    fileZone.addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-          event.preventDefault();
-          fileInput.click();
-        }
-      }
-    );
-
-    fileInput.addEventListener(
-      "change",
-      () => {
-        addFiles(
-          fileInput.files
-        );
-
-        fileInput.value = "";
-      }
-    );
-
-    /*
-     * -----------------------------
-     * DRAG & DROP
-     * -----------------------------
-     */
-
-    fileZone.addEventListener(
-      "dragover",
-      event => {
-        event.preventDefault();
-        fileZone.classList.add(
-          "dragover"
-        );
-      }
-    );
-
-    fileZone.addEventListener(
-      "dragleave",
-      () => {
-        fileZone.classList.remove(
-          "dragover"
-        );
-      }
-    );
-
-    fileZone.addEventListener(
-      "drop",
-      event => {
-        event.preventDefault();
-
-        fileZone.classList.remove(
-          "dragover"
-        );
-
-        if (event.dataTransfer?.files) {
-          addFiles(
-            event.dataTransfer.files
-          );
-        }
-      }
-    );
-
-    /*
-     * -----------------------------
-     * CLEAR
-     * -----------------------------
-     */
-
-    clearBtn.addEventListener(
-      "click",
-      () => {
-        textInput.value = "";
-        selectedFiles = [];
-
-        renderFiles();
-
-        answerEl.textContent = "";
-        providerEl.textContent = "";
-
-        result.classList.remove(
-          "show"
-        );
-
-        lastRequest = null;
-
-        if (retryTimer) {
-          clearInterval(
-            retryTimer
-          );
-
-          retryTimer = null;
-        }
-
-        processBtn.disabled = false;
-
-        setStatus("");
-      }
-    );
-
-    /*
-     * -----------------------------
-     * PROCESS BUTTON
-     * -----------------------------
-     */
-
-    processBtn.addEventListener(
-      "click",
-      processText
-    );
-
-    /*
-     * -----------------------------
-     * HISTORY
-     * -----------------------------
-     */
-
-    function getHistory() {
-      try {
-        const raw =
-          localStorage.getItem(
-            HISTORY_KEY
-          );
-
-        if (!raw) return [];
-
-        const parsed =
-          JSON.parse(raw);
-
-        return Array.isArray(parsed)
-          ? parsed
-          : [];
-
-      } catch {
-        return [];
-      }
-    }
-
-    function saveHistory(item) {
-      try {
-        const history =
-          getHistory();
-
-        history.unshift({
-          ...item,
-          date:
-            new Date().toLocaleString(
-              "ru-RU"
-            )
-        });
+        item.favorite = !item.favorite;
 
         localStorage.setItem(
           HISTORY_KEY,
-          JSON.stringify(
-            history.slice(0, 20)
-          )
+          JSON.stringify(history)
         );
 
         renderHistory();
-
-      } catch (error) {
-        console.error(
-          "History error:",
-          error
-        );
-      }
-    }
-
-    function renderHistory() {
-      const history =
-        getHistory();
-
-      historyList.innerHTML = "";
-
-      if (!history.length) {
-        historySection.classList.add(
-          "hidden"
-        );
-
-        return;
-      }
-
-      historySection.classList.remove(
-        "hidden"
-      );
-
-      history
-        .slice(0, 10)
-        .forEach(item => {
-          const element =
-            document.createElement(
-              "div"
-            );
-
-          element.className =
-            "history-item";
-
-          const text =
-            document.createElement(
-              "div"
-            );
-
-          text.className =
-            "history-text";
-
-          text.textContent =
-            item.text || "";
-
-          const meta =
-            document.createElement(
-              "div"
-            );
-
-          meta.className =
-            "history-meta";
-
-          meta.textContent =
-            [
-              item.date || "",
-              item.provider
-                ? `AI: ${item.provider}`
-                : "",
-              item.files?.length
-                ? `Файлов: ${item.files.length}`
-                : ""
-            ]
-              .filter(Boolean)
-              .join(" · ");
-
-          element.appendChild(text);
-          element.appendChild(meta);
-
-          element.addEventListener(
-            "click",
-            () => {
-              textInput.value =
-                item.text || "";
-
-              if (item.answer) {
-                answerEl.textContent =
-                  item.answer;
-
-                providerEl.textContent =
-                  item.provider
-                    ? `✦ Провайдер: ${item.provider}`
-                    : "";
-
-                result.classList.add(
-                  "show"
-                );
-              }
-
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-              });
-            }
-          );
-
-          historyList.appendChild(
-            element
-          );
-        });
-    }
-
-    /*
-     * -----------------------------
-     * TEMPLATES
-     * -----------------------------
-     */
-
-    function getTemplates() {
-      try {
-        const raw =
-          localStorage.getItem(
-            TEMPLATES_KEY
-          );
-
-        if (!raw) return [];
-
-        const parsed =
-          JSON.parse(raw);
-
-        return Array.isArray(parsed)
-          ? parsed
-          : [];
-
-      } catch {
-        return [];
-      }
-    }
-
-    function renderTemplates() {
-      const templates =
-        getTemplates();
-
-      templatesList.innerHTML = "";
-
-      if (!templates.length) {
-        templatesSection.classList.add(
-          "hidden"
-        );
-
-        return;
-      }
-
-      templatesSection.classList.remove(
-        "hidden"
-      );
-
-      templates.forEach(template => {
-        const element =
-          document.createElement(
-            "div"
-          );
-
-        element.className =
-          "template-item";
-
-        const text =
-          document.createElement(
-            "div"
-          );
-
-        text.className =
-          "template-text";
-
-        text.textContent =
-          template.text || "";
-
-        element.appendChild(text);
-
-        element.addEventListener(
-          "click",
-          () => {
-            textInput.value =
-              template.text || "";
-
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth"
-            });
-
-            textInput.focus();
-          }
-        );
-
-        templatesList.appendChild(
-          element
-        );
       });
+
+    });
+
+  document.querySelectorAll("[data-history-copy]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id = Number(button.dataset.historyCopy);
+
+        const item =
+          loadHistory().find(x => x.id === id);
+
+        if (!item) return;
+
+        await navigator.clipboard.writeText(
+          item.answer || ""
+        );
+
+        button.textContent = "✓ Скопировано";
+
+        setTimeout(() => {
+          button.textContent = "📋 Копировать";
+        }, 1200);
+      });
+
+    });
+
+  document.querySelectorAll("[data-history-delete]")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const id = Number(button.dataset.historyDelete);
+
+        const history =
+          loadHistory().filter(x => x.id !== id);
+
+        localStorage.setItem(
+          HISTORY_KEY,
+          JSON.stringify(history)
+        );
+
+        renderHistory();
+      });
+
+    });
+}
+
+/* =========================
+   TEMPLATES
+========================= */
+
+function loadTemplates() {
+
+  try {
+    return JSON.parse(
+      localStorage.getItem(TEMPLATES_KEY) || "[]"
+    );
+  } catch {
+    return [];
+  }
+}
+
+function renderTemplates() {
+
+  const templates = loadTemplates();
+
+  if (!templates.length) {
+
+    templatesEl.innerHTML =
+      '<div class="empty">Шаблонов пока нет</div>';
+
+    return;
+  }
+
+  templatesEl.innerHTML = templates.map(item => `
+    <div class="history-item">
+
+      <div class="history-text">
+        ${escapeHtml(item.name)}
+      </div>
+
+      <div class="history-actions">
+
+        <button
+          type="button"
+          data-template-use="${item.id}"
+        >
+          Использовать
+        </button>
+
+        <button
+          type="button"
+          data-template-delete="${item.id}"
+        >
+          Удалить
+        </button>
+
+      </div>
+
+    </div>
+  `).join("");
+
+  document.querySelectorAll("[data-template-use]")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const id = Number(button.dataset.templateUse);
+
+        const item =
+          loadTemplates().find(x => x.id === id);
+
+        if (!item) return;
+
+        messageEl.value = item.text;
+
+        updateCounter();
+      });
+
+    });
+
+  document.querySelectorAll("[data-template-delete]")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const id = Number(button.dataset.templateDelete);
+
+        const templates =
+          loadTemplates().filter(x => x.id !== id);
+
+        localStorage.setItem(
+          TEMPLATES_KEY,
+          JSON.stringify(templates)
+        );
+
+        renderTemplates();
+      });
+
+    });
+}
+
+/* =========================
+   EVENTS
+========================= */
+
+messageEl.addEventListener(
+  "input",
+  updateCounter
+);
+
+processBtn.addEventListener(
+  "click",
+  processText
+);
+
+retryBtn.addEventListener(
+  "click",
+  () => {
+
+    if (!lastRequest) {
+      processText();
+      return;
     }
 
-    /*
-     * -----------------------------
-     * INITIALIZE
-     * -----------------------------
-     */
+    processText();
+  }
+);
 
-    renderFiles();
-    renderHistory();
+clearBtn.addEventListener(
+  "click",
+  () => {
+
+    messageEl.value = "";
+    updateCounter();
+
+    resultCard.classList.remove("visible");
+  }
+);
+
+pasteBtn.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      const text =
+        await navigator.clipboard.readText();
+
+      if (text) {
+
+        messageEl.value =
+          text.slice(0, MAX_TEXT);
+
+        updateCounter();
+      }
+
+    } catch {
+
+      setResult(
+        "Не удалось получить доступ к буферу обмена. Вставьте текст вручную."
+      );
+    }
+  }
+);
+
+fileBtn.addEventListener(
+  "click",
+  () => fileInput.click()
+);
+
+fileDrop.addEventListener(
+  "click",
+  () => fileInput.click()
+);
+
+fileInput.addEventListener(
+  "change",
+  async event => {
+
+    await addFiles(event.target.files);
+
+    fileInput.value = "";
+  }
+);
+
+fileDrop.addEventListener(
+  "dragover",
+  event => {
+
+    event.preventDefault();
+
+    fileDrop.classList.add("drag");
+  }
+);
+
+fileDrop.addEventListener(
+  "dragleave",
+  () => {
+    fileDrop.classList.remove("drag");
+  }
+);
+
+fileDrop.addEventListener(
+  "drop",
+  async event => {
+
+    event.preventDefault();
+
+    fileDrop.classList.remove("drag");
+
+    await addFiles(event.dataTransfer.files);
+  }
+);
+
+copyBtn.addEventListener(
+  "click",
+  async () => {
+
+    const text = resultText.textContent;
+
+    if (!text) return;
+
+    try {
+
+      await navigator.clipboard.writeText(text);
+
+      copyBtn.textContent = "✓ Скопировано";
+
+      setTimeout(() => {
+        copyBtn.textContent = "📋 Скопировать";
+      }, 1200);
+
+    } catch {
+      alert("Не удалось скопировать текст.");
+    }
+  }
+);
+
+/* =========================
+   SPEECH
+========================= */
+
+speakBtn.addEventListener(
+  "click",
+  () => {
+
+    const text = resultText.textContent.trim();
+
+    if (!text) return;
+
+    if (!("speechSynthesis" in window)) {
+
+      alert("Озвучка не поддерживается этим браузером.");
+
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance =
+      new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "ru-RU";
+
+    window.speechSynthesis.speak(
+      utterance
+    );
+  }
+);
+
+stopSpeakBtn.addEventListener(
+  "click",
+  () => {
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+);
+
+/* =========================
+   VOICE INPUT
+========================= */
+
+voiceBtn.addEventListener(
+  "click",
+  () => {
+
+    const SpeechRecognition =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+
+      alert(
+        "Голосовой ввод не поддерживается этим браузером."
+      );
+
+      return;
+    }
+
+    if (recognition) {
+
+      recognition.stop();
+      recognition = null;
+
+      voiceBtn.textContent = "🎙 Голос";
+
+      return;
+    }
+
+    recognition =
+      new SpeechRecognition();
+
+    recognition.lang = "ru-RU";
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      voiceBtn.textContent = "⏹ Слушаю...";
+    };
+
+    recognition.onresult = event => {
+
+      let text = "";
+
+      for (
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ) {
+        text += event.results[i][0].transcript;
+      }
+
+      messageEl.value =
+        text.slice(0, MAX_TEXT);
+
+      updateCounter();
+    };
+
+    recognition.onerror = () => {
+
+      voiceBtn.textContent = "🎙 Голос";
+      recognition = null;
+    };
+
+    recognition.onend = () => {
+
+      voiceBtn.textContent = "🎙 Голос";
+      recognition = null;
+    };
+
+    recognition.start();
+  }
+);
+
+/* =========================
+   CREATE TEMPLATE
+========================= */
+
+createTemplateBtn.addEventListener(
+  "click",
+  () => {
+
+    const text = messageEl.value.trim();
+
+    if (!text) {
+
+      alert(
+        "Сначала введи текст, который нужно сохранить как шаблон."
+      );
+
+      return;
+    }
+
+    const name =
+      prompt("Название шаблона:");
+
+    if (!name || !name.trim()) {
+      return;
+    }
+
+    const templates = loadTemplates();
+
+    templates.unshift({
+      id: Date.now(),
+      name: name.trim(),
+      text
+    });
+
+    templates.splice(30);
+
+    localStorage.setItem(
+      TEMPLATES_KEY,
+      JSON.stringify(templates)
+    );
+
     renderTemplates();
-  </script>
+  }
+);
+
+/* =========================
+   HISTORY CLEAR
+========================= */
+
+clearHistoryBtn.addEventListener(
+  "click",
+  () => {
+
+    localStorage.removeItem(HISTORY_KEY);
+
+    renderHistory();
+  }
+);
+
+/* =========================
+   START
+========================= */
+
+updateCounter();
+renderFiles();
+renderHistory();
+renderTemplates();
+
+</script>
+
 </body>
 </html>
