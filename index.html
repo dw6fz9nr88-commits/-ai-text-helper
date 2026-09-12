@@ -2,4412 +2,2002 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
-
-  <meta
-    name="theme-color"
-    content="#08090d"
-  >
-
-  <meta
-    name="description"
-    content="AI Помощник — улучшение, перевод, сокращение и создание текстов"
-  >
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08090d">
   <title>AI Помощник</title>
 
-  <!-- DOCX -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"
-  ></script>
-
   <!-- PDF -->
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs"
-    type="module"
-  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-  <!-- Excel -->
-  <script
-    src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
-  ></script>
+  <!-- DOCX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+
+  <!-- XLS/XLSX -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
   <style>
-    :root {
-      --bg: #08090d;
-      --panel: #11131a;
-      --panel2: #171923;
-      --border: #292d39;
-      --text: #f5f7fb;
-      --muted: #8f96a8;
-      --accent: #7667ff;
-      --accent2: #9d6cff;
-      --danger: #ff667d;
-      --success: #5ee6a8;
+    :root{
+      --bg:#08090d;
+      --panel:#11131a;
+      --panel2:#171a23;
+      --border:#272b38;
+      --text:#f4f6fb;
+      --muted:#8e95a7;
+      --accent:#6d7cff;
+      --accent2:#9b5cff;
+      --danger:#ff5964;
+      --success:#48d597;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    *{box-sizing:border-box}
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
+    body{
+      margin:0;
       background:
-        radial-gradient(
-          circle at top,
-          rgba(118, 103, 255, 0.12),
-          transparent 35%
-        ),
+        radial-gradient(circle at 20% 0%,rgba(109,124,255,.13),transparent 30%),
+        radial-gradient(circle at 90% 10%,rgba(155,92,255,.11),transparent 30%),
         var(--bg);
-      color: var(--text);
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "SF Pro Text",
-        Arial,
-        sans-serif;
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+      min-height:100vh;
     }
 
-    button,
+    button,input,textarea,select{font:inherit}
+
+    button{
+      border:0;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .wrap{
+      width:min(900px,calc(100% - 28px));
+      margin:0 auto;
+      padding:28px 0 50px;
+    }
+
+    .hero{
+      text-align:center;
+      padding:18px 0 25px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.035);
+      border-radius:999px;
+      color:#b9c0d0;
+      font-size:11px;
+      letter-spacing:.12em;
+      font-weight:800;
+    }
+
+    .badge span{
+      color:var(--success);
+    }
+
+    h1{
+      margin:17px 0 8px;
+      font-size:clamp(34px,8vw,58px);
+      line-height:1;
+      letter-spacing:-.045em;
+    }
+
+    .hero p{
+      margin:0 auto;
+      color:var(--muted);
+      max-width:600px;
+      line-height:1.5;
+      font-size:15px;
+    }
+
+    .card{
+      background:rgba(17,19,26,.9);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
+    }
+
+    .label{
+      display:block;
+      margin-bottom:8px;
+      color:#aeb5c5;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.12em;
+    }
+
     select,
-    textarea,
-    input {
-      font: inherit;
+    textarea{
+      width:100%;
+      color:var(--text);
+      background:var(--panel2);
+      border:1px solid var(--border);
+      outline:none;
+      border-radius:15px;
     }
 
-    button {
-      -webkit-tap-highlight-color: transparent;
+    select{
+      height:48px;
+      padding:0 14px;
     }
 
-    .container {
-      width: min(920px, calc(100% - 28px));
-      margin: 0 auto;
-      padding: 24px 0 40px;
-    }
-
-    header {
-      text-align: center;
-      padding: 20px 0 28px;
-    }
-
-    .language {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 24px;
-    }
-
-    select {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--panel2);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 12px 14px;
-      outline: none;
-    }
-
-    .language select {
-      width: auto;
-      min-width: 120px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      border: 1px solid rgba(118, 103, 255, 0.35);
-      background: rgba(118, 103, 255, 0.09);
-      color: #bdb5ff;
-      border-radius: 999px;
-      padding: 7px 12px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-    }
-
-    h1 {
-      margin: 16px 0 8px;
-      font-size: clamp(34px, 8vw, 58px);
-      line-height: 1;
-      letter-spacing: -0.04em;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 0 auto;
-      max-width: 620px;
-      line-height: 1.6;
-    }
-
-    .app {
-      display: grid;
-      gap: 18px;
-    }
-
-    .panel {
-      background: rgba(17, 19, 26, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18);
-    }
-
-    .field-label {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-
-    #action {
-      margin-bottom: 8px;
-    }
-
-    .action-help {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      min-height: 20px;
-      margin-bottom: 14px;
-    }
-
-    textarea {
-      display: block;
-      width: 100%;
-      min-height: 230px;
-      resize: vertical;
-      border: 1px solid var(--border);
-      background: #0c0e14;
-      color: var(--text);
-      border-radius: 16px;
-      padding: 16px;
-      outline: none;
-      line-height: 1.6;
-      font-size: 16px;
+    textarea{
+      min-height:190px;
+      resize:vertical;
+      padding:15px;
+      line-height:1.55;
+      font-size:16px;
+      margin-top:12px;
     }
 
     textarea:focus,
-    select:focus {
-      border-color: rgba(118, 103, 255, 0.7);
-      box-shadow: 0 0 0 3px rgba(118, 103, 255, 0.08);
+    select:focus{
+      border-color:rgba(109,124,255,.7);
+      box-shadow:0 0 0 3px rgba(109,124,255,.09);
     }
 
-    .input-tools {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-top:9px;
+      flex-wrap:wrap;
     }
 
-    .tools-left,
-    .tools-right {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .counter{
+      color:var(--muted);
+      font-size:12px;
     }
 
-    .tool-btn,
-    .action-btn {
-      border: 1px solid var(--border);
-      background: var(--panel2);
-      color: var(--text);
-      border-radius: 11px;
-      padding: 9px 12px;
-      cursor: pointer;
-      transition: 0.18s ease;
+    .mini-actions{
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
     }
 
-    .tool-btn:hover,
-    .action-btn:hover {
-      border-color: rgba(118, 103, 255, 0.6);
-      transform: translateY(-1px);
+    .mini{
+      background:#1b1e27;
+      color:#d9ddea;
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:8px 11px;
+      font-size:12px;
     }
 
-    .tool-btn:disabled,
-    .action-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      transform: none;
+    .mini:hover{
+      border-color:#42485c;
     }
 
-    .counter {
-      color: var(--muted);
-      font-size: 12px;
+    .help{
+      color:var(--muted);
+      font-size:12px;
+      margin:9px 2px 0;
+      line-height:1.4;
     }
 
-    #fileInput {
-      display: none;
+    .main-btn{
+      width:100%;
+      margin-top:13px;
+      min-height:53px;
+      border-radius:15px;
+      color:white;
+      font-weight:900;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 12px 30px rgba(109,124,255,.2);
     }
 
-    .file-info {
-      display: none;
-      margin-top: 10px;
-      padding: 11px 13px;
-      border: 1px solid var(--border);
-      background: rgba(118, 103, 255, 0.06);
-      border-radius: 12px;
-      white-space: pre-line;
-      color: #cfd3df;
-      font-size: 13px;
-      line-height: 1.5;
+    .main-btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
     }
 
-    .file-info.show {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
+    .file-zone{
+      margin-top:13px;
+      padding:15px;
+      border:1px dashed #3a4050;
+      border-radius:16px;
+      background:rgba(255,255,255,.025);
     }
 
-    .file-info button {
-      flex: 0 0 auto;
+    .file-zone-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
 
-    .process {
-      width: 100%;
-      border: 0;
-      border-radius: 15px;
-      padding: 15px 18px;
-      background:
-        linear-gradient(
-          135deg,
-          var(--accent),
-          var(--accent2)
-        );
-      color: white;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 16px;
-      box-shadow: 0 12px 30px rgba(118, 103, 255, 0.2);
+    .file-zone-title{
+      font-size:13px;
+      font-weight:800;
     }
 
-    .process:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
+    .file-zone-sub{
+      color:var(--muted);
+      font-size:11px;
+      margin-top:3px;
     }
 
-    .result {
-      display: none;
+    .file-add{
+      background:#202431;
+      color:#fff;
+      border:1px solid var(--border);
+      border-radius:11px;
+      padding:9px 12px;
+      font-weight:700;
+      font-size:12px;
+      white-space:nowrap;
     }
 
-    .result.show {
-      display: block;
+    .file-list{
+      display:grid;
+      gap:8px;
+      margin-top:12px;
     }
 
-    .result-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 12px;
+    .file-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px;
+      border:1px solid var(--border);
+      background:#0d0f15;
+      border-radius:13px;
+      min-width:0;
     }
 
-    .result-title {
-      font-weight: 800;
-      font-size: 15px;
+    .file-icon{
+      width:34px;
+      height:34px;
+      flex:0 0 34px;
+      display:grid;
+      place-items:center;
+      border-radius:9px;
+      background:#191d27;
+      font-size:16px;
     }
 
-    .provider {
-      color: var(--muted);
-      font-size: 12px;
+    .file-details{
+      min-width:0;
+      flex:1;
     }
 
-    #resultText {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      background: #0c0e14;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      padding: 16px;
-      line-height: 1.65;
-      min-height: 100px;
+    .file-name{
+      font-size:13px;
+      font-weight:700;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
-    .result-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .file-meta{
+      color:var(--muted);
+      font-size:10px;
+      margin-top:3px;
+      line-height:1.35;
     }
 
-    .section {
-      margin-top: 20px;
+    .file-status{
+      font-size:10px;
+      color:var(--success);
+      margin-top:3px;
     }
 
-    .section-title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 10px;
+    .file-status.warn{
+      color:#ffc857;
     }
 
-    .templates,
-    .history {
-      display: grid;
-      gap: 10px;
+    .file-remove{
+      background:none;
+      color:#777e90;
+      padding:7px;
+      font-size:17px;
     }
 
-    .card {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 15px;
-      padding: 14px;
+    .result{
+      display:none;
     }
 
-    .card-title {
-      font-weight: 800;
-      margin-bottom: 6px;
+    .result.show{
+      display:block;
     }
 
-    .card-preview {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
+    .result-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
     }
 
-    .card-actions {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-top: 11px;
+    .result-title{
+      font-weight:900;
+      font-size:14px;
+      letter-spacing:.08em;
     }
 
-    .empty {
-      color: var(--muted);
-      border: 1px dashed var(--border);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
+    .provider{
+      color:#aeb5c5;
+      font-size:11px;
+      padding:6px 9px;
+      border-radius:999px;
+      background:#191c25;
+      border:1px solid var(--border);
     }
 
-    footer {
-      color: var(--muted);
-      text-align: center;
-      font-size: 12px;
-      padding: 28px 0 8px;
+    .answer{
+      background:#0b0d12;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      line-height:1.65;
+      white-space:pre-wrap;
+      word-break:break-word;
+      min-height:80px;
     }
 
-    @media (max-width: 640px) {
-      .container {
-        width: min(100% - 18px, 920px);
-        padding-top: 10px;
+    .result-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .result-actions button{
+      flex:1;
+      min-width:100px;
+      background:#191c25;
+      border:1px solid var(--border);
+      color:#e8ebf3;
+      border-radius:11px;
+      padding:10px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+      font-weight:900;
+      font-size:14px;
+    }
+
+    .tabs{
+      display:flex;
+      gap:7px;
+      overflow:auto;
+      margin-bottom:12px;
+    }
+
+    .tab{
+      background:#191c25;
+      color:#9da5b7;
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:8px 11px;
+      font-size:11px;
+      white-space:nowrap;
+    }
+
+    .tab.active{
+      color:#fff;
+      border-color:#5963a8;
+      background:#222641;
+    }
+
+    .history-list,
+    .template-list{
+      display:grid;
+      gap:9px;
+    }
+
+    .history-item,
+    .template-item{
+      border:1px solid var(--border);
+      background:#0d0f15;
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .history-top,
+    .template-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .history-mode,
+    .template-name{
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .history-date{
+      color:#697082;
+      font-size:10px;
+    }
+
+    .history-preview,
+    .template-preview{
+      color:#9299a9;
+      font-size:11px;
+      line-height:1.45;
+      margin:7px 0;
+      white-space:pre-wrap;
+    }
+
+    .item-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .item-actions button{
+      background:#181b23;
+      border:1px solid var(--border);
+      color:#bfc5d3;
+      border-radius:8px;
+      padding:6px 8px;
+      font-size:10px;
+    }
+
+    .features{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .feature{
+      padding:15px;
+      border:1px solid var(--border);
+      background:#11131a;
+      border-radius:16px;
+    }
+
+    .feature strong{
+      display:block;
+      margin-bottom:5px;
+      font-size:13px;
+    }
+
+    .feature span{
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.4;
+    }
+
+    footer{
+      text-align:center;
+      color:#606778;
+      font-size:11px;
+      padding:20px 0;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:20px;
+      transform:translate(-50%,20px);
+      opacity:0;
+      pointer-events:none;
+      background:#191d27;
+      border:1px solid var(--border);
+      color:#fff;
+      padding:11px 15px;
+      border-radius:12px;
+      font-size:12px;
+      z-index:100;
+      transition:.2s;
+      max-width:calc(100% - 30px);
+      text-align:center;
+    }
+
+    .toast.show{
+      opacity:1;
+      transform:translate(-50%,0);
+    }
+
+    .empty{
+      color:#6e7586;
+      text-align:center;
+      padding:15px 5px;
+      font-size:12px;
+    }
+
+    @media(max-width:620px){
+      .wrap{
+        width:min(100% - 18px,900px);
+        padding-top:15px;
       }
 
-      header {
-        padding-top: 8px;
+      .card{
+        padding:14px;
+        border-radius:19px;
       }
 
-      .language {
-        justify-content: center;
+      .features{
+        grid-template-columns:1fr;
       }
 
-      .language select {
-        width: 100%;
+      .file-zone-head{
+        align-items:flex-start;
       }
 
-      .panel {
-        padding: 14px;
-        border-radius: 17px;
-      }
-
-      textarea {
-        min-height: 210px;
-      }
-
-      .tools-left,
-      .tools-right {
-        width: 100%;
-      }
-
-      .tool-btn {
-        flex: 1;
-      }
-
-      .file-info.show {
-        align-items: stretch;
+      .result-actions button{
+        flex:1 1 calc(50% - 8px);
       }
     }
   </style>
 </head>
 
 <body>
+<div class="wrap">
 
-<div class="container">
-
-  <header>
-
-    <div class="language">
-      <select id="interfaceLanguage">
-        <option value="ru">Русский</option>
-        <option value="pl">Polski</option>
-        <option value="en">English</option>
-        <option value="uk">Українська</option>
-        <option value="de">Deutsch</option>
-        <option value="fr">Français</option>
-        <option value="es">Español</option>
-        <option value="it">Italiano</option>
-        <option value="pt">Português</option>
-        <option value="cs">Čeština</option>
-      </select>
-    </div>
-
-    <div class="badge" id="badge">
-      ● AI POWERED
-    </div>
-
-    <h1 id="pageTitle">
-      ✦ AI Помощник
-    </h1>
-
-    <p class="subtitle" id="pageSubtitle">
-      Напиши текст — AI поможет его улучшить, перевести или переработать.
-    </p>
-
+  <header class="hero">
+    <div class="badge"><span>●</span> AI POWERED</div>
+    <h1>✦ AI Помощник</h1>
+    <p>Напиши текст — AI поможет его улучшить, перевести или переработать.</p>
   </header>
 
-  <main class="app">
+  <section class="card">
 
-    <section class="panel">
+    <label class="label" for="action">ДЕЙСТВИЕ</label>
 
-      <label
-        class="field-label"
-        id="actionLabel"
-        for="action"
-      >
-        ДЕЙСТВИЕ
-      </label>
+    <select id="action">
+      <optgroup label="Текст">
+        <option value="improve">Улучшить текст</option>
+        <option value="polish">Сделать грамотнее</option>
+        <option value="english">Перевести на английский</option>
+        <option value="shorten">Сократить</option>
+        <option value="summarize">Сделать краткое содержание</option>
+        <option value="explain">Объяснить проще</option>
+      </optgroup>
 
-      <select id="action">
+      <optgroup label="Создать">
+        <option value="write">Написать текст</option>
+        <option value="reply">Написать ответ</option>
+        <option value="business">Деловой текст</option>
+        <option value="tiktok">Текст для TikTok</option>
+      </optgroup>
+    </select>
 
-        <optgroup
-          id="textGroup"
-          label="ТЕКСТ"
-        >
-          <option value="improve">
-            Улучшить текст
-          </option>
+    <div id="help" class="help">
+      Исправляет ошибки, улучшает стиль и делает текст естественнее.
+    </div>
 
-          <option value="polish">
-            Сделать текст грамотнее
-          </option>
+    <textarea
+      id="text"
+      maxlength="10000"
+      placeholder="Введите текст..."
+      spellcheck="true"
+    ></textarea>
 
-          <option value="english">
-            Перевести на английский
-          </option>
+    <div class="toolbar">
+      <div id="counter" class="counter">0 / 10000</div>
 
-          <option value="shorten">
-            Сократить текст
-          </option>
-
-          <option value="summarize">
-            Сделать краткое содержание
-          </option>
-
-          <option value="explain">
-            Объяснить текст
-          </option>
-        </optgroup>
-
-        <optgroup
-          id="createGroup"
-          label="СОЗДАНИЕ"
-        >
-          <option value="write">
-            Написать текст
-          </option>
-
-          <option value="reply">
-            Написать ответ
-          </option>
-
-          <option value="business">
-            Деловой текст
-          </option>
-
-          <option value="tiktok">
-            Создать TikTok-текст
-          </option>
-        </optgroup>
-
-      </select>
-
-      <div
-        class="action-help"
-        id="actionHelp"
-      ></div>
-
-      <textarea
-        id="textInput"
-        maxlength="10000"
-        placeholder="Введите текст..."
-      ></textarea>
-
-      <div class="input-tools">
-
-        <div class="tools-left">
-
-          <button
-            class="tool-btn"
-            id="pasteButton"
-            type="button"
-          >
-            📋 Вставить
-          </button>
-
-          <button
-            class="tool-btn"
-            id="fileButton"
-            type="button"
-          >
-            📎 Добавить файл
-          </button>
-
-          <button
-            class="tool-btn"
-            id="voiceButton"
-            type="button"
-          >
-            🎙️ Голос
-          </button>
-
-          <button
-            class="tool-btn"
-            id="clearButton"
-            type="button"
-          >
-            ✕ Очистить
-          </button>
-
-          <input
-            type="file"
-            id="fileInput"
-            accept="*/*"
-            multiple
-          >
-
-        </div>
-
-        <div
-          class="tools-right"
-          id="counter"
-        >
-          0 / 10000
-        </div>
-
+      <div class="mini-actions">
+        <button class="mini" id="pasteBtn" type="button">📋 Вставить</button>
+        <button class="mini" id="voiceBtn" type="button">🎙 Голос</button>
+        <button class="mini" id="clearBtn" type="button">✕ Очистить</button>
       </div>
+    </div>
 
-      <div
-        class="file-info"
-        id="fileInfo"
-      >
-        <span id="fileName"></span>
+    <!-- UNIVERSAL FILES -->
+    <div class="file-zone">
 
-        <button
-          class="action-btn"
-          id="removeFile"
-          type="button"
-        >
-          ✕
+      <div class="file-zone-head">
+        <div>
+          <div class="file-zone-title">📎 Файлы</div>
+          <div class="file-zone-sub">
+            Можно выбрать файлы любого формата
+          </div>
+        </div>
+
+        <button class="file-add" id="fileAddBtn" type="button">
+          + Добавить
         </button>
       </div>
 
-      <div style="height: 12px;"></div>
-
-      <button
-        class="process"
-        id="processButton"
-        type="button"
+      <input
+        id="fileInput"
+        type="file"
+        multiple
+        accept="*/*"
+        hidden
       >
-        ✨ Обработать
+
+      <div id="fileList" class="file-list"></div>
+    </div>
+
+    <button class="main-btn" id="processBtn" type="button">
+      ✨ Обработать
+    </button>
+
+  </section>
+
+  <section class="card result" id="resultCard">
+
+    <div class="result-head">
+      <div class="result-title">✦ РЕЗУЛЬТАТ AI</div>
+      <div class="provider" id="provider">AI</div>
+    </div>
+
+    <div class="answer" id="answer"></div>
+
+    <div class="result-actions">
+      <button id="copyBtn" type="button">📋 Скопировать</button>
+      <button id="retryBtn" type="button">↻ Повторить</button>
+      <button id="speakBtn" type="button">🔊 Озвучить</button>
+      <button id="stopSpeakBtn" type="button">⏹ Стоп</button>
+    </div>
+
+  </section>
+
+  <section class="card">
+    <div class="section-title">
+      <span>История</span>
+      <button class="mini" id="clearHistoryBtn" type="button">
+        Очистить
       </button>
+    </div>
 
-    </section>
+    <div class="tabs">
+      <button class="tab active" data-filter="all" type="button">Все</button>
+      <button class="tab" data-filter="favorite" type="button">Избранное</button>
+    </div>
 
+    <div id="historyList" class="history-list"></div>
+  </section>
 
-    <section
-      class="panel result"
-      id="resultBox"
-    >
+  <section class="card">
+    <div class="section-title">
+      <span>Шаблоны</span>
+      <button class="mini" id="newTemplateBtn" type="button">+ Создать</button>
+    </div>
 
-      <div class="result-head">
+    <div id="templateList" class="template-list"></div>
+  </section>
 
-        <div
-          class="result-title"
-          id="resultTitle"
-        >
-          ✦ РЕЗУЛЬТАТ AI
-        </div>
+  <section class="features">
+    <div class="feature">
+      <strong>⚡ Быстро</strong>
+      <span>За считанные секунды</span>
+    </div>
 
-        <div
-          class="provider"
-          id="provider"
-        ></div>
+    <div class="feature">
+      <strong>🧠 Умно</strong>
+      <span>Gemini · Groq · OpenRouter</span>
+    </div>
 
-      </div>
+    <div class="feature">
+      <strong>🌍 Много языков</strong>
+      <span>Перевод и редактура</span>
+    </div>
+  </section>
 
-      <div id="resultText"></div>
-
-      <div class="result-actions">
-
-        <button
-          class="action-btn"
-          id="copyButton"
-          type="button"
-          style="display:none;"
-        >
-          📋 Скопировать
-        </button>
-
-        <button
-          class="action-btn"
-          id="retryButton"
-          type="button"
-          style="display:none;"
-        >
-          ↻ Повторить
-        </button>
-
-        <button
-          class="action-btn"
-          id="speakButton"
-          type="button"
-          style="display:none;"
-        >
-          🔊 Озвучить
-        </button>
-
-        <button
-          class="action-btn"
-          id="stopSpeakButton"
-          type="button"
-          style="display:none;"
-        >
-          ■ Стоп
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <section class="section">
-
-      <div class="section-title">
-        Шаблоны
-      </div>
-
-      <div
-        class="templates"
-        id="templatesList"
-      ></div>
-
-      <button
-        class="action-btn"
-        id="addTemplateButton"
-        type="button"
-        style="margin-top:10px;"
-      >
-        ＋ Добавить шаблон
-      </button>
-
-    </section>
-
-
-    <section class="section">
-
-      <div class="section-title">
-        История
-      </div>
-
-      <div
-        style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
-          margin-bottom:10px;
-        "
-      >
-
-        <button
-          class="action-btn"
-          id="allHistoryTab"
-          type="button"
-        >
-          Все
-        </button>
-
-        <button
-          class="action-btn"
-          id="favoriteHistoryTab"
-          type="button"
-        >
-          ★ Избранное
-        </button>
-
-        <button
-          class="action-btn"
-          id="clearHistoryButton"
-          type="button"
-        >
-          Очистить историю
-        </button>
-
-      </div>
-
-      <div
-        class="history"
-        id="historyList"
-      ></div>
-
-    </section>
-
-  </main>
-
-  <footer id="footer">
+  <footer>
     AI Помощник · Gemini · Groq · OpenRouter
   </footer>
 
 </div>
 
+<div class="toast" id="toast"></div>
 
 <script>
 "use strict";
 
+/* =========================
+   CONFIG
+========================= */
 
-/* =========================================================
-   DOM
-========================================================= */
-
-const interfaceLanguage =
-  document.getElementById(
-    "interfaceLanguage"
-  );
-
-const pageTitle =
-  document.getElementById(
-    "pageTitle"
-  );
-
-const pageSubtitle =
-  document.getElementById(
-    "pageSubtitle"
-  );
-
-const actionLabel =
-  document.getElementById(
-    "actionLabel"
-  );
-
-const textGroup =
-  document.getElementById(
-    "textGroup"
-  );
-
-const createGroup =
-  document.getElementById(
-    "createGroup"
-  );
-
-const actionSelect =
-  document.getElementById(
-    "action"
-  );
-
-const actionHelp =
-  document.getElementById(
-    "actionHelp"
-  );
-
-const textInput =
-  document.getElementById(
-    "textInput"
-  );
-
-const pasteButton =
-  document.getElementById(
-    "pasteButton"
-  );
-
-const fileButton =
-  document.getElementById(
-    "fileButton"
-  );
-
-const voiceButton =
-  document.getElementById(
-    "voiceButton"
-  );
-
-const clearButton =
-  document.getElementById(
-    "clearButton"
-  );
-
-const fileInput =
-  document.getElementById(
-    "fileInput"
-  );
-
-const fileInfo =
-  document.getElementById(
-    "fileInfo"
-  );
-
-const fileName =
-  document.getElementById(
-    "fileName"
-  );
-
-const removeFile =
-  document.getElementById(
-    "removeFile"
-  );
-
-const counter =
-  document.getElementById(
-    "counter"
-  );
-
-const processButton =
-  document.getElementById(
-    "processButton"
-  );
-
-const resultBox =
-  document.getElementById(
-    "resultBox"
-  );
-
-const resultTitle =
-  document.getElementById(
-    "resultTitle"
-  );
-
-const resultText =
-  document.getElementById(
-    "resultText"
-  );
-
-const provider =
-  document.getElementById(
-    "provider"
-  );
-
-const copyButton =
-  document.getElementById(
-    "copyButton"
-  );
-
-const retryButton =
-  document.getElementById(
-    "retryButton"
-  );
-
-const speakButton =
-  document.getElementById(
-    "speakButton"
-  );
-
-const stopSpeakButton =
-  document.getElementById(
-    "stopSpeakButton"
-  );
-
-const templatesList =
-  document.getElementById(
-    "templatesList"
-  );
-
-const historyList =
-  document.getElementById(
-    "historyList"
-  );
-
-const allHistoryTab =
-  document.getElementById(
-    "allHistoryTab"
-  );
-
-const favoriteHistoryTab =
-  document.getElementById(
-    "favoriteHistoryTab"
-  );
-
-const clearHistoryButton =
-  document.getElementById(
-    "clearHistoryButton"
-  );
-
-const addTemplateButton =
-  document.getElementById(
-    "addTemplateButton"
-  );
-
-const footer =
-  document.getElementById(
-    "footer"
-  );
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-const HISTORY_KEY =
-  "ai_helper_history_v3";
-
-const TEMPLATES_KEY =
-  "ai_helper_templates_v3";
-
-const LANGUAGE_KEY =
-  "ai_helper_interface_language_v3";
-
+const MAX_TEXT = 10000;
 const MAX_HISTORY = 20;
 const MAX_TEMPLATES = 30;
-const MAX_TEXT = 10000;
-
-const MAX_FILE_SIZE =
-  10 * 1024 * 1024;
 
 const MAX_FILES = 5;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_TOTAL_EXTRACTED = 8500;
 
-const MAX_PDF_PAGES = 50;
+const HISTORY_KEY = "ai_helper_history_v3";
+const TEMPLATES_KEY = "ai_helper_templates_v3";
 
 let historyFilter = "all";
-let rateLimited = false;
 let retryTimer = null;
 let recognition = null;
+let lastRequest = null;
+
 let selectedFiles = [];
 
-
-/* =========================================================
-   TRANSLATIONS
-========================================================= */
-
-const translations = {
-
-  ru: {
-    title: "AI Помощник",
-    subtitle:
-      "Напиши текст — AI поможет его улучшить, перевести или переработать.",
-    actionLabel: "ДЕЙСТВИЕ",
-    textGroup: "ТЕКСТ",
-    createGroup: "СОЗДАНИЕ",
-
-    improve: "Улучшить текст",
-    polish: "Сделать текст грамотнее",
-    english: "Перевести на английский",
-    shorten: "Сократить текст",
-    summarize: "Сделать краткое содержание",
-    explain: "Объяснить текст",
-    write: "Написать текст",
-    reply: "Написать ответ",
-    business: "Деловой текст",
-    tiktok: "Создать TikTok-текст",
-
-    process: "✨ Обработать",
-    processing: "⏳ Обработка...",
-    copy: "📋 Скопировать",
-    copied: "✓ Скопировано",
-    copiedError: "Не удалось скопировать текст.",
-    retry: "↻ Повторить",
-    speak: "🔊 Озвучить",
-    stop: "■ Стоп",
-    paste: "📋 Вставить",
-    file: "📎 Добавить файл",
-    voice: "🎙️ Голос",
-    clear: "✕ Очистить",
-
-    resultTitle: "✦ РЕЗУЛЬТАТ AI",
-
-    enterText: "Введите текст.",
-    tooLong: "Текст слишком длинный.",
-    serverError: "Ошибка сервера.",
-    noAnswer: "AI не вернул ответ.",
-
-    limit: "⚠️ Лимит AI временно исчерпан.",
-    retryIn: "Попробуйте снова через",
-    seconds: "сек.",
-
-    pastePermission:
-      "Разрешите доступ к буферу обмена.",
-    pasteUnavailable:
-      "Не удалось получить текст из буфера обмена.",
-
-    microphoneUnavailable:
-      "Голосовой ввод не поддерживается этим браузером.",
-    listening: "🎙️ Слушаю...",
-
-    emptyHistory:
-      "История пока пуста.",
-    emptyFavorites:
-      "Избранных записей пока нет.",
-    emptyTemplates:
-      "Шаблонов пока нет.",
-
-    useAgain: "Использовать",
-    favorite: "☆ В избранное",
-    favoriteActive: "★ В избранном",
-    delete: "Удалить",
-
-    confirmClear:
-      "Удалить всю историю?",
-
-    templateName:
-      "Введите название шаблона:",
-
-    fileLoaded:
-      "загружен",
-
-    fileTooLarge:
-      "Файл слишком большой. Максимальный размер — 10 MB.",
-
-    fileReadError:
-      "Не удалось прочитать файл.",
-
-    unsupportedFile:
-      "Формат файла пока не поддерживается для извлечения содержимого.",
-
-    fileDocument:
-      "Документ",
-
-    fileText:
-      "Текст",
-
-    fileImage:
-      "Изображение",
-
-    fileAudio:
-      "Аудио",
-
-    fileVideo:
-      "Видео",
-
-    fileArchive:
-      "Архив",
-
-    fileUnknown:
-      "Неизвестный формат",
-
-    maxFiles:
-      "Можно добавить максимум 5 файлов.",
-
-    docxReaderUnavailable:
-      "Не удалось подключить модуль чтения DOCX.",
-
-    pdfReaderUnavailable:
-      "Не удалось подключить модуль чтения PDF.",
-
-    xlsxReaderUnavailable:
-      "Не удалось подключить модуль чтения Excel."
-  },
-
-  pl: {
-    title: "Asystent AI",
-    subtitle:
-      "Napisz tekst — AI pomoże go poprawić, przetłumaczyć lub przeredagować.",
-    actionLabel: "DZIAŁANIE",
-    textGroup: "TEKST",
-    createGroup: "TWORZENIE",
-
-    improve: "Popraw tekst",
-    polish: "Popraw gramatykę",
-    english: "Przetłumacz na angielski",
-    shorten: "Skróć tekst",
-    summarize: "Podsumuj tekst",
-    explain: "Wyjaśnij tekst",
-    write: "Napisz tekst",
-    reply: "Napisz odpowiedź",
-    business: "Tekst biznesowy",
-    tiktok: "Stwórz tekst TikTok",
-
-    process: "✨ Przetwórz",
-    processing: "⏳ Przetwarzanie...",
-    copy: "📋 Kopiuj",
-    copied: "✓ Skopiowano",
-    copiedError: "Nie udało się skopiować tekstu.",
-    retry: "↻ Ponów",
-    speak: "🔊 Odczytaj",
-    stop: "■ Stop",
-    paste: "📋 Wklej",
-    file: "📎 Dodaj plik",
-    voice: "🎙️ Głos",
-    clear: "✕ Wyczyść",
-
-    resultTitle: "✦ WYNIK AI",
-
-    enterText: "Wpisz tekst.",
-    tooLong: "Tekst jest za długi.",
-    serverError: "Błąd serwera.",
-    noAnswer: "AI nie zwróciło odpowiedzi.",
-
-    limit: "⚠️ Limit AI został tymczasowo wyczerpany.",
-    retryIn: "Spróbuj ponownie za",
-    seconds: "sek.",
-
-    pastePermission:
-      "Zezwól na dostęp do schowka.",
-    pasteUnavailable:
-      "Nie udało się pobrać tekstu ze schowka.",
-
-    microphoneUnavailable:
-      "Ta przeglądarka nie obsługuje rozpoznawania mowy.",
-    listening: "🎙️ Słucham...",
-
-    emptyHistory: "Historia jest pusta.",
-    emptyFavorites: "Brak ulubionych.",
-    emptyTemplates: "Brak szablonów.",
-
-    useAgain: "Użyj",
-    favorite: "☆ Ulubione",
-    favoriteActive: "★ Ulubione",
-    delete: "Usuń",
-
-    confirmClear: "Usunąć całą historię?",
-    templateName: "Podaj nazwę szablonu:",
-
-    fileLoaded: "załadowany",
-    fileTooLarge:
-      "Plik jest za duży. Maksymalny rozmiar to 10 MB.",
-    fileReadError: "Nie udało się odczytać pliku.",
-    unsupportedFile:
-      "Ten format nie jest jeszcze obsługiwany do odczytu.",
-    fileDocument: "Dokument",
-    fileText: "Tekst",
-    fileImage: "Obraz",
-    fileAudio: "Audio",
-    fileVideo: "Wideo",
-    fileArchive: "Archiwum",
-    fileUnknown: "Nieznany format",
-    maxFiles: "Możesz dodać maksymalnie 5 plików.",
-    docxReaderUnavailable:
-      "Nie udało się załadować modułu DOCX.",
-    pdfReaderUnavailable:
-      "Nie udało się załadować modułu PDF.",
-    xlsxReaderUnavailable:
-      "Nie udało się załadować modułu Excel."
-  },
-
-  en: {
-    title: "AI Assistant",
-    subtitle:
-      "Write something — AI will help improve, translate or rewrite it.",
-    actionLabel: "ACTION",
-    textGroup: "TEXT",
-    createGroup: "CREATE",
-
-    improve: "Improve text",
-    polish: "Polish grammar",
-    english: "Translate to English",
-    shorten: "Shorten text",
-    summarize: "Summarize text",
-    explain: "Explain text",
-    write: "Write text",
-    reply: "Write a reply",
-    business: "Business text",
-    tiktok: "Create TikTok text",
-
-    process: "✨ Process",
-    processing: "⏳ Processing...",
-    copy: "📋 Copy",
-    copied: "✓ Copied",
-    copiedError: "Could not copy the text.",
-    retry: "↻ Retry",
-    speak: "🔊 Speak",
-    stop: "■ Stop",
-    paste: "📋 Paste",
-    file: "📎 Add file",
-    voice: "🎙️ Voice",
-    clear: "✕ Clear",
-
-    resultTitle: "✦ AI RESULT",
-
-    enterText: "Enter some text.",
-    tooLong: "The text is too long.",
-    serverError: "Server error.",
-    noAnswer: "AI returned no answer.",
-
-    limit: "⚠️ AI limit has been temporarily reached.",
-    retryIn: "Try again in",
-    seconds: "sec.",
-
-    pastePermission:
-      "Allow clipboard access.",
-    pasteUnavailable:
-      "Could not read the clipboard.",
-
-    microphoneUnavailable:
-      "Voice recognition is not supported by this browser.",
-    listening: "🎙️ Listening...",
-
-    emptyHistory: "History is empty.",
-    emptyFavorites: "No favorites yet.",
-    emptyTemplates: "No templates yet.",
-
-    useAgain: "Use",
-    favorite: "☆ Favorite",
-    favoriteActive: "★ Favorite",
-    delete: "Delete",
-
-    confirmClear: "Delete all history?",
-    templateName: "Enter template name:",
-
-    fileLoaded: "loaded",
-    fileTooLarge:
-      "File is too large. Maximum size is 10 MB.",
-    fileReadError:
-      "Could not read the file.",
-    unsupportedFile:
-      "This format is not currently supported for content extraction.",
-    fileDocument: "Document",
-    fileText: "Text",
-    fileImage: "Image",
-    fileAudio: "Audio",
-    fileVideo: "Video",
-    fileArchive: "Archive",
-    fileUnknown: "Unknown format",
-    maxFiles: "You can add up to 5 files.",
-    docxReaderUnavailable:
-      "Could not load the DOCX reader.",
-    pdfReaderUnavailable:
-      "Could not load the PDF reader.",
-    xlsxReaderUnavailable:
-      "Could not load the Excel reader."
-  },
-
-  uk: {
-    title: "AI Помічник",
-    subtitle:
-      "Напиши текст — AI допоможе його покращити, перекласти або переробити.",
-    actionLabel: "ДІЯ",
-    textGroup: "ТЕКСТ",
-    createGroup: "СТВОРЕННЯ",
-
-    improve: "Покращити текст",
-    polish: "Виправити граматику",
-    english: "Перекласти англійською",
-    shorten: "Скоротити текст",
-    summarize: "Зробити короткий зміст",
-    explain: "Пояснити текст",
-    write: "Написати текст",
-    reply: "Написати відповідь",
-    business: "Діловий текст",
-    tiktok: "Створити TikTok-текст",
-
-    process: "✨ Обробити",
-    processing: "⏳ Обробка...",
-    copy: "📋 Копіювати",
-    copied: "✓ Скопійовано",
-    copiedError: "Не вдалося скопіювати текст.",
-    retry: "↻ Повторити",
-    speak: "🔊 Озвучити",
-    stop: "■ Стоп",
-    paste: "📋 Вставити",
-    file: "📎 Додати файл",
-    voice: "🎙️ Голос",
-    clear: "✕ Очистити",
-
-    resultTitle: "✦ РЕЗУЛЬТАТ AI",
-
-    enterText: "Введіть текст.",
-    tooLong: "Текст занадто довгий.",
-    serverError: "Помилка сервера.",
-    noAnswer: "AI не повернув відповідь.",
-
-    limit: "⚠️ Ліміт AI тимчасово вичерпано.",
-    retryIn: "Спробуйте знову через",
-    seconds: "сек.",
-
-    pastePermission:
-      "Дозвольте доступ до буфера обміну.",
-    pasteUnavailable:
-      "Не вдалося отримати текст із буфера обміну.",
-
-    microphoneUnavailable:
-      "Голосове введення не підтримується цим браузером.",
-    listening: "🎙️ Слухаю...",
-
-    emptyHistory: "Історія порожня.",
-    emptyFavorites: "Обраних записів немає.",
-    emptyTemplates: "Шаблонів немає.",
-
-    useAgain: "Використати",
-    favorite: "☆ Обране",
-    favoriteActive: "★ Обране",
-    delete: "Видалити",
-
-    confirmClear: "Видалити всю історію?",
-    templateName: "Введіть назву шаблону:",
-
-    fileLoaded: "завантажено",
-    fileTooLarge:
-      "Файл занадто великий. Максимум 10 MB.",
-    fileReadError:
-      "Не вдалося прочитати файл.",
-    unsupportedFile:
-      "Цей формат поки не підтримується для читання.",
-    fileDocument: "Документ",
-    fileText: "Текст",
-    fileImage: "Зображення",
-    fileAudio: "Аудіо",
-    fileVideo: "Відео",
-    fileArchive: "Архів",
-    fileUnknown: "Невідомий формат",
-    maxFiles: "Можна додати максимум 5 файлів.",
-    docxReaderUnavailable:
-      "Не вдалося завантажити модуль DOCX.",
-    pdfReaderUnavailable:
-      "Не вдалося завантажити модуль PDF.",
-    xlsxReaderUnavailable:
-      "Не вдалося завантажити модуль Excel."
-  },
-
-  de: {
-    title: "KI-Assistent",
-    subtitle:
-      "Schreibe einen Text — die KI hilft beim Verbessern, Übersetzen oder Umschreiben.",
-    actionLabel: "AKTION",
-    textGroup: "TEXT",
-    createGroup: "ERSTELLEN",
-    improve: "Text verbessern",
-    polish: "Grammatik verbessern",
-    english: "Ins Englische übersetzen",
-    shorten: "Text kürzen",
-    summarize: "Zusammenfassen",
-    explain: "Text erklären",
-    write: "Text schreiben",
-    reply: "Antwort schreiben",
-    business: "Geschäftstext",
-    tiktok: "TikTok-Text erstellen",
-    process: "✨ Verarbeiten",
-    processing: "⏳ Verarbeitung...",
-    copy: "📋 Kopieren",
-    copied: "✓ Kopiert",
-    copiedError: "Text konnte nicht kopiert werden.",
-    retry: "↻ Wiederholen",
-    speak: "🔊 Vorlesen",
-    stop: "■ Stopp",
-    paste: "📋 Einfügen",
-    file: "📎 Datei hinzufügen",
-    voice: "🎙️ Sprache",
-    clear: "✕ Löschen",
-    resultTitle: "✦ KI-ERGEBNIS",
-    enterText: "Text eingeben.",
-    tooLong: "Der Text ist zu lang.",
-    serverError: "Serverfehler.",
-    noAnswer: "Keine KI-Antwort.",
-    limit: "⚠️ KI-Limit wurde vorübergehend erreicht.",
-    retryIn: "Erneut versuchen in",
-    seconds: "Sek.",
-    pastePermission: "Zugriff auf Zwischenablage erlauben.",
-    pasteUnavailable: "Zwischenablage konnte nicht gelesen werden.",
-    microphoneUnavailable: "Spracherkennung wird nicht unterstützt.",
-    listening: "🎙️ Höre zu...",
-    emptyHistory: "Verlauf ist leer.",
-    emptyFavorites: "Keine Favoriten.",
-    emptyTemplates: "Keine Vorlagen.",
-    useAgain: "Verwenden",
-    favorite: "☆ Favorit",
-    favoriteActive: "★ Favorit",
-    delete: "Löschen",
-    confirmClear: "Gesamten Verlauf löschen?",
-    templateName: "Vorlagenname eingeben:",
-    fileLoaded: "geladen",
-    fileTooLarge: "Datei zu groß. Maximum 10 MB.",
-    fileReadError: "Datei konnte nicht gelesen werden.",
-    unsupportedFile: "Dieses Format wird noch nicht unterstützt.",
-    fileDocument: "Dokument",
-    fileText: "Text",
-    fileImage: "Bild",
-    fileAudio: "Audio",
-    fileVideo: "Video",
-    fileArchive: "Archiv",
-    fileUnknown: "Unbekanntes Format",
-    maxFiles: "Maximal 5 Dateien.",
-    docxReaderUnavailable: "DOCX-Modul konnte nicht geladen werden.",
-    pdfReaderUnavailable: "PDF-Modul konnte nicht geladen werden.",
-    xlsxReaderUnavailable: "Excel-Modul konnte nicht geladen werden."
-  },
-
-  fr: {
-    title: "Assistant IA",
-    subtitle:
-      "Écrivez un texte — l'IA vous aide à l'améliorer, le traduire ou le reformuler.",
-    actionLabel: "ACTION",
-    textGroup: "TEXTE",
-    createGroup: "CRÉATION",
-    improve: "Améliorer le texte",
-    polish: "Corriger la grammaire",
-    english: "Traduire en anglais",
-    shorten: "Raccourcir",
-    summarize: "Résumer",
-    explain: "Expliquer le texte",
-    write: "Écrire un texte",
-    reply: "Écrire une réponse",
-    business: "Texte professionnel",
-    tiktok: "Créer un texte TikTok",
-    process: "✨ Traiter",
-    processing: "⏳ Traitement...",
-    copy: "📋 Copier",
-    copied: "✓ Copié",
-    copiedError: "Impossible de copier le texte.",
-    retry: "↻ Réessayer",
-    speak: "🔊 Lire",
-    stop: "■ Stop",
-    paste: "📋 Coller",
-    file: "📎 Ajouter un fichier",
-    voice: "🎙️ Voix",
-    clear: "✕ Effacer",
-    resultTitle: "✦ RÉSULTAT IA",
-    enterText: "Entrez un texte.",
-    tooLong: "Le texte est trop long.",
-    serverError: "Erreur serveur.",
-    noAnswer: "L'IA n'a pas répondu.",
-    limit: "⚠️ Limite IA temporairement atteinte.",
-    retryIn: "Réessayez dans",
-    seconds: "sec.",
-    pastePermission: "Autorisez l'accès au presse-papiers.",
-    pasteUnavailable: "Impossible de lire le presse-papiers.",
-    microphoneUnavailable: "La reconnaissance vocale n'est pas disponible.",
-    listening: "🎙️ Écoute...",
-    emptyHistory: "Historique vide.",
-    emptyFavorites: "Aucun favori.",
-    emptyTemplates: "Aucun modèle.",
-    useAgain: "Utiliser",
-    favorite: "☆ Favori",
-    favoriteActive: "★ Favori",
-    delete: "Supprimer",
-    confirmClear: "Supprimer tout l'historique ?",
-    templateName: "Nom du modèle :",
-    fileLoaded: "chargé",
-    fileTooLarge: "Fichier trop volumineux. Maximum 10 Mo.",
-    fileReadError: "Impossible de lire le fichier.",
-    unsupportedFile: "Ce format n'est pas encore pris en charge.",
-    fileDocument: "Document",
-    fileText: "Texte",
-    fileImage: "Image",
-    fileAudio: "Audio",
-    fileVideo: "Vidéo",
-    fileArchive: "Archive",
-    fileUnknown: "Format inconnu",
-    maxFiles: "Maximum 5 fichiers.",
-    docxReaderUnavailable: "Module DOCX indisponible.",
-    pdfReaderUnavailable: "Module PDF indisponible.",
-    xlsxReaderUnavailable: "Module Excel indisponible."
-  },
-
-  es: {
-    title: "Asistente IA",
-    subtitle:
-      "Escribe un texto — la IA te ayudará a mejorarlo, traducirlo o reformularlo.",
-    actionLabel: "ACCIÓN",
-    textGroup: "TEXTO",
-    createGroup: "CREACIÓN",
-    improve: "Mejorar texto",
-    polish: "Corregir gramática",
-    english: "Traducir al inglés",
-    shorten: "Acortar texto",
-    summarize: "Resumir",
-    explain: "Explicar texto",
-    write: "Escribir texto",
-    reply: "Escribir respuesta",
-    business: "Texto empresarial",
-    tiktok: "Crear texto para TikTok",
-    process: "✨ Procesar",
-    processing: "⏳ Procesando...",
-    copy: "📋 Copiar",
-    copied: "✓ Copiado",
-    copiedError: "No se pudo copiar el texto.",
-    retry: "↻ Reintentar",
-    speak: "🔊 Leer",
-    stop: "■ Detener",
-    paste: "📋 Pegar",
-    file: "📎 Añadir archivo",
-    voice: "🎙️ Voz",
-    clear: "✕ Limpiar",
-    resultTitle: "✦ RESULTADO IA",
-    enterText: "Introduce un texto.",
-    tooLong: "El texto es demasiado largo.",
-    serverError: "Error del servidor.",
-    noAnswer: "La IA no respondió.",
-    limit: "⚠️ Límite de IA alcanzado temporalmente.",
-    retryIn: "Inténtalo de nuevo en",
-    seconds: "seg.",
-    pastePermission: "Permite el acceso al portapapeles.",
-    pasteUnavailable: "No se pudo leer el portapapeles.",
-    microphoneUnavailable: "El reconocimiento de voz no está disponible.",
-    listening: "🎙️ Escuchando...",
-    emptyHistory: "El historial está vacío.",
-    emptyFavorites: "No hay favoritos.",
-    emptyTemplates: "No hay plantillas.",
-    useAgain: "Usar",
-    favorite: "☆ Favorito",
-    favoriteActive: "★ Favorito",
-    delete: "Eliminar",
-    confirmClear: "¿Eliminar todo el historial?",
-    templateName: "Nombre de la plantilla:",
-    fileLoaded: "cargado",
-    fileTooLarge: "Archivo demasiado grande. Máximo 10 MB.",
-    fileReadError: "No se pudo leer el archivo.",
-    unsupportedFile: "Este formato aún no es compatible.",
-    fileDocument: "Documento",
-    fileText: "Texto",
-    fileImage: "Imagen",
-    fileAudio: "Audio",
-    fileVideo: "Vídeo",
-    fileArchive: "Archivo",
-    fileUnknown: "Formato desconocido",
-    maxFiles: "Máximo 5 archivos.",
-    docxReaderUnavailable: "Módulo DOCX no disponible.",
-    pdfReaderUnavailable: "Módulo PDF no disponible.",
-    xlsxReaderUnavailable: "Módulo Excel no disponible."
-  },
-
-  it: {
-    title: "Assistente AI",
-    subtitle:
-      "Scrivi un testo — l'AI ti aiuterà a migliorarlo, tradurlo o riscriverlo.",
-    actionLabel: "AZIONE",
-    textGroup: "TESTO",
-    createGroup: "CREAZIONE",
-    improve: "Migliora testo",
-    polish: "Correggi la grammatica",
-    english: "Traduci in inglese",
-    shorten: "Accorcia testo",
-    summarize: "Riassumi",
-    explain: "Spiega il testo",
-    write: "Scrivi testo",
-    reply: "Scrivi risposta",
-    business: "Testo aziendale",
-    tiktok: "Crea testo TikTok",
-    process: "✨ Elabora",
-    processing: "⏳ Elaborazione...",
-    copy: "📋 Copia",
-    copied: "✓ Copiato",
-    copiedError: "Impossibile copiare il testo.",
-    retry: "↻ Riprova",
-    speak: "🔊 Leggi",
-    stop: "■ Stop",
-    paste: "📋 Incolla",
-    file: "📎 Aggiungi file",
-    voice: "🎙️ Voce",
-    clear: "✕ Cancella",
-    resultTitle: "✦ RISULTATO AI",
-    enterText: "Inserisci il testo.",
-    tooLong: "Il testo è troppo lungo.",
-    serverError: "Errore del server.",
-    noAnswer: "L'AI non ha risposto.",
-    limit: "⚠️ Limite AI temporaneamente raggiunto.",
-    retryIn: "Riprova tra",
-    seconds: "sec.",
-    pastePermission: "Consenti l'accesso agli appunti.",
-    pasteUnavailable: "Impossibile leggere gli appunti.",
-    microphoneUnavailable: "Riconoscimento vocale non supportato.",
-    listening: "🎙️ Ascolto...",
-    emptyHistory: "Cronologia vuota.",
-    emptyFavorites: "Nessun preferito.",
-    emptyTemplates: "Nessun modello.",
-    useAgain: "Usa",
-    favorite: "☆ Preferito",
-    favoriteActive: "★ Preferito",
-    delete: "Elimina",
-    confirmClear: "Eliminare tutta la cronologia?",
-    templateName: "Nome del modello:",
-    fileLoaded: "caricato",
-    fileTooLarge: "File troppo grande. Massimo 10 MB.",
-    fileReadError: "Impossibile leggere il file.",
-    unsupportedFile: "Questo formato non è ancora supportato.",
-    fileDocument: "Documento",
-    fileText: "Testo",
-    fileImage: "Immagine",
-    fileAudio: "Audio",
-    fileVideo: "Video",
-    fileArchive: "Archivio",
-    fileUnknown: "Formato sconosciuto",
-    maxFiles: "Massimo 5 file.",
-    docxReaderUnavailable: "Modulo DOCX non disponibile.",
-    pdfReaderUnavailable: "Modulo PDF non disponibile.",
-    xlsxReaderUnavailable: "Modulo Excel non disponibile."
-  },
-
-  pt: {
-    title: "Assistente de IA",
-    subtitle:
-      "Escreva um texto — a IA ajudará a melhorar, traduzir ou reescrever.",
-    actionLabel: "AÇÃO",
-    textGroup: "TEXTO",
-    createGroup: "CRIAÇÃO",
-    improve: "Melhorar texto",
-    polish: "Corrigir gramática",
-    english: "Traduzir para inglês",
-    shorten: "Encurtar texto",
-    summarize: "Resumir",
-    explain: "Explicar texto",
-    write: "Escrever texto",
-    reply: "Escrever resposta",
-    business: "Texto empresarial",
-    tiktok: "Criar texto para TikTok",
-    process: "✨ Processar",
-    processing: "⏳ Processando...",
-    copy: "📋 Copiar",
-    copied: "✓ Copiado",
-    copiedError: "Não foi possível copiar o texto.",
-    retry: "↻ Tentar novamente",
-    speak: "🔊 Ler",
-    stop: "■ Parar",
-    paste: "📋 Colar",
-    file: "📎 Adicionar arquivo",
-    voice: "🎙️ Voz",
-    clear: "✕ Limpar",
-    resultTitle: "✦ RESULTADO IA",
-    enterText: "Digite um texto.",
-    tooLong: "O texto é muito longo.",
-    serverError: "Erro do servidor.",
-    noAnswer: "A IA não respondeu.",
-    limit: "⚠️ Limite de IA atingido temporariamente.",
-    retryIn: "Tente novamente em",
-    seconds: "seg.",
-    pastePermission: "Permita o acesso à área de transferência.",
-    pasteUnavailable: "Não foi possível ler a área de transferência.",
-    microphoneUnavailable: "Reconhecimento de voz não suportado.",
-    listening: "🎙️ Ouvindo...",
-    emptyHistory: "Histórico vazio.",
-    emptyFavorites: "Nenhum favorito.",
-    emptyTemplates: "Nenhum modelo.",
-    useAgain: "Usar",
-    favorite: "☆ Favorito",
-    favoriteActive: "★ Favorito",
-    delete: "Excluir",
-    confirmClear: "Excluir todo o histórico?",
-    templateName: "Nome do modelo:",
-    fileLoaded: "carregado",
-    fileTooLarge: "Arquivo muito grande. Máximo 10 MB.",
-    fileReadError: "Não foi possível ler o arquivo.",
-    unsupportedFile: "Este formato ainda não é suportado.",
-    fileDocument: "Documento",
-    fileText: "Texto",
-    fileImage: "Imagem",
-    fileAudio: "Áudio",
-    fileVideo: "Vídeo",
-    fileArchive: "Arquivo",
-    fileUnknown: "Formato desconhecido",
-    maxFiles: "Máximo de 5 arquivos.",
-    docxReaderUnavailable: "Módulo DOCX indisponível.",
-    pdfReaderUnavailable: "Módulo PDF indisponível.",
-    xlsxReaderUnavailable: "Módulo Excel indisponível."
-  },
-
-  cs: {
-    title: "AI Asistent",
-    subtitle:
-      "Napište text — AI vám pomůže jej vylepšit, přeložit nebo přepracovat.",
-    actionLabel: "AKCE",
-    textGroup: "TEXT",
-    createGroup: "VYTVOŘIT",
-    improve: "Vylepšit text",
-    polish: "Opravit gramatiku",
-    english: "Přeložit do angličtiny",
-    shorten: "Zkrátit text",
-    summarize: "Shrnout text",
-    explain: "Vysvětlit text",
-    write: "Napsat text",
-    reply: "Napsat odpověď",
-    business: "Obchodní text",
-    tiktok: "Vytvořit TikTok text",
-    process: "✨ Zpracovat",
-    processing: "⏳ Zpracování...",
-    copy: "📋 Kopírovat",
-    copied: "✓ Zkopírováno",
-    copiedError: "Text se nepodařilo zkopírovat.",
-    retry: "↻ Zkusit znovu",
-    speak: "🔊 Přečíst",
-    stop: "■ Stop",
-    paste: "📋 Vložit",
-    file: "📎 Přidat soubor",
-    voice: "🎙️ Hlas",
-    clear: "✕ Vymazat",
-    resultTitle: "✦ VÝSLEDEK AI",
-    enterText: "Zadejte text.",
-    tooLong: "Text je příliš dlouhý.",
-    serverError: "Chyba serveru.",
-    noAnswer: "AI nevrátilo odpověď.",
-    limit: "⚠️ Limit AI byl dočasně dosažen.",
-    retryIn: "Zkuste znovu za",
-    seconds: "s.",
-    pastePermission: "Povolte přístup ke schránce.",
-    pasteUnavailable: "Schránku se nepodařilo načíst.",
-    microphoneUnavailable: "Rozpoznávání hlasu není podporováno.",
-    listening: "🎙️ Poslouchám...",
-    emptyHistory: "Historie je prázdná.",
-    emptyFavorites: "Žádné oblíbené položky.",
-    emptyTemplates: "Žádné šablony.",
-    useAgain: "Použít",
-    favorite: "☆ Oblíbené",
-    favoriteActive: "★ Oblíbené",
-    delete: "Smazat",
-    confirmClear: "Smazat celou historii?",
-    templateName: "Název šablony:",
-    fileLoaded: "načten",
-    fileTooLarge: "Soubor je příliš velký. Maximum 10 MB.",
-    fileReadError: "Soubor se nepodařilo přečíst.",
-    unsupportedFile: "Tento formát zatím není podporován.",
-    fileDocument: "Dokument",
-    fileText: "Text",
-    fileImage: "Obrázek",
-    fileAudio: "Audio",
-    fileVideo: "Video",
-    fileArchive: "Archiv",
-    fileUnknown: "Neznámý formát",
-    maxFiles: "Maximálně 5 souborů.",
-    docxReaderUnavailable: "Modul DOCX není dostupný.",
-    pdfReaderUnavailable: "Modul PDF není dostupný.",
-    xlsxReaderUnavailable: "Modul Excel není dostupný."
-  }
-
-};
-
-
-/* =========================================================
-   TRANSLATION HELPERS
-========================================================= */
-
-function getLanguage() {
-
-  const value =
-    interfaceLanguage.value;
-
-  return translations[value]
-    ? value
-    : "ru";
+/* =========================
+   DOM
+========================= */
+
+const textInput = document.getElementById("text");
+const action = document.getElementById("action");
+const processBtn = document.getElementById("processBtn");
+const resultCard = document.getElementById("resultCard");
+const answer = document.getElementById("answer");
+const provider = document.getElementById("provider");
+const counter = document.getElementById("counter");
+const help = document.getElementById("help");
+const fileInput = document.getElementById("fileInput");
+const fileList = document.getElementById("fileList");
+const toast = document.getElementById("toast");
+
+/* =========================
+   TOAST
+========================= */
+
+let toastTimer = null;
+
+function showToast(message){
+  clearTimeout(toastTimer);
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2800);
 }
 
-
-function t(key) {
-
-  const language =
-    getLanguage();
-
-  return (
-    translations[language]?.[key] ||
-    translations.ru[key] ||
-    key
-  );
-}
-
-
-function getHelp(mode) {
-
-  const helps = {
-
-    improve: {
-      ru: "Улучшает стиль и читаемость текста.",
-      pl: "Poprawia styl i czytelność tekstu.",
-      en: "Improves style and readability.",
-      uk: "Покращує стиль і читабельність.",
-      de: "Verbessert Stil und Lesbarkeit.",
-      fr: "Améliore le style et la lisibilité.",
-      es: "Mejora el estilo y la legibilidad.",
-      it: "Migliora stile e leggibilità.",
-      pt: "Melhora o estilo e a legibilidade.",
-      cs: "Zlepší styl a čitelnost."
-    },
-
-    polish: {
-      ru: "Исправляет грамматику, орфографию и формулировки.",
-      pl: "Poprawia gramatykę, ortografię i sformułowania.",
-      en: "Fixes grammar, spelling and wording.",
-      uk: "Виправляє граматику, орфографію та формулювання.",
-      de: "Korrigiert Grammatik, Rechtschreibung und Formulierungen.",
-      fr: "Corrige la grammaire et la formulation.",
-      es: "Corrige gramática y redacción.",
-      it: "Corregge grammatica e formulazioni.",
-      pt: "Corrige gramática e formulações.",
-      cs: "Opraví gramatiku a formulace."
-    },
-
-    english: {
-      ru: "Переводит текст на английский язык.",
-      pl: "Tłumaczy tekst na język angielski.",
-      en: "Translates the text into English.",
-      uk: "Перекладає текст англійською.",
-      de: "Übersetzt den Text ins Englische.",
-      fr: "Traduit le texte en anglais.",
-      es: "Traduce el texto al inglés.",
-      it: "Traduce il testo in inglese.",
-      pt: "Traduz o texto para inglês.",
-      cs: "Přeloží text do angličtiny."
-    },
-
-    shorten: {
-      ru: "Сокращает текст, сохраняя главный смысл.",
-      pl: "Skraca tekst, zachowując najważniejszy sens.",
-      en: "Shortens the text while keeping the main meaning.",
-      uk: "Скорочує текст, зберігаючи основний зміст.",
-      de: "Kürzt den Text und bewahrt die Kernaussage.",
-      fr: "Raccourcit le texte en gardant le sens principal.",
-      es: "Acorta el texto manteniendo la idea principal.",
-      it: "Accorcia il testo mantenendo il significato.",
-      pt: "Encurta o texto mantendo o sentido principal.",
-      cs: "Zkrátí text při zachování hlavního významu."
-    },
-
-    summarize: {
-      ru: "Создаёт краткое содержание.",
-      pl: "Tworzy krótkie podsumowanie.",
-      en: "Creates a concise summary.",
-      uk: "Створює короткий зміст.",
-      de: "Erstellt eine kurze Zusammenfassung.",
-      fr: "Crée un résumé concis.",
-      es: "Crea un resumen breve.",
-      it: "Crea un riassunto breve.",
-      pt: "Cria um resumo curto.",
-      cs: "Vytvoří stručné shrnutí."
-    },
-
-    explain: {
-      ru: "Объясняет содержание простыми словами.",
-      pl: "Wyjaśnia treść prostymi słowami.",
-      en: "Explains the content in simple words.",
-      uk: "Пояснює зміст простими словами.",
-      de: "Erklärt den Inhalt in einfachen Worten.",
-      fr: "Explique le contenu simplement.",
-      es: "Explica el contenido con palabras sencillas.",
-      it: "Spiega il contenuto in modo semplice.",
-      pt: "Explica o conteúdo de forma simples.",
-      cs: "Vysvětlí obsah jednoduchými slovy."
-    },
-
-    write: {
-      ru: "Создаёт новый текст по вашему запросу.",
-      pl: "Tworzy nowy tekst na podstawie polecenia.",
-      en: "Creates new text based on your request.",
-      uk: "Створює новий текст за вашим запитом.",
-      de: "Erstellt einen neuen Text nach Ihrer Anfrage.",
-      fr: "Crée un nouveau texte selon votre demande.",
-      es: "Crea un texto nuevo según tu solicitud.",
-      it: "Crea un nuovo testo in base alla richiesta.",
-      pt: "Cria um novo texto com base no pedido.",
-      cs: "Vytvoří nový text podle vašeho zadání."
-    },
-
-    reply: {
-      ru: "Помогает написать естественный ответ.",
-      pl: "Pomaga napisać naturalną odpowiedź.",
-      en: "Helps write a natural reply.",
-      uk: "Допомагає написати природну відповідь.",
-      de: "Hilft beim Schreiben einer natürlichen Antwort.",
-      fr: "Aide à rédiger une réponse naturelle.",
-      es: "Ayuda a escribir una respuesta natural.",
-      it: "Aiuta a scrivere una risposta naturale.",
-      pt: "Ajuda a escrever uma resposta natural.",
-      cs: "Pomůže napsat přirozenou odpověď."
-    },
-
-    business: {
-      ru: "Создаёт профессиональный деловой текст.",
-      pl: "Tworzy profesjonalny tekst biznesowy.",
-      en: "Creates professional business text.",
-      uk: "Створює професійний діловий текст.",
-      de: "Erstellt professionellen Geschäftstext.",
-      fr: "Crée un texte professionnel.",
-      es: "Crea un texto profesional.",
-      it: "Crea un testo professionale.",
-      pt: "Cria um texto profissional.",
-      cs: "Vytvoří profesionální obchodní text."
-    },
-
-    tiktok: {
-      ru: "Создаёт цепляющий текст для TikTok.",
-      pl: "Tworzy angażujący tekst na TikTok.",
-      en: "Creates engaging TikTok copy.",
-      uk: "Створює цікавий текст для TikTok.",
-      de: "Erstellt ansprechenden TikTok-Text.",
-      fr: "Crée un texte accrocheur pour TikTok.",
-      es: "Crea un texto atractivo para TikTok.",
-      it: "Crea un testo coinvolgente per TikTok.",
-      pt: "Cria um texto envolvente para TikTok.",
-      cs: "Vytvoří poutavý text pro TikTok."
-    }
-
-  };
-
-  const language =
-    getLanguage();
-
-  return (
-    helps[mode]?.[language] ||
-    helps[mode]?.ru ||
-    ""
-  );
-}
-
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-function applyLanguage() {
-
-  const language =
-    getLanguage();
-
-  document.documentElement.lang =
-    language;
-
-  document.title =
-    t("title");
-
-  pageTitle.textContent =
-    "✦ " + t("title");
-
-  pageSubtitle.textContent =
-    t("subtitle");
-
-  actionLabel.textContent =
-    t("actionLabel");
-
-  textGroup.label =
-    t("textGroup");
-
-  createGroup.label =
-    t("createGroup");
-
-  const options =
-    actionSelect.querySelectorAll(
-      "option"
-    );
-
-  options.forEach(option => {
-
-    const key =
-      option.value;
-
-    if (translations[language][key]) {
-      option.textContent =
-        translations[language][key];
-    }
-
-  });
-
-  pasteButton.textContent =
-    t("paste");
-
-  fileButton.textContent =
-    t("file");
-
-  voiceButton.textContent =
-    t("voice");
-
-  clearButton.textContent =
-    t("clear");
-
-  processButton.textContent =
-    rateLimited
-      ? processButton.textContent
-      : t("process");
-
-  resultTitle.textContent =
-    t("resultTitle");
-
-  copyButton.textContent =
-    t("copy");
-
-  retryButton.textContent =
-    t("retry");
-
-  speakButton.textContent =
-    t("speak");
-
-  stopSpeakButton.textContent =
-    t("stop");
-
-  allHistoryTab.textContent =
-    "Все";
-
-  favoriteHistoryTab.textContent =
-    "★ " + t("favorite");
-
-  clearHistoryButton.textContent =
-    "Очистить историю";
-
-  addTemplateButton.textContent =
-    "＋ Добавить шаблон";
-
-  footer.textContent =
-    "AI Помощник · Gemini · Groq · OpenRouter";
-
-  updatePlaceholder();
-  updateActionHelp();
-  updateCounter();
-  renderHistory();
-  renderTemplates();
-
-  if (recognition) {
-    recognition.lang =
-      getSpeechLanguage(language);
-  }
-}
-
-
-function updateActionHelp() {
-
-  actionHelp.textContent =
-    getHelp(
-      actionSelect.value
-    );
-}
-
-
-function updatePlaceholder() {
-
-  const placeholders = {
-
-    ru: "Введите текст или загрузите файл...",
-    pl: "Wpisz tekst lub dodaj plik...",
-    en: "Enter text or upload a file...",
-    uk: "Введіть текст або завантажте файл...",
-    de: "Text eingeben oder Datei hochladen...",
-    fr: "Entrez du texte ou ajoutez un fichier...",
-    es: "Escribe texto o añade un archivo...",
-    it: "Inserisci testo o aggiungi un file...",
-    pt: "Digite texto ou adicione um arquivo...",
-    cs: "Zadejte text nebo nahrajte soubor..."
-
-  };
-
-  textInput.placeholder =
-    placeholders[
-      getLanguage()
-    ] ||
-    placeholders.ru;
-}
-
-
-function updateCounter() {
-
+/* =========================
+   TEXT
+========================= */
+
+function updateCounter(){
   counter.textContent =
-    textInput.value.length +
-    " / " +
-    MAX_TEXT;
+    `${textInput.value.length} / ${MAX_TEXT}`;
 }
 
-
-/* =========================================================
-   RESULT
-========================================================= */
-
-function showResult(message) {
-
-  resultText.textContent =
-    message;
-
-  resultBox.classList.add(
-    "show"
-  );
-}
-
-
-function resetResult() {
-
-  resultText.textContent =
-    "";
-
-  provider.textContent =
-    "";
-
-  resultBox.classList.remove(
-    "show"
-  );
-
-  copyButton.style.display =
-    "none";
-
-  retryButton.style.display =
-    "none";
-
-  speakButton.style.display =
-    "none";
-
-  stopSpeakButton.style.display =
-    "none";
-}
-
-
-/* =========================================================
-   PROVIDER
-========================================================= */
-
-function getProviderName(name) {
-
-  const providers = {
-
-    gemini: "✦ Gemini",
-    groq: "✦ Groq",
-    openrouter: "✦ OpenRouter"
-
+function updateHelp(){
+  const helps = {
+    improve:"Исправляет ошибки, улучшает стиль и делает текст естественнее.",
+    polish:"Исправляет грамматику, пунктуацию и стилистические ошибки.",
+    english:"Переводит текст на естественный английский язык.",
+    shorten:"Сохраняет смысл, но делает текст короче.",
+    summarize:"Выделяет главное и делает краткое содержание.",
+    explain:"Объясняет сложный текст простыми словами.",
+    write:"Создаёт новый текст по твоему описанию.",
+    reply:"Помогает написать подходящий ответ.",
+    business:"Создаёт аккуратный деловой и профессиональный текст.",
+    tiktok:"Создаёт цепляющий текст для TikTok."
   };
 
-  return (
-    providers[name] ||
-    name ||
-    ""
-  );
+  help.textContent =
+    helps[action.value] || helps.improve;
 }
 
+function resetResult(){
+  resultCard.classList.remove("show");
+  answer.textContent = "";
+  provider.textContent = "AI";
+}
 
-/* =========================================================
-   SAFE ID
-========================================================= */
+function getModeLabel(mode){
+  const labels = {
+    improve:"Улучшить текст",
+    polish:"Сделать грамотнее",
+    english:"Перевести на английский",
+    shorten:"Сократить",
+    summarize:"Краткое содержание",
+    explain:"Объяснить проще",
+    write:"Написать текст",
+    reply:"Написать ответ",
+    business:"Деловой текст",
+    tiktok:"TikTok"
+  };
 
-function safeId() {
+  return labels[mode] || mode;
+}
 
-  if (
-    typeof crypto !== "undefined" &&
-    typeof crypto.randomUUID === "function"
-  ) {
+/* =========================
+   FILES
+========================= */
 
-    return crypto.randomUUID();
+function getExtension(name){
+  const parts = name.toLowerCase().split(".");
+  return parts.length > 1 ? parts.pop() : "";
+}
 
+function formatBytes(bytes){
+  if(bytes < 1024) return `${bytes} Б`;
+  if(bytes < 1024 * 1024){
+    return `${(bytes / 1024).toFixed(1)} КБ`;
   }
-
-  return (
-    Date.now().toString(36) +
-    Math.random()
-      .toString(36)
-      .slice(2)
-  );
+  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`;
 }
 
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-function loadHistory() {
-
-  try {
-
-    const data =
-      JSON.parse(
-        localStorage.getItem(
-          HISTORY_KEY
-        ) || "[]"
-      );
-
-    return Array.isArray(data)
-      ? data.slice(0, MAX_HISTORY)
-      : [];
-
-  } catch {
-
-    return [];
-
-  }
-}
-
-
-function saveHistory(data) {
-
-  try {
-
-    localStorage.setItem(
-      HISTORY_KEY,
-      JSON.stringify(
-        data.slice(
-          0,
-          MAX_HISTORY
-        )
-      )
-    );
-
-  } catch {}
-
-}
-
-
-function addHistory(
-  source,
-  result,
-  mode,
-  providerName
-) {
-
-  const history =
-    loadHistory();
-
-  history.unshift({
-
-    id:
-      safeId(),
-
-    sourceText:
-      source.slice(0, MAX_TEXT),
-
-    resultText:
-      result.slice(0, MAX_TEXT),
-
-    mode,
-
-    provider:
-      providerName || "",
-
-    favorite:
-      false,
-
-    createdAt:
-      Date.now()
-
-  });
-
-  saveHistory(
-    history
-  );
-
-  renderHistory();
-}
-
-
-function getModeLabel(mode) {
-
-  return (
-    translations[
-      getLanguage()
-    ]?.[mode] ||
-    translations.ru[mode] ||
-    mode
-  );
-}
-
-
-function renderHistory() {
-
-  const history =
-    loadHistory();
-
-  const filtered =
-    historyFilter === "favorites"
-      ? history.filter(
-          item => item.favorite
-        )
-      : history;
-
-  historyList.innerHTML =
-    "";
-
-  if (!filtered.length) {
-
-    const empty =
-      document.createElement(
-        "div"
-      );
-
-    empty.className =
-      "empty";
-
-    empty.textContent =
-      historyFilter === "favorites"
-        ? t("emptyFavorites")
-        : t("emptyHistory");
-
-    historyList.appendChild(
-      empty
-    );
-
-    return;
-  }
-
-  filtered.forEach(item => {
-
-    const card =
-      document.createElement(
-        "div"
-      );
-
-    card.className =
-      "card";
-
-    const title =
-      document.createElement(
-        "div"
-      );
-
-    title.className =
-      "card-title";
-
-    title.textContent =
-      getModeLabel(
-        item.mode
-      );
-
-    const preview =
-      document.createElement(
-        "div"
-      );
-
-    preview.className =
-      "card-preview";
-
-    preview.textContent =
-      item.sourceText.slice(
-        0,
-        180
-      );
-
-    const actions =
-      document.createElement(
-        "div"
-      );
-
-    actions.className =
-      "card-actions";
-
-    const use =
-      document.createElement(
-        "button"
-      );
-
-    use.className =
-      "action-btn";
-
-    use.type =
-      "button";
-
-    use.textContent =
-      t("useAgain");
-
-    use.onclick = () => {
-
-      actionSelect.value =
-        item.mode;
-
-      textInput.value =
-        item.sourceText;
-
-      updateCounter();
-      updateActionHelp();
-      resetResult();
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-
-    };
-
-    const favorite =
-      document.createElement(
-        "button"
-      );
-
-    favorite.className =
-      "action-btn";
-
-    favorite.type =
-      "button";
-
-    favorite.textContent =
-      item.favorite
-        ? t("favoriteActive")
-        : t("favorite");
-
-    favorite.onclick = () => {
-
-      const data =
-        loadHistory();
-
-      const target =
-        data.find(
-          x =>
-            x.id === item.id
-        );
-
-      if (target) {
-
-        target.favorite =
-          !target.favorite;
-
-        saveHistory(
-          data
-        );
-
-        renderHistory();
-      }
-
-    };
-
-    const copy =
-      document.createElement(
-        "button"
-      );
-
-    copy.className =
-      "action-btn";
-
-    copy.type =
-      "button";
-
-    copy.textContent =
-      t("copy");
-
-    copy.onclick = () => {
-
-      copyText(
-        item.resultText,
-        copy
-      );
-
-    };
-
-    const remove =
-      document.createElement(
-        "button"
-      );
-
-    remove.className =
-      "action-btn";
-
-    remove.type =
-      "button";
-
-    remove.textContent =
-      t("delete");
-
-    remove.onclick = () => {
-
-      saveHistory(
-        loadHistory().filter(
-          x =>
-            x.id !== item.id
-        )
-      );
-
-      renderHistory();
-
-    };
-
-    actions.append(
-      use,
-      favorite,
-      copy,
-      remove
-    );
-
-    card.append(
-      title,
-      preview,
-      actions
-    );
-
-    historyList.appendChild(
-      card
-    );
-
-  });
-}
-
-
-/* =========================================================
-   TEMPLATES
-========================================================= */
-
-function loadTemplates() {
-
-  try {
-
-    const data =
-      JSON.parse(
-        localStorage.getItem(
-          TEMPLATES_KEY
-        ) || "[]"
-      );
-
-    return Array.isArray(data)
-      ? data.slice(
-          0,
-          MAX_TEMPLATES
-        )
-      : [];
-
-  } catch {
-
-    return [];
-
-  }
-}
-
-
-function saveTemplates(data) {
-
-  try {
-
-    localStorage.setItem(
-      TEMPLATES_KEY,
-      JSON.stringify(
-        data.slice(
-          0,
-          MAX_TEMPLATES
-        )
-      )
-    );
-
-  } catch {}
-
-}
-
-
-function renderTemplates() {
-
-  const templates =
-    loadTemplates();
-
-  templatesList.innerHTML =
-    "";
-
-  if (!templates.length) {
-
-    const empty =
-      document.createElement(
-        "div"
-      );
-
-    empty.className =
-      "empty";
-
-    empty.textContent =
-      t("emptyTemplates");
-
-    templatesList.appendChild(
-      empty
-    );
-
-    return;
-  }
-
-  templates.forEach(
-    template => {
-
-      const card =
-        document.createElement(
-          "div"
-        );
-
-      card.className =
-        "card";
-
-      const title =
-        document.createElement(
-          "div"
-        );
-
-      title.className =
-        "card-title";
-
-      title.textContent =
-        template.name;
-
-      const preview =
-        document.createElement(
-          "div"
-        );
-
-      preview.className =
-        "card-preview";
-
-      preview.textContent =
-        template.text.slice(
-          0,
-          160
-        );
-
-      const actions =
-        document.createElement(
-          "div"
-        );
-
-      actions.className =
-        "card-actions";
-
-      const use =
-        document.createElement(
-          "button"
-        );
-
-      use.className =
-        "action-btn";
-
-      use.type =
-        "button";
-
-      use.textContent =
-        t("useAgain");
-
-      use.onclick = () => {
-
-        actionSelect.value =
-          template.mode;
-
-        textInput.value =
-          template.text;
-
-        updateCounter();
-        updateActionHelp();
-        resetResult();
-
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-
-      };
-
-      const remove =
-        document.createElement(
-          "button"
-        );
-
-      remove.className =
-        "action-btn";
-
-      remove.type =
-        "button";
-
-      remove.textContent =
-        t("delete");
-
-      remove.onclick = () => {
-
-        saveTemplates(
-          loadTemplates().filter(
-            x =>
-              x.id !== template.id
-          )
-        );
-
-        renderTemplates();
-
-      };
-
-      actions.append(
-        use,
-        remove
-      );
-
-      card.append(
-        title,
-        preview,
-        actions
-      );
-
-      templatesList.appendChild(
-        card
-      );
-
-    }
-  );
-}
-
-
-/* =========================================================
-   COPY
-========================================================= */
-
-async function copyText(
-  text,
-  button = copyButton
-) {
-
-  if (!text) {
-    return;
-  }
-
-  try {
-
-    if (
-      navigator.clipboard &&
-      typeof navigator.clipboard.writeText ===
-        "function"
-    ) {
-
-      await navigator.clipboard.writeText(
-        text
-      );
-
-    } else {
-
-      const area =
-        document.createElement(
-          "textarea"
-        );
-
-      area.value =
-        text;
-
-      area.style.position =
-        "fixed";
-
-      area.style.opacity =
-        "0";
-
-      document.body.appendChild(
-        area
-      );
-
-      area.select();
-
-      document.execCommand(
-        "copy"
-      );
-
-      area.remove();
-
-    }
-
-    const old =
-      button.textContent;
-
-    button.textContent =
-      t("copied");
-
-    setTimeout(
-      () => {
-
-        button.textContent =
-          old;
-
-      },
-      1400
-    );
-
-  } catch {
-
-    alert(
-      t("copiedError")
-    );
-
-  }
-}
-
-
-/* =========================================================
-   PASTE
-========================================================= */
-
-pasteButton.addEventListener(
-  "click",
-  async () => {
-
-    try {
-
-      if (
-        !navigator.clipboard ||
-        typeof navigator.clipboard.readText !==
-          "function"
-      ) {
-
-        showResult(
-          t("pastePermission")
-        );
-
-        return;
-      }
-
-      const text =
-        await navigator.clipboard.readText();
-
-      if (!text) {
-        return;
-      }
-
-      textInput.value =
-        text.slice(
-          0,
-          MAX_TEXT
-        );
-
-      updateCounter();
-      resetResult();
-
-      textInput.focus();
-
-    } catch {
-
-      showResult(
-        t("pasteUnavailable")
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   AI PROCESSING
-========================================================= */
-
-async function processText() {
-
-  if (rateLimited) {
-    return;
-  }
-
-  const message =
-    textInput.value.trim();
-
-  const mode =
-    actionSelect.value;
-
-  if (!message) {
-
-    showResult(
-      t("enterText")
-    );
-
-    textInput.focus();
-
-    return;
-  }
-
-  if (
-    message.length >
-    MAX_TEXT
-  ) {
-
-    showResult(
-      t("tooLong")
-    );
-
-    return;
-  }
-
-  processButton.disabled =
-    true;
-
-  processButton.textContent =
-    t("processing");
-
-  retryButton.style.display =
-    "none";
-
-  copyButton.style.display =
-    "none";
-
-  speakButton.style.display =
-    "none";
-
-  stopSpeakButton.style.display =
-    "none";
-
-  showResult(
-    t("processing")
-  );
-
-  provider.textContent =
-    "";
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/chat",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              message,
-              mode
-            })
-        }
-      );
-
-    const data =
-      await response
-        .json()
-        .catch(
-          () => ({})
-        );
-
-    if (
-      response.status ===
-      429
-    ) {
-
-      const seconds =
-        Number(
-          data.retryAfter
-        ) || 60;
-
-      startRetryTimer(
-        seconds
-      );
-
-      showResult(
-        t("limit") +
-        "\n\n" +
-        t("retryIn") +
-        " " +
-        seconds +
-        " " +
-        t("seconds")
-      );
-
-      return;
-    }
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        t("serverError")
-      );
-
-    }
-
-    if (
-      !data.answer ||
-      typeof data.answer !==
-        "string"
-    ) {
-
-      throw new Error(
-        t("noAnswer")
-      );
-
-    }
-
-    resultText.textContent =
-      data.answer;
-
-    resultBox.classList.add(
-      "show"
-    );
-
-    provider.textContent =
-      getProviderName(
-        data.provider
-      );
-
-    copyButton.style.display =
-      "inline-block";
-
-    retryButton.style.display =
-      "inline-block";
-
-    if (
-      "speechSynthesis" in
-      window
-    ) {
-
-      speakButton.style.display =
-        "inline-block";
-
-      stopSpeakButton.style.display =
-        "inline-block";
-
-    }
-
-    addHistory(
-      message,
-      data.answer,
-      mode,
-      data.provider
-    );
-
-    resultBox.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest"
-    });
-
-  } catch (error) {
-
-    showResult(
-      error.message ||
-      t("serverError")
-    );
-
-    retryButton.style.display =
-      "inline-block";
-
-  } finally {
-
-    if (!rateLimited) {
-
-      processButton.disabled =
-        false;
-
-      processButton.textContent =
-        t("process");
-
-    }
-
-  }
-}
-
-
-/* =========================================================
-   RATE LIMIT
-========================================================= */
-
-function startRetryTimer(
-  seconds
-) {
-
-  clearInterval(
-    retryTimer
-  );
-
-  rateLimited =
-    true;
-
-  processButton.disabled =
-    true;
-
-  let remaining =
-    Math.max(
-      1,
-      Math.floor(
-        seconds
-      )
-    );
-
-  processButton.textContent =
-    "⏳ " +
-    t("retryIn") +
-    " " +
-    remaining +
-    " " +
-    t("seconds");
-
-  retryTimer =
-    setInterval(
-      () => {
-
-        remaining--;
-
-        if (
-          remaining <= 0
-        ) {
-
-          clearInterval(
-            retryTimer
-          );
-
-          retryTimer =
-            null;
-
-          rateLimited =
-            false;
-
-          processButton.disabled =
-            false;
-
-          processButton.textContent =
-            t("process");
-
-          return;
-        }
-
-        processButton.textContent =
-          "⏳ " +
-          t("retryIn") +
-          " " +
-          remaining +
-          " " +
-          t("seconds");
-
-      },
-      1000
-    );
-}
-
-
-/* =========================================================
-   FILE SYSTEM
-========================================================= */
-
-const TEXT_EXTENSIONS =
-  new Set([
-    "txt",
-    "md",
-    "csv",
-    "json",
-    "xml",
-    "html",
-    "htm",
-    "css",
-    "js",
-    "ts",
-    "jsx",
-    "tsx",
-    "py",
-    "java",
-    "c",
-    "cpp",
-    "h",
-    "hpp",
-    "sql",
-    "yaml",
-    "yml",
-    "ini",
-    "conf",
-    "log",
-    "rtf"
+function getFileKind(file){
+  const ext = getExtension(file.name);
+
+  const textExt = new Set([
+    "txt","md","markdown","csv","tsv",
+    "json","jsonl","xml","html","htm",
+    "css","scss","less",
+    "js","jsx","ts","tsx",
+    "py","java","c","cpp","h","hpp",
+    "cs","go","rs","php","rb",
+    "swift","kt","kts",
+    "sql","sh","bash","bat","ps1",
+    "yaml","yml","toml","ini","cfg",
+    "log","srt","vtt","tex","svg"
   ]);
 
-
-const IMAGE_EXTENSIONS =
-  new Set([
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "gif",
-    "bmp",
-    "svg"
-  ]);
-
-
-const AUDIO_EXTENSIONS =
-  new Set([
-    "mp3",
-    "wav",
-    "m4a",
-    "aac",
-    "ogg",
-    "flac",
-    "opus"
-  ]);
-
-
-const VIDEO_EXTENSIONS =
-  new Set([
-    "mp4",
-    "mov",
-    "webm",
-    "avi",
-    "mkv",
-    "mpeg",
-    "mpg"
-  ]);
-
-
-const ARCHIVE_EXTENSIONS =
-  new Set([
-    "zip",
-    "rar",
-    "7z",
-    "tar",
-    "gz"
-  ]);
-
-
-const DOCUMENT_EXTENSIONS =
-  new Set([
-    "doc",
-    "docx",
-    "pdf",
-    "xls",
-    "xlsx",
-    "ppt",
-    "pptx"
-  ]);
-
-
-function getFileExtension(
-  file
-) {
-
-  const name =
-    String(
-      file.name || ""
-    );
-
-  const parts =
-    name.split(".");
-
-  if (
-    parts.length <
-    2
-  ) {
-    return "";
-  }
-
-  return parts
-    .pop()
-    .toLowerCase();
-}
-
-
-function formatFileSize(
-  bytes
-) {
-
-  if (
-    !Number.isFinite(
-      bytes
-    )
-  ) {
-    return "";
-  }
-
-  if (
-    bytes <
-    1024
-  ) {
-
-    return (
-      bytes +
-      " B"
-    );
-  }
-
-  if (
-    bytes <
-    1024 * 1024
-  ) {
-
-    return (
-      (
-        bytes /
-        1024
-      ).toFixed(1) +
-      " KB"
-    );
-  }
-
-  return (
-    (
-      bytes /
-      (1024 * 1024)
-    ).toFixed(1) +
-    " MB"
-  );
-}
-
-
-function detectFileType(
-  file
-) {
-
-  const extension =
-    getFileExtension(
-      file
-    );
-
-  const mime =
-    String(
-      file.type || ""
-    ).toLowerCase();
-
-  if (
-    TEXT_EXTENSIONS.has(
-      extension
-    ) ||
-    mime.startsWith(
-      "text/"
-    )
-  ) {
-
+  if(textExt.has(ext) || file.type.startsWith("text/")){
     return "text";
   }
 
-  if (
-    DOCUMENT_EXTENSIONS.has(
-      extension
-    )
-  ) {
-
-    return "document";
+  if(ext === "pdf" || file.type === "application/pdf"){
+    return "pdf";
   }
 
-  if (
-    IMAGE_EXTENSIONS.has(
-      extension
-    ) ||
-    mime.startsWith(
-      "image/"
-    )
-  ) {
+  if(ext === "docx"){
+    return "docx";
+  }
 
+  if(ext === "xlsx" || ext === "xls"){
+    return "spreadsheet";
+  }
+
+  if([
+    "jpg","jpeg","png","webp","gif","bmp","svg"
+  ].includes(ext) || file.type.startsWith("image/")){
     return "image";
   }
 
-  if (
-    AUDIO_EXTENSIONS.has(
-      extension
-    ) ||
-    mime.startsWith(
-      "audio/"
-    )
-  ) {
-
+  if([
+    "mp3","wav","m4a","aac","ogg","flac"
+  ].includes(ext) || file.type.startsWith("audio/")){
     return "audio";
   }
 
-  if (
-    VIDEO_EXTENSIONS.has(
-      extension
-    ) ||
-    mime.startsWith(
-      "video/"
-    )
-  ) {
-
+  if([
+    "mp4","mov","avi","mkv","webm"
+  ].includes(ext) || file.type.startsWith("video/")){
     return "video";
   }
 
-  if (
-    ARCHIVE_EXTENSIONS.has(
-      extension
-    )
-  ) {
-
+  if([
+    "zip","rar","7z","tar","gz"
+  ].includes(ext)){
     return "archive";
   }
 
-  return "unknown";
+  return "binary";
 }
 
-
-function getFileTypeLabel(
-  type
-) {
-
-  const keys = {
-
-    text: "fileText",
-    document: "fileDocument",
-    image: "fileImage",
-    audio: "fileAudio",
-    video: "fileVideo",
-    archive: "fileArchive",
-    unknown: "fileUnknown"
-
+function getFileIcon(kind){
+  const icons = {
+    text:"📄",
+    pdf:"📕",
+    docx:"📘",
+    spreadsheet:"📊",
+    image:"🖼️",
+    audio:"🎵",
+    video:"🎬",
+    archive:"🗜️",
+    binary:"📦"
   };
 
-  return t(
-    keys[type] ||
-    "fileUnknown"
-  );
+  return icons[kind] || "📎";
 }
 
+function statusText(item){
+  if(item.status === "processing"){
+    return "⏳ Обрабатывается...";
+  }
 
-/* =========================================================
-   FILE LIST
-========================================================= */
+  if(item.status === "ready"){
+    return "✓ Текст извлечён";
+  }
 
-function renderSelectedFiles() {
+  if(item.status === "metadata"){
+    return "⚠ Файл выбран, но содержимое не извлечено";
+  }
 
-  fileInfo.classList.remove(
-    "show"
-  );
+  if(item.status === "error"){
+    return "⚠ Ошибка обработки";
+  }
 
-  fileName.textContent =
-    "";
+  return "";
+}
 
-  if (
-    !selectedFiles.length
-  ) {
+function renderFiles(){
+  fileList.innerHTML = "";
+
+  if(!selectedFiles.length) return;
+
+  selectedFiles.forEach(item => {
+    const el = document.createElement("div");
+    el.className = "file-item";
+
+    const icon = document.createElement("div");
+    icon.className = "file-icon";
+    icon.textContent = getFileIcon(item.kind);
+
+    const details = document.createElement("div");
+    details.className = "file-details";
+
+    const name = document.createElement("div");
+    name.className = "file-name";
+    name.textContent = item.file.name;
+
+    const meta = document.createElement("div");
+    meta.className = "file-meta";
+    meta.textContent =
+      `${item.file.type || "неизвестный формат"} · ${formatBytes(item.file.size)}`;
+
+    const status = document.createElement("div");
+    status.className =
+      "file-status" +
+      (item.status === "metadata" || item.status === "error"
+        ? " warn"
+        : "");
+
+    status.textContent = statusText(item);
+
+    details.append(name,meta,status);
+
+    const remove = document.createElement("button");
+    remove.className = "file-remove";
+    remove.type = "button";
+    remove.textContent = "×";
+    remove.title = "Удалить файл";
+
+    remove.addEventListener("click",() => {
+      selectedFiles =
+        selectedFiles.filter(x => x.id !== item.id);
+
+      renderFiles();
+    });
+
+    el.append(icon,details,remove);
+    fileList.appendChild(el);
+  });
+}
+
+/* =========================
+   FILE EXTRACTION
+========================= */
+
+async function extractTextFile(file){
+  return await file.text();
+}
+
+async function extractPdf(file){
+  if(!window.pdfjsLib){
+    throw new Error("PDF.js недоступен");
+  }
+
+  const buffer = await file.arrayBuffer();
+
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const pdf = await window.pdfjsLib
+    .getDocument({data:buffer})
+    .promise;
+
+  let result = "";
+
+  const pages = Math.min(pdf.numPages,50);
+
+  for(let pageNumber = 1; pageNumber <= pages; pageNumber++){
+    const page = await pdf.getPage(pageNumber);
+    const content = await page.getTextContent();
+
+    const pageText = content.items
+      .map(item => item.str || "")
+      .join(" ");
+
+    result += `\n[Страница ${pageNumber}]\n`;
+    result += pageText;
+  }
+
+  return result.trim();
+}
+
+async function extractDocx(file){
+  if(!window.mammoth){
+    throw new Error("DOCX-парсер недоступен");
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+
+  const result =
+    await window.mammoth.extractRawText({arrayBuffer});
+
+  return result.value || "";
+}
+
+async function extractSpreadsheet(file){
+  if(!window.XLSX){
+    throw new Error("Excel-парсер недоступен");
+  }
+
+  const buffer = await file.arrayBuffer();
+
+  const workbook = XLSX.read(buffer,{
+    type:"array",
+    cellDates:true
+  });
+
+  let output = "";
+
+  workbook.SheetNames
+    .slice(0,10)
+    .forEach(sheetName => {
+      const sheet = workbook.Sheets[sheetName];
+
+      output +=
+        `\n=== Лист: ${sheetName} ===\n`;
+
+      output +=
+        XLSX.utils.sheet_to_csv(sheet,{
+          FS:","
+        });
+    });
+
+  return output.trim();
+}
+
+async function prepareFile(item){
+  const file = item.file;
+
+  item.status = "processing";
+  renderFiles();
+
+  try{
+    let text = "";
+
+    if(item.kind === "text"){
+      text = await extractTextFile(file);
+    }
+
+    else if(item.kind === "pdf"){
+      text = await extractPdf(file);
+    }
+
+    else if(item.kind === "docx"){
+      text = await extractDocx(file);
+    }
+
+    else if(item.kind === "spreadsheet"){
+      text = await extractSpreadsheet(file);
+    }
+
+    else if(item.kind === "image"){
+      item.status = "metadata";
+      item.note =
+        "Изображение выбрано. Текущий текстовый API не поддерживает анализ изображений.";
+      renderFiles();
+      return;
+    }
+
+    else if(item.kind === "audio"){
+      item.status = "metadata";
+      item.note =
+        "Аудиофайл выбран. Для распознавания речи нужен отдельный speech-to-text backend.";
+      renderFiles();
+      return;
+    }
+
+    else if(item.kind === "video"){
+      item.status = "metadata";
+      item.note =
+        "Видео выбрано. Текущий API не поддерживает мультимодальный анализ видео.";
+      renderFiles();
+      return;
+    }
+
+    else if(item.kind === "archive"){
+      item.status = "metadata";
+      item.note =
+        "Архив выбран, но автоматически распаковывать его небезопасно.";
+      renderFiles();
+      return;
+    }
+
+    else{
+      item.status = "metadata";
+      item.note =
+        "Неизвестный бинарный формат. Файл выбран, но текст не извлечён.";
+      renderFiles();
+      return;
+    }
+
+    item.text = String(text || "").trim();
+
+    if(item.text){
+      item.status = "ready";
+    }else{
+      item.status = "metadata";
+      item.note = "Текст внутри файла не найден.";
+    }
+
+  }catch(error){
+    console.error("File extraction:",error);
+
+    item.status = "error";
+    item.note =
+      error && error.message
+        ? error.message
+        : "Не удалось прочитать файл.";
+  }
+
+  renderFiles();
+}
+
+async function addFiles(files){
+  const incoming = Array.from(files);
+
+  if(!incoming.length) return;
+
+  if(selectedFiles.length >= MAX_FILES){
+    showToast(`Можно добавить максимум ${MAX_FILES} файлов.`);
     return;
   }
 
-  const lines =
-    selectedFiles.map(
-      item => {
+  for(const file of incoming){
 
-        return (
-          "📎 " +
-          item.file.name +
-          " · " +
-          formatFileSize(
-            item.file.size
-          ) +
-          " · " +
-          getFileTypeLabel(
-            item.type
-          )
-        );
-
-      }
-    );
-
-  fileName.textContent =
-    lines.join(
-      "\n"
-    );
-
-  fileInfo.classList.add(
-    "show"
-  );
-}
-
-
-/* =========================================================
-   TEXT
-========================================================= */
-
-async function extractTextFile(
-  file
-) {
-
-  const text =
-    await file.text();
-
-  return text.slice(
-    0,
-    MAX_TEXT
-  );
-}
-
-
-/* =========================================================
-   DOCX
-========================================================= */
-
-async function extractDocx(
-  file
-) {
-
-  if (
-    typeof window.mammoth ===
-    "undefined"
-  ) {
-
-    throw new Error(
-      "DOCX_READER_UNAVAILABLE"
-    );
-
-  }
-
-  const buffer =
-    await file.arrayBuffer();
-
-  const result =
-    await window.mammoth.extractRawText({
-      arrayBuffer:
-        buffer
-    });
-
-  return String(
-    result.value ||
-    ""
-  ).slice(
-    0,
-    MAX_TEXT
-  );
-}
-
-
-/* =========================================================
-   PDF
-========================================================= */
-
-async function getPdfJs() {
-
-  if (
-    window.__pdfjs
-  ) {
-    return window.__pdfjs;
-  }
-
-  try {
-
-    const module =
-      await import(
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs"
-      );
-
-    window.__pdfjs =
-      module;
-
-    if (
-      module.GlobalWorkerOptions
-    ) {
-
-      module.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
-
+    if(selectedFiles.length >= MAX_FILES){
+      showToast(`Можно добавить максимум ${MAX_FILES} файлов.`);
+      break;
     }
 
-    return module;
+    if(file.size > MAX_FILE_SIZE){
+      showToast(
+        `${file.name}: максимум ${formatBytes(MAX_FILE_SIZE)}`
+      );
+      continue;
+    }
 
-  } catch {
+    const duplicate =
+      selectedFiles.some(
+        x =>
+          x.file.name === file.name &&
+          x.file.size === file.size &&
+          x.file.lastModified === file.lastModified
+      );
 
-    throw new Error(
-      "PDF_READER_UNAVAILABLE"
-    );
+    if(duplicate) continue;
 
+    const item = {
+      id:
+        `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      file,
+      kind:getFileKind(file),
+      text:"",
+      status:"processing",
+      note:""
+    };
+
+    selectedFiles.push(item);
+
+    renderFiles();
+
+    await prepareFile(item);
   }
+
+  fileInput.value = "";
 }
 
+/* =========================
+   ATTACHMENT CONTEXT
+========================= */
 
-async function extractPdf(
-  file
-) {
-
-  const pdfjs =
-    await getPdfJs();
-
-  const buffer =
-    await file.arrayBuffer();
-
-  const loadingTask =
-    pdfjs.getDocument({
-      data: buffer
-    });
-
-  const pdf =
-    await loadingTask.promise;
-
-  let text =
-    "";
-
-  const pages =
-    Math.min(
-      pdf.numPages,
-      MAX_PDF_PAGES
+function buildAttachmentContext(){
+  const ready =
+    selectedFiles.filter(
+      item =>
+        item.status === "ready" &&
+        item.text
     );
 
-  for (
-    let pageNumber = 1;
-    pageNumber <= pages;
-    pageNumber++
-  ) {
+  if(!ready.length) return "";
 
-    const page =
-      await pdf.getPage(
-        pageNumber
-      );
+  let total = 0;
+  let result = "";
+
+  for(const item of ready){
+
+    if(total >= MAX_TOTAL_EXTRACTED) break;
+
+    const remaining =
+      MAX_TOTAL_EXTRACTED - total;
 
     const content =
-      await page.getTextContent();
+      item.text.slice(0,remaining);
 
-    const pageText =
-      content.items
-        .map(
-          item =>
-            item.str ||
-            ""
-        )
-        .join(" ");
+    result +=
+      `\n\n=== ФАЙЛ: ${item.file.name} ===\n`;
 
-    text +=
-      "\n\n===== PAGE " +
-      pageNumber +
-      " =====\n\n" +
-      pageText;
+    result += content;
 
-    if (
-      text.length >=
-      MAX_TEXT
-    ) {
-      break;
+    total += content.length;
+
+    if(item.text.length > content.length){
+      result +=
+        "\n[Содержимое файла сокращено из-за лимита контекста]";
     }
-
   }
 
-  return text.slice(
-    0,
-    MAX_TEXT
-  );
+  return result;
 }
 
-
-/* =========================================================
-   EXCEL
-========================================================= */
-
-async function extractSpreadsheet(
-  file
-) {
-
-  if (
-    typeof window.XLSX ===
-    "undefined"
-  ) {
-
-    throw new Error(
-      "XLSX_READER_UNAVAILABLE"
+function getFileNotes(){
+  return selectedFiles
+    .filter(item => item.status === "metadata")
+    .map(item =>
+      `${item.file.name}: ${item.note || "содержимое не извлечено"}`
     );
+}
 
+/* =========================
+   HISTORY
+========================= */
+
+function loadHistory(){
+  try{
+    const raw =
+      localStorage.getItem(HISTORY_KEY);
+
+    const data =
+      raw ? JSON.parse(raw) : [];
+
+    return Array.isArray(data) ? data : [];
+  }catch{
+    return [];
+  }
+}
+
+function saveHistory(data){
+  try{
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(data.slice(0,MAX_HISTORY))
+    );
+  }catch(error){
+    console.warn("History save:",error);
+  }
+}
+
+function addHistory(item){
+  const history = loadHistory();
+
+  history.unshift(item);
+
+  saveHistory(history);
+  renderHistory();
+}
+
+function renderHistory(){
+  const container =
+    document.getElementById("historyList");
+
+  container.innerHTML = "";
+
+  let history = loadHistory();
+
+  if(historyFilter === "favorite"){
+    history =
+      history.filter(item => item.favorite);
   }
 
-  const buffer =
-    await file.arrayBuffer();
+  if(!history.length){
+    container.innerHTML =
+      '<div class="empty">История пока пуста</div>';
+    return;
+  }
 
-  const workbook =
-    window.XLSX.read(
-      buffer,
-      {
-        type: "array"
+  history.forEach(item => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "history-item";
+
+    const top =
+      document.createElement("div");
+
+    top.className = "history-top";
+
+    const mode =
+      document.createElement("div");
+
+    mode.className = "history-mode";
+    mode.textContent =
+      getModeLabel(item.mode);
+
+    const date =
+      document.createElement("div");
+
+    date.className = "history-date";
+
+    date.textContent =
+      new Date(item.date).toLocaleString(
+        "ru-RU",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+    top.append(mode,date);
+
+    const preview =
+      document.createElement("div");
+
+    preview.className = "history-preview";
+
+    preview.textContent =
+      item.sourceText.slice(0,180) +
+      (item.sourceText.length > 180 ? "…" : "");
+
+    const actions =
+      document.createElement("div");
+
+    actions.className = "item-actions";
+
+    const use =
+      document.createElement("button");
+
+    use.textContent = "Использовать снова";
+
+    use.onclick = () => {
+      textInput.value = item.sourceText;
+      action.value = item.mode;
+      updateCounter();
+      updateHelp();
+      window.scrollTo({top:0,behavior:"smooth"});
+    };
+
+    const favorite =
+      document.createElement("button");
+
+    favorite.textContent =
+      item.favorite ? "★ Избранное" : "☆ Избранное";
+
+    favorite.onclick = () => {
+      const all = loadHistory();
+
+      const found =
+        all.find(x => x.id === item.id);
+
+      if(found){
+        found.favorite = !found.favorite;
+        saveHistory(all);
+        renderHistory();
       }
-    );
+    };
 
-  let output =
-    "";
+    const copy =
+      document.createElement("button");
 
-  for (
-    const sheetName of
-    workbook.SheetNames
-  ) {
+    copy.textContent = "📋 Копировать";
 
-    const sheet =
-      workbook.Sheets[
-        sheetName
-      ];
+    copy.onclick = () =>
+      copyText(item.answer);
 
-    const csv =
-      window.XLSX.utils.sheet_to_csv(
-        sheet
-      );
+    const remove =
+      document.createElement("button");
 
-    output +=
-      "\n\n===== " +
-      sheetName +
-      " =====\n\n" +
-      csv;
+    remove.textContent = "Удалить";
 
-    if (
-      output.length >=
-      MAX_TEXT
-    ) {
-      break;
-    }
+    remove.onclick = () => {
+      const all =
+        loadHistory().filter(
+          x => x.id !== item.id
+        );
 
+      saveHistory(all);
+      renderHistory();
+    };
+
+    actions.append(use,favorite,copy,remove);
+
+    card.append(top,preview,actions);
+
+    container.appendChild(card);
+  });
+}
+
+/* =========================
+   TEMPLATES
+========================= */
+
+function loadTemplates(){
+  try{
+    const raw =
+      localStorage.getItem(TEMPLATES_KEY);
+
+    const data =
+      raw ? JSON.parse(raw) : [];
+
+    return Array.isArray(data) ? data : [];
+  }catch{
+    return [];
   }
+}
 
-  return output.slice(
-    0,
-    MAX_TEXT
+function saveTemplates(data){
+  localStorage.setItem(
+    TEMPLATES_KEY,
+    JSON.stringify(data.slice(0,MAX_TEMPLATES))
   );
 }
 
+function renderTemplates(){
+  const container =
+    document.getElementById("templateList");
 
-/* =========================================================
-   FILE EXTRACTION
-========================================================= */
+  container.innerHTML = "";
 
-async function extractFile(
-  file,
-  type
-) {
+  const templates = loadTemplates();
 
-  if (
-    type ===
-    "text"
-  ) {
-
-    return {
-      kind: "text",
-      text:
-        await extractTextFile(
-          file
-        )
-    };
-
+  if(!templates.length){
+    container.innerHTML =
+      '<div class="empty">Шаблонов пока нет</div>';
+    return;
   }
 
-  if (
-    type ===
-    "document"
-  ) {
+  templates.forEach(item => {
 
-    const extension =
-      getFileExtension(
-        file
-      );
+    const card =
+      document.createElement("div");
 
-    if (
-      extension ===
-      "docx"
-    ) {
+    card.className = "template-item";
 
-      return {
-        kind: "text",
-        text:
-          await extractDocx(
-            file
-          )
-      };
+    const top =
+      document.createElement("div");
 
-    }
+    top.className = "template-top";
 
-    if (
-      extension ===
-      "pdf"
-    ) {
+    const name =
+      document.createElement("div");
 
-      return {
-        kind: "text",
-        text:
-          await extractPdf(
-            file
-          )
-      };
+    name.className = "template-name";
+    name.textContent = item.name;
 
-    }
+    top.appendChild(name);
 
-    if (
-      extension ===
-      "xls" ||
-      extension ===
-      "xlsx"
-    ) {
+    const preview =
+      document.createElement("div");
 
-      return {
-        kind: "text",
-        text:
-          await extractSpreadsheet(
-            file
-          )
-      };
+    preview.className = "template-preview";
+    preview.textContent =
+      item.text.slice(0,180);
 
-    }
+    const actions =
+      document.createElement("div");
 
-    return {
-      kind: "unsupported",
-      text: ""
+    actions.className = "item-actions";
+
+    const use =
+      document.createElement("button");
+
+    use.textContent = "Использовать";
+
+    use.onclick = () => {
+      textInput.value = item.text;
+      updateCounter();
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
     };
+
+    const remove =
+      document.createElement("button");
+
+    remove.textContent = "Удалить";
+
+    remove.onclick = () => {
+      const all =
+        loadTemplates().filter(
+          x => x.id !== item.id
+        );
+
+      saveTemplates(all);
+      renderTemplates();
+    };
+
+    actions.append(use,remove);
+
+    card.append(top,preview,actions);
+
+    container.appendChild(card);
+  });
+}
+
+/* =========================
+   CLIPBOARD
+========================= */
+
+async function copyText(value){
+  if(!value) return;
+
+  try{
+    await navigator.clipboard.writeText(value);
+    showToast("Скопировано");
+  }catch{
+
+    const area =
+      document.createElement("textarea");
+
+    area.value = value;
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+
+    document.body.appendChild(area);
+
+    area.select();
+
+    document.execCommand("copy");
+
+    area.remove();
+
+    showToast("Скопировано");
+  }
+}
+
+/* =========================
+   PROCESS AI
+========================= */
+
+async function processText(){
+
+  if(processBtn.disabled) return;
+
+  const rawText =
+    textInput.value.trim();
+
+  const attachmentContext =
+    buildAttachmentContext();
+
+  const notes =
+    getFileNotes();
+
+  let message = rawText;
+
+  if(!message && selectedFiles.length){
+    message =
+      "Проанализируй содержимое прикрепленных файлов.";
   }
 
-  return {
-    kind: type,
-    text: ""
+  if(!message){
+    showToast("Введите текст или добавьте файл.");
+    return;
+  }
+
+  const combined =
+    `${message}${attachmentContext}`.slice(
+      0,
+      9500
+    );
+
+  const mode =
+    action.value;
+
+  lastRequest = {
+    message:combined,
+    mode
   };
-}
 
+  processBtn.disabled = true;
+  processBtn.textContent = "⏳ Обработка...";
 
-/* =========================================================
-   FILE SELECT
-========================================================= */
+  resultCard.classList.add("show");
 
-fileButton.addEventListener(
-  "click",
-  () => {
+  answer.textContent = "AI обрабатывает запрос...";
+  provider.textContent = "AI";
 
-    fileInput.click();
+  try{
 
-  }
-);
-
-
-fileInput.addEventListener(
-  "change",
-  async () => {
-
-    const files =
-      Array.from(
-        fileInput.files ||
-        []
-      );
-
-    if (
-      !files.length
-    ) {
-      return;
-    }
-
-    if (
-      files.length >
-      MAX_FILES
-    ) {
-
-      showResult(
-        t("maxFiles")
-      );
-
-      fileInput.value =
-        "";
-
-      return;
-    }
-
-    selectedFiles =
-      [];
-
-    let extractedText =
-      "";
-
-    let unsupportedCount =
-      0;
-
-    for (
-      const file of
-      files
-    ) {
-
-      if (
-        file.size >
-        MAX_FILE_SIZE
-      ) {
-
-        showResult(
-          t("fileTooLarge") +
-          "\n\n" +
-          file.name
-        );
-
-        continue;
-      }
-
-      const type =
-        detectFileType(
-          file
-        );
-
-      selectedFiles.push({
-        file,
-        type
+    const response =
+      await fetch("/api/chat",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          message:combined,
+          mode
+        })
       });
 
-      try {
+    let data = null;
 
-        const result =
-          await extractFile(
-            file,
-            type
-          );
-
-        if (
-          result.kind ===
-          "text" &&
-          result.text.trim()
-        ) {
-
-          extractedText +=
-            "\n\n===== " +
-            file.name +
-            " =====\n\n" +
-            result.text;
-
-        } else if (
-          result.kind !==
-          "text"
-        ) {
-
-          unsupportedCount++;
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "File extraction error:",
-          error
-        );
-
-        unsupportedCount++;
-
-      }
-
+    try{
+      data = await response.json();
+    }catch{
+      data = {};
     }
 
-    renderSelectedFiles();
+    if(response.status === 429){
 
-    if (
-      extractedText.trim()
-    ) {
-
-      textInput.value =
-        extractedText.slice(
-          0,
-          MAX_TEXT
+      const retryAfter =
+        Number(
+          response.headers.get("Retry-After") ||
+          data.retryAfter ||
+          60
         );
 
-      updateCounter();
+      answer.textContent =
+        `⚠️ Лимит AI временно исчерпан.\n\nПопробуйте снова через ${retryAfter} сек.`;
 
-      resetResult();
+      startRetryTimer(retryAfter);
 
-      textInput.focus();
-
+      return;
     }
 
-    if (
-      unsupportedCount >
-      0 &&
-      !extractedText.trim()
-    ) {
+    if(!response.ok){
 
-      showResult(
-        t("unsupportedFile")
+      throw new Error(
+        data.error ||
+        `HTTP ${response.status}`
       );
-
     }
 
-    fileInput.value =
-      "";
+    if(!data.answer){
 
+      throw new Error(
+        "AI не вернул текстовый ответ."
+      );
+    }
+
+    answer.textContent =
+      data.answer;
+
+    provider.textContent =
+      data.provider
+        ? `✦ ${data.provider}`
+        : "✦ AI";
+
+    addHistory({
+      id:
+        `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      date:new Date().toISOString(),
+      mode,
+      sourceText:
+        rawText ||
+        "Анализ прикреплённых файлов",
+      answer:data.answer,
+      favorite:false,
+      files:selectedFiles.map(
+        item => item.file.name
+      )
+    });
+
+    if(notes.length){
+      showToast(
+        "Готово. Некоторые файлы были добавлены только как информация о формате."
+      );
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    answer.textContent =
+      `❌ ${error.message || "Произошла ошибка."}`;
+
+    provider.textContent = "Ошибка";
+
+  }finally{
+
+    processBtn.disabled = false;
+
+    if(!retryTimer){
+      processBtn.textContent = "✨ Обработать";
+    }
   }
-);
-
-
-/* =========================================================
-   REMOVE FILES
-========================================================= */
-
-removeFile.addEventListener(
-  "click",
-  () => {
-
-    selectedFiles =
-      [];
-
-    fileInput.value =
-      "";
-
-    fileInfo.classList.remove(
-      "show"
-    );
-
-    fileName.textContent =
-      "";
-
-  }
-);
-
-
-/* =========================================================
-   VOICE
-========================================================= */
-
-function getSpeechLanguage(
-  language
-) {
-
-  const languages = {
-
-    ru: "ru-RU",
-    pl: "pl-PL",
-    en: "en-US",
-    uk: "uk-UA",
-    de: "de-DE",
-    fr: "fr-FR",
-    es: "es-ES",
-    it: "it-IT",
-    pt: "pt-PT",
-    cs: "cs-CZ"
-
-  };
-
-  return (
-    languages[language] ||
-    "ru-RU"
-  );
 }
 
+/* =========================
+   RETRY TIMER
+========================= */
 
-function setupVoice() {
+function startRetryTimer(seconds){
+
+  clearInterval(retryTimer);
+
+  let left =
+    Math.max(1,Math.ceil(seconds));
+
+  processBtn.disabled = true;
+
+  const tick = () => {
+
+    processBtn.textContent =
+      `⏳ Повторить через ${left} сек.`;
+
+    left--;
+
+    if(left < 0){
+
+      clearInterval(retryTimer);
+      retryTimer = null;
+
+      processBtn.disabled = false;
+      processBtn.textContent =
+        "✨ Обработать";
+    }
+  };
+
+  tick();
+
+  retryTimer =
+    setInterval(tick,1000);
+}
+
+/* =========================
+   VOICE INPUT
+========================= */
+
+function startVoice(){
 
   const SpeechRecognition =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
-  if (
-    !SpeechRecognition
-  ) {
-
-    voiceButton.addEventListener(
-      "click",
-      () => {
-
-        showResult(
-          t("microphoneUnavailable")
-        );
-
-      }
+  if(!SpeechRecognition){
+    showToast(
+      "Голосовой ввод не поддерживается этим браузером."
     );
+    return;
+  }
 
+  if(recognition){
+    recognition.stop();
+    recognition = null;
     return;
   }
 
   recognition =
     new SpeechRecognition();
 
-  recognition.continuous =
-    false;
+  recognition.lang = "ru-RU";
+  recognition.interimResults = true;
+  recognition.continuous = false;
 
-  recognition.interimResults =
-    true;
+  recognition.onstart = () => {
+    showToast("Говорите...");
+    document.getElementById("voiceBtn")
+      .textContent = "⏹ Остановить";
+  };
 
-  recognition.lang =
-    getSpeechLanguage(
-      getLanguage()
-    );
+  recognition.onresult = event => {
 
-  recognition.onstart =
-    () => {
+    let finalText = "";
 
-      voiceButton.textContent =
-        t("listening");
-
-      voiceButton.disabled =
-        true;
-
-    };
-
-  recognition.onresult =
-    event => {
-
-      let spokenText =
-        "";
-
-      for (
-        let i =
-          event.resultIndex;
-
-        i <
-          event.results.length;
-
-        i++
-      ) {
-
-        spokenText +=
-          event.results[i][0]
-            .transcript;
-
-      }
-
-      textInput.value =
-        spokenText.slice(
-          0,
-          MAX_TEXT
-        );
-
-      updateCounter();
-
-    };
-
-  recognition.onerror =
-    () => {
-
-      voiceButton.textContent =
-        t("voice");
-
-      voiceButton.disabled =
-        false;
-
-    };
-
-  recognition.onend =
-    () => {
-
-      voiceButton.textContent =
-        t("voice");
-
-      voiceButton.disabled =
-        false;
-
-    };
-
-  voiceButton.addEventListener(
-    "click",
-    () => {
-
-      recognition.lang =
-        getSpeechLanguage(
-          getLanguage()
-        );
-
-      try {
-
-        recognition.start();
-
-      } catch {
-
-        try {
-          recognition.stop();
-        } catch {}
-
-      }
-
+    for(
+      let i = event.resultIndex;
+      i < event.results.length;
+      i++
+    ){
+      finalText +=
+        event.results[i][0].transcript;
     }
-  );
-}
-
-
-/* =========================================================
-   TEXT TO SPEECH
-========================================================= */
-
-speakButton.addEventListener(
-  "click",
-  () => {
-
-    const text =
-      resultText.textContent.trim();
-
-    if (
-      !text ||
-      !(
-        "speechSynthesis" in
-        window
-      )
-    ) {
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-
-    const utterance =
-      new SpeechSynthesisUtterance(
-        text
-      );
-
-    utterance.lang =
-      getSpeechLanguage(
-        getLanguage()
-      );
-
-    utterance.rate =
-      0.95;
-
-    window.speechSynthesis.speak(
-      utterance
-    );
-
-  }
-);
-
-
-stopSpeakButton.addEventListener(
-  "click",
-  () => {
-
-    if (
-      "speechSynthesis" in
-      window
-    ) {
-
-      window.speechSynthesis.cancel();
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-processButton.addEventListener(
-  "click",
-  processText
-);
-
-
-retryButton.addEventListener(
-  "click",
-  processText
-);
-
-
-copyButton.addEventListener(
-  "click",
-  () => {
-
-    copyText(
-      resultText.textContent
-    );
-
-  }
-);
-
-
-clearButton.addEventListener(
-  "click",
-  () => {
 
     textInput.value =
-      "";
-
-    selectedFiles =
-      [];
-
-    fileInput.value =
-      "";
-
-    fileInfo.classList.remove(
-      "show"
-    );
-
-    fileName.textContent =
-      "";
-
-    resetResult();
+      `${textInput.value} ${finalText}`
+        .trim()
+        .slice(0,MAX_TEXT);
 
     updateCounter();
+  };
 
-    updateActionHelp();
+  recognition.onerror = event => {
+    showToast(
+      `Ошибка голосового ввода: ${event.error}`
+    );
+  };
 
-    textInput.focus();
+  recognition.onend = () => {
+    recognition = null;
 
+    document.getElementById("voiceBtn")
+      .textContent = "🎙 Голос";
+  };
+
+  recognition.start();
+}
+
+/* =========================
+   SPEECH
+========================= */
+
+function speakAnswer(){
+
+  const text =
+    answer.textContent.trim();
+
+  if(!text) return;
+
+  if(!("speechSynthesis" in window)){
+    showToast("Озвучивание не поддерживается.");
+    return;
   }
-);
 
+  speechSynthesis.cancel();
 
-actionSelect.addEventListener(
-  "change",
-  () => {
+  const utterance =
+    new SpeechSynthesisUtterance(text);
 
-    updateActionHelp();
+  utterance.lang = "ru-RU";
+  utterance.rate = .95;
 
+  speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking(){
+
+  if("speechSynthesis" in window){
+    speechSynthesis.cancel();
   }
-);
+}
 
+/* =========================
+   EVENTS
+========================= */
 
 textInput.addEventListener(
   "input",
-  () => {
+  updateCounter
+);
 
-    if (
-      textInput.value.length >
-      MAX_TEXT
-    ) {
+action.addEventListener(
+  "change",
+  updateHelp
+);
+
+document
+  .getElementById("pasteBtn")
+  .addEventListener("click",async () => {
+
+    try{
+
+      const value =
+        await navigator.clipboard.readText();
 
       textInput.value =
-        textInput.value.slice(
-          0,
-          MAX_TEXT
-        );
+        value.slice(0,MAX_TEXT);
 
+      updateCounter();
+
+    }catch{
+      showToast(
+        "Не удалось получить доступ к буферу обмена."
+      );
     }
+  });
+
+document
+  .getElementById("clearBtn")
+  .addEventListener("click",() => {
+
+    textInput.value = "";
 
     updateCounter();
+    resetResult();
+  });
 
-  }
-);
+document
+  .getElementById("voiceBtn")
+  .addEventListener(
+    "click",
+    startVoice
+  );
 
+document
+  .getElementById("processBtn")
+  .addEventListener(
+    "click",
+    processText
+  );
 
-/* =========================================================
-   LANGUAGE SWITCH
-========================================================= */
+document
+  .getElementById("copyBtn")
+  .addEventListener(
+    "click",
+    () => copyText(answer.textContent)
+  );
 
-interfaceLanguage.addEventListener(
+document
+  .getElementById("speakBtn")
+  .addEventListener(
+    "click",
+    speakAnswer
+  );
+
+document
+  .getElementById("stopSpeakBtn")
+  .addEventListener(
+    "click",
+    stopSpeaking
+  );
+
+document
+  .getElementById("retryBtn")
+  .addEventListener("click",() => {
+
+    if(lastRequest){
+      processText();
+    }
+  });
+
+document
+  .getElementById("fileAddBtn")
+  .addEventListener(
+    "click",
+    () => fileInput.click()
+  );
+
+fileInput.addEventListener(
   "change",
-  () => {
-
-    try {
-
-      localStorage.setItem(
-        LANGUAGE_KEY,
-        interfaceLanguage.value
-      );
-
-    } catch {}
-
-    applyLanguage();
-
-  }
+  event => addFiles(event.target.files)
 );
 
+document
+  .getElementById("clearHistoryBtn")
+  .addEventListener("click",() => {
 
-/* =========================================================
-   HISTORY TABS
-========================================================= */
+    if(!confirm("Очистить историю?")) return;
 
-allHistoryTab.addEventListener(
-  "click",
-  () => {
-
-    historyFilter =
-      "all";
-
+    localStorage.removeItem(HISTORY_KEY);
     renderHistory();
+  });
 
-  }
-);
+document
+  .querySelectorAll(".tab")
+  .forEach(tab => {
 
+    tab.addEventListener("click",() => {
 
-favoriteHistoryTab.addEventListener(
-  "click",
-  () => {
-
-    historyFilter =
-      "favorites";
-
-    renderHistory();
-
-  }
-);
-
-
-clearHistoryButton.addEventListener(
-  "click",
-  () => {
-
-    if (
-      confirm(
-        t("confirmClear")
-      )
-    ) {
-
-      try {
-
-        localStorage.removeItem(
-          HISTORY_KEY
+      document
+        .querySelectorAll(".tab")
+        .forEach(x =>
+          x.classList.remove("active")
         );
 
-      } catch {}
+      tab.classList.add("active");
+
+      historyFilter =
+        tab.dataset.filter;
 
       renderHistory();
+    });
+  });
 
-    }
-
-  }
-);
-
-
-/* =========================================================
-   TEMPLATE
-========================================================= */
-
-addTemplateButton.addEventListener(
-  "click",
-  () => {
-
-    const text =
-      textInput.value.trim();
-
-    if (!text) {
-
-      showResult(
-        t("enterText")
-      );
-
-      return;
-    }
+document
+  .getElementById("newTemplateBtn")
+  .addEventListener("click",() => {
 
     const name =
-      prompt(
-        t("templateName")
-      );
+      prompt("Название шаблона:");
 
-    if (
-      !name ||
-      !name.trim()
-    ) {
+    if(!name) return;
+
+    const value =
+      textInput.value.trim();
+
+    if(!value){
+      showToast(
+        "Сначала введи текст шаблона."
+      );
       return;
     }
 
@@ -4415,106 +2005,67 @@ addTemplateButton.addEventListener(
       loadTemplates();
 
     templates.unshift({
-
       id:
-        safeId(),
-
-      name:
-        name
-          .trim()
-          .slice(
-            0,
-            100
-          ),
-
-      text:
-        text.slice(
-          0,
-          MAX_TEXT
-        ),
-
-      mode:
-        actionSelect.value
-
+        `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      name:name.trim().slice(0,80),
+      text:value
     });
 
-    saveTemplates(
-      templates
-    );
-
+    saveTemplates(templates);
     renderTemplates();
 
+    showToast("Шаблон сохранён.");
+  });
+
+/* =========================
+   DRAG & DROP
+========================= */
+
+const fileZone =
+  document.querySelector(".file-zone");
+
+fileZone.addEventListener(
+  "dragover",
+  event => {
+    event.preventDefault();
+    fileZone.style.borderColor =
+      "var(--accent)";
   }
 );
 
-
-/* =========================================================
-   INITIAL LANGUAGE
-========================================================= */
-
-let savedLanguage = null;
-
-try {
-
-  savedLanguage =
-    localStorage.getItem(
-      LANGUAGE_KEY
-    );
-
-} catch {}
-
-
-if (
-  savedLanguage &&
-  translations[
-    savedLanguage
-  ]
-) {
-
-  interfaceLanguage.value =
-    savedLanguage;
-
-} else {
-
-  const browserLanguage =
-    (
-      navigator.language ||
-      "ru"
-    ).slice(
-      0,
-      2
-    );
-
-  if (
-    translations[
-      browserLanguage
-    ]
-  ) {
-
-    interfaceLanguage.value =
-      browserLanguage;
-
-  } else {
-
-    interfaceLanguage.value =
-      "ru";
-
+fileZone.addEventListener(
+  "dragleave",
+  () => {
+    fileZone.style.borderColor =
+      "#3a4050";
   }
+);
 
-}
+fileZone.addEventListener(
+  "drop",
+  event => {
 
+    event.preventDefault();
 
-/* =========================================================
-   INITIAL STATE
-========================================================= */
+    fileZone.style.borderColor =
+      "#3a4050";
 
-resetResult();
+    if(event.dataTransfer.files){
+      addFiles(event.dataTransfer.files);
+    }
+  }
+);
 
-applyLanguage();
+/* =========================
+   INIT
+========================= */
 
-setupVoice();
+updateCounter();
+updateHelp();
+renderHistory();
+renderTemplates();
+renderFiles();
 
 </script>
-
 </body>
 </html>
