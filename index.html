@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#08090d">
 <title>AI Помощник</title>
+
 <style>
 *{box-sizing:border-box}
+
 html,body{
   margin:0;
   padding:0;
@@ -15,18 +17,22 @@ html,body{
   color:#f5f7fb;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif
 }
+
 body{
   padding:20px 12px 40px
 }
+
 .container{
   width:100%;
   max-width:760px;
   margin:0 auto
 }
+
 .header{
   text-align:center;
   padding:20px 0 24px
 }
+
 .badge{
   display:inline-block;
   padding:7px 12px;
@@ -38,12 +44,14 @@ body{
   letter-spacing:1.4px;
   margin-bottom:14px
 }
+
 h1{
   margin:0;
   font-size:34px;
   line-height:1.1;
   letter-spacing:-1px
 }
+
 .subtitle{
   margin:10px auto 0;
   max-width:560px;
@@ -51,6 +59,7 @@ h1{
   font-size:15px;
   line-height:1.5
 }
+
 .card{
   background:#111319;
   border:1px solid #252936;
@@ -58,6 +67,7 @@ h1{
   padding:16px;
   margin-bottom:14px
 }
+
 .label{
   display:block;
   margin-bottom:9px;
@@ -66,6 +76,7 @@ h1{
   font-weight:800;
   letter-spacing:1.3px
 }
+
 select,
 textarea,
 input{
@@ -77,9 +88,11 @@ input{
   outline:none;
   font:inherit
 }
+
 select{
   padding:13px
 }
+
 textarea{
   min-height:210px;
   resize:vertical;
@@ -87,22 +100,26 @@ textarea{
   line-height:1.55;
   font-size:15px
 }
+
 textarea:focus,
 select:focus{
   border-color:#5864ff
 }
+
 .counter{
   text-align:right;
   margin-top:6px;
   color:#687082;
   font-size:11px
 }
+
 .tools{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
   margin-top:10px
 }
+
 button{
   border:1px solid #2a2f3b;
   background:#171a22;
@@ -112,13 +129,16 @@ button{
   font-size:13px;
   cursor:pointer
 }
+
 button:active{
   transform:scale(.98)
 }
+
 button:disabled{
   opacity:.5;
   cursor:not-allowed
 }
+
 .primary{
   width:100%;
   margin-top:14px;
@@ -129,9 +149,11 @@ button:disabled{
   font-weight:800;
   font-size:15px
 }
+
 .file-input{
   display:none
 }
+
 .file-drop{
   margin-top:12px;
   border:1px dashed #343947;
@@ -142,16 +164,19 @@ button:disabled{
   font-size:13px;
   cursor:pointer
 }
+
 .file-drop.drag{
   border-color:#6875ff;
   background:#171927
 }
+
 .file-list{
   margin-top:10px;
   display:flex;
   flex-direction:column;
   gap:8px
 }
+
 .file-item{
   display:flex;
   align-items:center;
@@ -161,6 +186,7 @@ button:disabled{
   border-radius:12px;
   padding:10px
 }
+
 .file-icon{
   width:34px;
   height:34px;
@@ -171,34 +197,42 @@ button:disabled{
   background:#171b26;
   flex:none
 }
+
 .file-info{
   min-width:0;
   flex:1
 }
+
 .file-name{
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
   font-size:13px
 }
+
 .file-meta{
   margin-top:3px;
   color:#6f7788;
   font-size:11px
 }
+
 .file-status{
   margin-top:4px;
   font-size:11px
 }
+
 .ok{
   color:#72d69b
 }
+
 .warn{
   color:#e9bd66
 }
+
 .error{
   color:#ff7272
 }
+
 .remove-file{
   width:30px;
   height:30px;
@@ -206,12 +240,15 @@ button:disabled{
   border-radius:8px;
   flex:none
 }
+
 .result{
   display:none
 }
+
 .result.visible{
   display:block
 }
+
 .result-header{
   display:flex;
   justify-content:space-between;
@@ -219,16 +256,19 @@ button:disabled{
   gap:10px;
   margin-bottom:10px
 }
+
 .result-title{
   color:#9da5b8;
   font-size:11px;
   font-weight:800;
   letter-spacing:1.3px
 }
+
 .provider{
   color:#737c8f;
   font-size:11px
 }
+
 .result-text{
   white-space:pre-wrap;
   word-break:break-word;
@@ -241,12 +281,14 @@ button:disabled{
   padding:15px;
   min-height:80px
 }
+
 .result-actions{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
   margin-top:10px
 }
+
 .section-title{
   display:flex;
   justify-content:space-between;
@@ -257,19 +299,23 @@ button:disabled{
   font-weight:800;
   letter-spacing:1px
 }
+
 .history-item{
   border-top:1px solid #252a34;
   padding:12px 0
 }
+
 .history-item:first-child{
   border-top:0
 }
+
 .history-mode{
   color:#727b8e;
   font-size:10px;
   text-transform:uppercase;
   margin-bottom:5px
 }
+
 .history-text{
   color:#e6e9ef;
   font-size:13px;
@@ -277,56 +323,66 @@ button:disabled{
   overflow:hidden;
   text-overflow:ellipsis
 }
+
 .history-date{
   color:#697183;
   font-size:10px;
   margin-top:4px
 }
+
 .history-actions{
   display:flex;
   gap:7px;
   margin-top:8px;
   flex-wrap:wrap
 }
+
 .empty{
   color:#60697b;
   text-align:center;
   padding:12px 0;
   font-size:13px
 }
+
 .features{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
   margin-top:14px
 }
+
 .feature{
   background:#111319;
   border:1px solid #252936;
   border-radius:14px;
   padding:14px
 }
+
 .feature b{
   display:block;
   font-size:13px;
   margin-bottom:5px
 }
+
 .feature span{
   color:#737b8d;
   font-size:11px;
   line-height:1.4
 }
+
 footer{
   text-align:center;
   color:#50586a;
   font-size:11px;
   padding:25px 0 5px
 }
+
 .loading{
   display:inline-flex;
   align-items:center;
   gap:7px
 }
+
 .dot{
   width:7px;
   height:7px;
@@ -334,118 +390,164 @@ footer{
   background:#9b4dff;
   animation:pulse 1s infinite
 }
+
 @keyframes pulse{
   0%,100%{opacity:.3}
   50%{opacity:1}
 }
+
 @media(max-width:600px){
   body{
     padding:12px 10px 30px
   }
+
   h1{
     font-size:29px
   }
+
   .features{
     grid-template-columns:1fr
   }
+
   .card{
     padding:13px
   }
+
   textarea{
     min-height:190px
   }
 }
 </style>
 </head>
+
 <body>
+
 <div class="container">
+
   <header class="header">
     <div class="badge">● AI POWERED</div>
+
     <h1>✦ AI Помощник</h1>
+
     <div class="subtitle">
       Напиши текст — AI поможет его улучшить, перевести или переработать.
     </div>
   </header>
+
   <section class="card">
-    <!-- =========================
-         LANGUAGE
-    ========================== -->
+
+    <label class="label" for="mode">ДЕЙСТВИЕ</label>
+
+    <select id="mode">
+
+      <optgroup label="Текст">
+        <option value="improve">Исправить и улучшить</option>
+        <option value="polish">Сделать естественнее</option>
+        <option value="english">Перевести на английский</option>
+        <option value="shorten">Сократить</option>
+        <option value="summarize">Сделать краткое резюме</option>
+        <option value="explain">Объяснить текст</option>
+      </optgroup>
+
+      <optgroup label="Создание">
+        <option value="write">Написать текст</option>
+        <option value="reply">Написать ответ</option>
+        <option value="business">Деловой текст</option>
+        <option value="tiktok">Текст для TikTok</option>
+      </optgroup>
+
+    </select>
+
+    <br><br>
+
     <label class="label" for="language">
       ЯЗЫК ОТВЕТА
     </label>
+
     <select id="language">
-      <option value="auto">🌐 Авто</option>
-      <option value="ru" selected>🇷🇺 Русский</option>
-      <option value="uk">🇺🇦 Українська</option>
-      <option value="pl">🇵🇱 Polski</option>
-      <option value="en">🇬🇧 English</option>
+
+      <option value="ru" selected>
+        🇷🇺 Русский
+      </option>
+
+      <option value="pl">
+        🇵🇱 Polski
+      </option>
+
+      <option value="uk">
+        🇺🇦 Українська
+      </option>
+
+      <option value="en">
+        🇬🇧 English
+      </option>
+
+      <option value="de">
+        🇩🇪 Deutsch
+      </option>
+
+      <option value="fr">
+        🇫🇷 Français
+      </option>
+
+      <option value="es">
+        🇪🇸 Español
+      </option>
+
+      <option value="it">
+        🇮🇹 Italiano
+      </option>
+
+      <option value="pt">
+        🇵🇹 Português
+      </option>
+
+      <option value="tr">
+        🇹🇷 Türkçe
+      </option>
+
+      <option value="zh">
+        🇨🇳 中文
+      </option>
+
+      <option value="ja">
+        🇯🇵 日本語
+      </option>
+
     </select>
+
     <br><br>
-    <!-- =========================
-         ACTION
-    ========================== -->
-    <label class="label" for="mode">
-      ДЕЙСТВИЕ
-    </label>
-    <select id="mode">
-      <optgroup label="Текст">
-        <option value="improve">
-          Исправить и улучшить
-        </option>
-        <option value="polish">
-          Сделать естественнее
-        </option>
-        <option value="english">
-          Перевести на английский
-        </option>
-        <option value="shorten">
-          Сократить
-        </option>
-        <option value="summarize">
-          Сделать краткое резюме
-        </option>
-        <option value="explain">
-          Объяснить текст
-        </option>
-      </optgroup>
-      <optgroup label="Создание">
-        <option value="write">
-          Написать текст
-        </option>
-        <option value="reply">
-          Написать ответ
-        </option>
-        <option value="business">
-          Деловой текст
-        </option>
-        <option value="tiktok">
-          Текст для TikTok
-        </option>
-      </optgroup>
-    </select>
-    <br><br>
+
     <textarea
       id="message"
       maxlength="10000"
       placeholder="Введите текст..."
     ></textarea>
+
     <div class="counter">
       <span id="counter">0</span> / 10000
     </div>
+
     <div class="tools">
+
       <button type="button" id="pasteBtn">
         📋 Вставить
       </button>
+
       <button type="button" id="voiceBtn">
         🎙 Голос
       </button>
+
       <button type="button" id="clearBtn">
         ✕ Очистить
       </button>
+
       <button type="button" id="fileBtn">
         📎 Файлы
       </button>
+
     </div>
+
     <input
       id="fileInput"
       class="file-input"
@@ -453,11 +555,14 @@ footer{
       multiple
       accept="*/*"
     >
+
     <div id="fileDrop" class="file-drop">
       Можно выбрать файлы любого формата<br>
       <strong>+ Добавить</strong>
     </div>
+
     <div id="fileList" class="file-list"></div>
+
     <button
       id="processBtn"
       class="primary"
@@ -465,743 +570,899 @@ footer{
     >
       ✨ Обработать
     </button>
+
   </section>
-  <!-- =========================
-       RESULT
-  ========================== -->
+
   <section
     id="resultCard"
     class="card result"
   >
+
     <div class="result-header">
+
       <div class="result-title">
         ✦ РЕЗУЛЬТАТ AI
       </div>
+
       <div
         id="provider"
         class="provider"
       ></div>
+
     </div>
+
     <div
       id="resultText"
       class="result-text"
     ></div>
+
     <div class="result-actions">
+
       <button
         id="copyBtn"
         type="button"
       >
         📋 Скопировать
       </button>
+
       <button
         id="retryBtn"
         type="button"
       >
         ↻ Повторить
       </button>
+
       <button
         id="speakBtn"
         type="button"
       >
         🔊 Озвучить
       </button>
+
       <button
         id="stopSpeakBtn"
         type="button"
       >
         ⏹ Стоп
       </button>
+
     </div>
+
   </section>
-  <!-- =========================
-       HISTORY
-  ========================== -->
+
   <section class="card">
+
     <div class="section-title">
-      <span>
-        История
-      </span>
+
+      <span>История</span>
+
       <button
         id="clearHistoryBtn"
         type="button"
       >
         Очистить
       </button>
+
     </div>
+
     <div id="history"></div>
+
   </section>
-  <!-- =========================
-       TEMPLATES
-  ========================== -->
+
   <section class="card">
+
     <div class="section-title">
-      <span>
-        Шаблоны
-      </span>
+
+      <span>Шаблоны</span>
+
       <button
         id="createTemplateBtn"
         type="button"
       >
         + Создать
       </button>
+
     </div>
+
     <div id="templates"></div>
+
   </section>
-  <!-- =========================
-       FEATURES
-  ========================== -->
+
   <div class="features">
+
     <div class="feature">
       <b>⚡ Быстро</b>
       <span>За считанные секунды</span>
     </div>
+
     <div class="feature">
       <b>🧠 Умно</b>
       <span>Gemini · Groq · OpenRouter</span>
     </div>
+
     <div class="feature">
       <b>🌍 Много языков</b>
-      <span>Русский · Polski · English · Українська</span>
+      <span>Ответы на выбранном языке</span>
     </div>
+
   </div>
+
   <footer>
     AI Помощник · Gemini · Groq · OpenRouter
   </footer>
+
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
 <script>
 "use strict";
+
 /* =========================
    НАСТРОЙКИ
 ========================= */
+
 const MAX_TEXT = 10000;
 const MAX_FILES = 5;
-const MAX_IMAGE_BYTES =
-  6 * 1024 * 1024;
-const MAX_FILE_BYTES =
-  10 * 1024 * 1024;
-const MAX_TOTAL_EXTRACTED =
-  8500;
-const HISTORY_KEY =
-  "ai_helper_history_v4";
-const TEMPLATES_KEY =
-  "ai_helper_templates_v4";
-/* =========================
-   ELEMENTS
-========================= */
+const MAX_IMAGE_BYTES = 6 * 1024 * 1024;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TOTAL_EXTRACTED = 8500;
+
+const HISTORY_KEY = "ai_helper_history_v4";
+const TEMPLATES_KEY = "ai_helper_templates_v4";
+
 const messageEl =
   document.getElementById("message");
+
 const counterEl =
   document.getElementById("counter");
+
 const modeEl =
   document.getElementById("mode");
+
 const languageEl =
   document.getElementById("language");
+
 const fileInput =
   document.getElementById("fileInput");
+
 const fileBtn =
   document.getElementById("fileBtn");
+
 const fileDrop =
   document.getElementById("fileDrop");
+
 const fileList =
   document.getElementById("fileList");
+
 const processBtn =
   document.getElementById("processBtn");
+
 const resultCard =
   document.getElementById("resultCard");
+
 const resultText =
   document.getElementById("resultText");
+
 const providerEl =
   document.getElementById("provider");
+
 const pasteBtn =
   document.getElementById("pasteBtn");
+
 const voiceBtn =
   document.getElementById("voiceBtn");
+
 const clearBtn =
   document.getElementById("clearBtn");
+
 const copyBtn =
   document.getElementById("copyBtn");
+
 const retryBtn =
   document.getElementById("retryBtn");
+
 const speakBtn =
   document.getElementById("speakBtn");
+
 const stopSpeakBtn =
   document.getElementById("stopSpeakBtn");
+
 const historyEl =
   document.getElementById("history");
+
 const clearHistoryBtn =
   document.getElementById("clearHistoryBtn");
+
 const templatesEl =
   document.getElementById("templates");
+
 const createTemplateBtn =
   document.getElementById("createTemplateBtn");
+
 let selectedFiles = [];
 let lastRequest = null;
 let recognition = null;
+
+/* =========================
+   ЯЗЫКИ
+========================= */
+
+const languageNames = {
+  ru: "русском языке",
+  pl: "польском языке",
+  uk: "украинском языке",
+  en: "английском языке",
+  de: "немецком языке",
+  fr: "французском языке",
+  es: "испанском языке",
+  it: "итальянском языке",
+  pt: "португальском языке",
+  tr: "турецком языке",
+  zh: "китайском языке",
+  ja: "японском языке"
+};
+
+const speechLanguages = {
+  ru: "ru-RU",
+  pl: "pl-PL",
+  uk: "uk-UA",
+  en: "en-US",
+  de: "de-DE",
+  fr: "fr-FR",
+  es: "es-ES",
+  it: "it-IT",
+  pt: "pt-PT",
+  tr: "tr-TR",
+  zh: "zh-CN",
+  ja: "ja-JP"
+};
+
+function getSelectedLanguage() {
+  return languageEl.value || "ru";
+}
+
 /* =========================
    PDF WORKER
 ========================= */
+
 if (window.pdfjsLib) {
+
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
 }
-/* =========================
-   LANGUAGE
-========================= */
-const LANGUAGE_NAMES = {
-  auto: "Авто",
-  ru: "Русский",
-  uk: "Українська",
-  pl: "Polski",
-  en: "English"
-};
-const LANGUAGE_INSTRUCTIONS = {
-  auto: `
-Отвечай на языке, на котором пользователь написал основной запрос.
-Если пользователь пишет на русском — отвечай на русском.
-Если пользователь пишет на украинском — отвечай на украинском.
-Если пользователь пишет на польском — отвечай на польском.
-Если пользователь пишет на английском — отвечай на английском.
-Не меняй язык без необходимости.
-`.trim(),
-  ru: `
-Отвечай ТОЛЬКО на русском языке.
-Даже если изображение, файл или его содержимое написаны на другом языке,
-объяснение и итоговый ответ должны быть на русском языке.
-`.trim(),
-  uk: `
-Відповідай ТІЛЬКИ українською мовою.
-Навіть якщо зображення, файл або його вміст написані іншою мовою,
-пояснення та підсумкова відповідь мають бути українською мовою.
-`.trim(),
-  pl: `
-Odpowiadaj WYŁĄCZNIE po polsku.
-Nawet jeśli obraz, plik lub jego zawartość są w innym języku,
-wyjaśnienie i końcowa odpowiedź mają być po polsku.
-`.trim(),
-  en: `
-Answer ONLY in English.
-Even if the image, file, or its contents are in another language,
-the explanation and final answer must be in English.
-`.trim()
-};
-function getSelectedLanguage() {
-  return (
-    languageEl.value || "ru"
-  );
-}
-function getLanguageInstruction() {
-  const language =
-    getSelectedLanguage();
-  return (
-    LANGUAGE_INSTRUCTIONS[language] ||
-    LANGUAGE_INSTRUCTIONS.ru
-  );
-}
-function getSpeechLanguage() {
-  const language =
-    getSelectedLanguage();
-  if (language === "uk") {
-    return "uk-UA";
-  }
-  if (language === "pl") {
-    return "pl-PL";
-  }
-  if (language === "en") {
-    return "en-US";
-  }
-  return "ru-RU";
-}
+
 /* =========================
    UTILITIES
 ========================= */
+
 function formatBytes(bytes) {
+
   if (!Number.isFinite(bytes)) {
     return "";
   }
+
   if (bytes < 1024) {
     return bytes + " Б";
   }
+
   if (bytes < 1024 * 1024) {
-    return (
-      (bytes / 1024).toFixed(1) +
-      " КБ"
-    );
+    return (bytes / 1024).toFixed(1) + " КБ";
   }
+
   return (
     (bytes / 1024 / 1024).toFixed(1) +
     " МБ"
   );
 }
+
 function escapeHtml(value) {
+
   return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+
 }
+
 function getModeName(mode) {
+
   const option =
     [...modeEl.options]
       .find(x => x.value === mode);
+
   return option
     ? option.textContent
     : mode;
 }
+
 function updateCounter() {
+
   counterEl.textContent =
     messageEl.value.length;
+
 }
+
 function setResult(
   text,
   provider = ""
 ) {
-  resultCard.classList.add(
-    "visible"
-  );
+
+  resultCard.classList.add("visible");
+
   resultText.textContent =
     text || "";
+
   providerEl.textContent =
     provider
       ? "✦ " + provider
       : "";
+
 }
+
 function setLoading(loading) {
-  processBtn.disabled =
-    loading;
+
+  processBtn.disabled = loading;
+
   if (loading) {
+
     processBtn.innerHTML =
       '<span class="loading">' +
       '<span class="dot"></span>' +
       ' Обрабатываю...' +
       '</span>';
+
   } else {
+
     processBtn.textContent =
       "✨ Обработать";
+
   }
+
 }
+
 /* =========================
    FILE HELPERS
 ========================= */
+
 function isImage(file) {
+
   return [
     "image/jpeg",
     "image/png",
     "image/webp",
     "image/gif"
   ].includes(file.type);
+
 }
+
 function isTextFile(file) {
+
   const type =
     file.type || "";
+
   const name =
     file.name.toLowerCase();
+
   return (
     type.startsWith("text/") ||
     /\.(txt|md|csv|json|xml|html|htm|css|js|ts|jsx|tsx|py|java|c|cpp|h|hpp|sql|log|yaml|yml|ini|conf|rtf)$/i
       .test(name)
   );
+
 }
+
 function isPdf(file) {
+
   return (
-    file.type ===
-      "application/pdf" ||
-    file.name
-      .toLowerCase()
-      .endsWith(".pdf")
+    file.type === "application/pdf" ||
+    file.name.toLowerCase().endsWith(".pdf")
   );
+
 }
+
 function isDocx(file) {
+
   return (
     file.type ===
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    file.name
-      .toLowerCase()
-      .endsWith(".docx")
+    file.name.toLowerCase().endsWith(".docx")
   );
+
 }
+
 function isSpreadsheet(file) {
+
   const name =
     file.name.toLowerCase();
+
   return (
-    /\.(xlsx|xls|xlsm|ods)$/i
-      .test(name) ||
-    file.type.includes(
-      "spreadsheet"
-    ) ||
-    file.type.includes(
-      "excel"
-    )
+    /\.(xlsx|xls|xlsm|ods)$/i.test(name) ||
+    file.type.includes("spreadsheet") ||
+    file.type.includes("excel")
   );
+
 }
+
 function readFileAsText(file) {
-  return new Promise(
-    (resolve, reject) => {
-      const reader =
-        new FileReader();
-      reader.onload = () =>
-        resolve(
-          String(
-            reader.result || ""
-          )
-        );
-      reader.onerror = () =>
-        reject(
-          new Error(
-            "Не удалось прочитать файл"
-          )
-        );
-      reader.readAsText(file);
-    }
-  );
+
+  return new Promise((resolve, reject) => {
+
+    const reader =
+      new FileReader();
+
+    reader.onload = () =>
+      resolve(
+        String(reader.result || "")
+      );
+
+    reader.onerror = () =>
+      reject(
+        new Error(
+          "Не удалось прочитать файл"
+        )
+      );
+
+    reader.readAsText(file);
+
+  });
+
 }
+
 function readFileAsDataURL(file) {
-  return new Promise(
-    (resolve, reject) => {
-      const reader =
-        new FileReader();
-      reader.onload = () => {
-        const result =
-          String(
-            reader.result || ""
-          );
-        if (
-          !result.startsWith("data:")
-        ) {
-          reject(
-            new Error(
-              "Некорректное содержимое изображения"
-            )
-          );
-          return;
-        }
-        resolve(result);
-      };
-      reader.onerror = () => {
+
+  return new Promise((resolve, reject) => {
+
+    const reader =
+      new FileReader();
+
+    reader.onload = () => {
+
+      const result =
+        String(reader.result || "");
+
+      if (!result.startsWith("data:")) {
+
         reject(
           new Error(
-            "Не удалось прочитать изображение"
+            "Некорректное содержимое изображения"
           )
         );
-      };
-      reader.readAsDataURL(file);
-    }
-  );
+
+        return;
+      }
+
+      resolve(result);
+
+    };
+
+    reader.onerror = () => {
+
+      reject(
+        new Error(
+          "Не удалось прочитать изображение"
+        )
+      );
+
+    };
+
+    reader.readAsDataURL(file);
+
+  });
+
 }
+
 /* =========================
    PDF
 ========================= */
+
 async function extractPdf(file) {
+
   if (!window.pdfjsLib) {
+
     throw new Error(
       "PDF.js не загрузился"
     );
+
   }
+
   const buffer =
     await file.arrayBuffer();
+
   const pdf =
-    await pdfjsLib
-      .getDocument({
-        data: buffer
-      })
-      .promise;
+    await pdfjsLib.getDocument({
+      data: buffer
+    }).promise;
+
   let output = "";
+
   for (
     let pageNumber = 1;
     pageNumber <= pdf.numPages;
     pageNumber++
   ) {
+
     const page =
-      await pdf.getPage(
-        pageNumber
-      );
+      await pdf.getPage(pageNumber);
+
     const content =
       await page.getTextContent();
+
     const pageText =
       content.items
-        .map(
-          item => item.str || ""
-        )
+        .map(item => item.str || "")
         .join(" ");
+
     output +=
       "\n" + pageText;
+
     if (
       output.length >=
       MAX_TOTAL_EXTRACTED
     ) {
       break;
     }
+
   }
+
   return output
     .trim()
-    .slice(
-      0,
-      MAX_TOTAL_EXTRACTED
-    );
+    .slice(0, MAX_TOTAL_EXTRACTED);
+
 }
+
 /* =========================
    DOCX
 ========================= */
+
 async function extractDocx(file) {
+
   if (!window.mammoth) {
+
     throw new Error(
       "Mammoth не загрузился"
     );
+
   }
+
   const buffer =
     await file.arrayBuffer();
+
   const result =
     await mammoth.extractRawText({
       arrayBuffer: buffer
     });
+
   return String(
     result.value || ""
   )
     .trim()
-    .slice(
-      0,
-      MAX_TOTAL_EXTRACTED
-    );
+    .slice(0, MAX_TOTAL_EXTRACTED);
+
 }
+
 /* =========================
-   SPREADSHEETS
+   XLS/XLSX/ODS
 ========================= */
+
 async function extractSpreadsheet(file) {
+
   if (!window.XLSX) {
+
     throw new Error(
       "SheetJS не загрузился"
     );
+
   }
+
   const buffer =
     await file.arrayBuffer();
+
   const workbook =
-    XLSX.read(
-      buffer,
-      {
-        type: "array"
-      }
-    );
+    XLSX.read(buffer, {
+      type: "array"
+    });
+
   let output = "";
+
   for (
-    const sheetName of
-    workbook.SheetNames
+    const sheetName
+    of workbook.SheetNames
   ) {
+
     const sheet =
-      workbook.Sheets[
-        sheetName
-      ];
+      workbook.Sheets[sheetName];
+
     const csv =
-      XLSX.utils.sheet_to_csv(
-        sheet
-      );
+      XLSX.utils.sheet_to_csv(sheet);
+
     output +=
       "\n\n=== ЛИСТ: " +
       sheetName +
       " ===\n" +
       csv;
+
     if (
       output.length >=
       MAX_TOTAL_EXTRACTED
     ) {
       break;
     }
+
   }
+
   return output
     .trim()
-    .slice(
-      0,
-      MAX_TOTAL_EXTRACTED
-    );
+    .slice(0, MAX_TOTAL_EXTRACTED);
+
 }
+
 /* =========================
-   PROCESS FILE
+   PROCESS ONE FILE
 ========================= */
+
 async function processFile(item) {
+
   const file =
     item.file;
+
   item.status =
     "processing";
+
   item.message =
     "Читаю файл...";
+
   renderFiles();
+
   try {
+
     if (
       file.size >
       MAX_FILE_BYTES
     ) {
+
       item.status =
         "error";
+
       item.message =
         "Файл слишком большой. Максимум 10 МБ.";
+
       renderFiles();
+
       return;
     }
+
     /* IMAGE */
+
     if (isImage(file)) {
+
       if (
         file.size >
         MAX_IMAGE_BYTES
       ) {
+
         item.status =
           "error";
+
         item.message =
           "Изображение слишком большое. Максимум 6 МБ.";
+
         renderFiles();
+
         return;
       }
+
       const dataUrl =
-        await readFileAsDataURL(
-          file
-        );
+        await readFileAsDataURL(file);
+
       if (
         !dataUrl ||
-        !dataUrl.includes(
-          ";base64,"
-        )
+        !dataUrl.includes(";base64,")
       ) {
+
         throw new Error(
           "Не удалось получить Base64 изображения"
         );
+
       }
+
       item.kind =
         "image";
+
       item.dataUrl =
         dataUrl;
+
       item.extractedText =
         "";
+
       item.status =
         "ready";
+
       item.message =
         "🖼️ Готово к анализу";
+
       renderFiles();
+
       return;
     }
+
     /* TEXT */
+
     if (isTextFile(file)) {
+
       const text =
-        await readFileAsText(
-          file
-        );
+        await readFileAsText(file);
+
       item.kind =
         "text";
+
       item.extractedText =
         text.slice(
           0,
           MAX_TOTAL_EXTRACTED
         );
+
       item.status =
         "ready";
+
       item.message =
         item.extractedText.trim()
           ? "✓ Текст извлечён"
           : "⚠ Файл пустой";
+
       renderFiles();
+
       return;
     }
+
     /* PDF */
+
     if (isPdf(file)) {
+
       const text =
-        await extractPdf(
-          file
-        );
+        await extractPdf(file);
+
       item.kind =
         "text";
+
       item.extractedText =
         text;
+
       item.status =
         "ready";
+
       item.message =
         text
           ? "✓ Текст из PDF извлечён"
           : "⚠ В PDF нет доступного текста";
+
       renderFiles();
+
       return;
     }
+
     /* DOCX */
+
     if (isDocx(file)) {
+
       const text =
-        await extractDocx(
-          file
-        );
+        await extractDocx(file);
+
       item.kind =
         "text";
+
       item.extractedText =
         text;
+
       item.status =
         "ready";
+
       item.message =
         text
           ? "✓ Текст из DOCX извлечён"
           : "⚠ В DOCX нет доступного текста";
+
       renderFiles();
+
       return;
     }
+
     /* SPREADSHEET */
+
     if (isSpreadsheet(file)) {
+
       const text =
-        await extractSpreadsheet(
-          file
-        );
+        await extractSpreadsheet(file);
+
       item.kind =
         "text";
+
       item.extractedText =
         text;
+
       item.status =
         "ready";
+
       item.message =
         text
           ? "✓ Таблица извлечена"
           : "⚠ Таблица пустая";
+
       renderFiles();
+
       return;
     }
+
     /* UNKNOWN */
+
     item.kind =
       "unsupported";
+
     item.status =
       "warning";
+
     item.message =
       "⚠ Этот формат выбран, но пока не поддерживается для анализа";
+
     renderFiles();
+
   } catch (error) {
+
     console.error(
       "FILE ERROR:",
       error
     );
+
     item.status =
       "error";
+
     item.message =
       "❌ " +
       (
         error?.message ||
         "Не удалось обработать файл"
       );
+
     renderFiles();
+
   }
+
 }
+
 /* =========================
    FILE UI
 ========================= */
+
 function renderFiles() {
-  fileList.innerHTML = "";
+
+  fileList.innerHTML =
+    "";
+
   if (
     !selectedFiles.length
   ) {
     return;
   }
+
   selectedFiles.forEach(
     (item, index) => {
+
       const div =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
+
       div.className =
         "file-item";
+
       let icon =
         "📄";
+
       if (
         isImage(item.file)
       ) {
@@ -1219,8 +1480,10 @@ function renderFiles() {
       ) {
         icon = "📊";
       }
+
       let statusClass =
         "";
+
       if (
         item.status ===
         "ready"
@@ -1228,49 +1491,47 @@ function renderFiles() {
         statusClass =
           "ok";
       } else if (
-        item.status ===
-          "warning" ||
-        item.status ===
-          "processing"
+        item.status === "warning" ||
+        item.status === "processing"
       ) {
         statusClass =
           "warn";
       } else if (
-        item.status ===
-        "error"
+        item.status === "error"
       ) {
         statusClass =
           "error";
       }
+
       div.innerHTML = `
         <div class="file-icon">
           ${icon}
         </div>
+
         <div class="file-info">
+
           <div class="file-name">
-            ${escapeHtml(
-              item.file.name
-            )}
+            ${escapeHtml(item.file.name)}
           </div>
+
           <div class="file-meta">
             ${escapeHtml(
               item.file.type ||
               "тип неизвестен"
             )}
             ·
-            ${formatBytes(
-              item.file.size
-            )}
+            ${formatBytes(item.file.size)}
           </div>
-          <div
-            class="file-status ${statusClass}"
-          >
+
+          <div class="file-status ${statusClass}">
             ${escapeHtml(
               item.message ||
               "Выбран"
             )}
           </div>
+
         </div>
+
         <button
           class="remove-file"
           type="button"
@@ -1279,44 +1540,56 @@ function renderFiles() {
           ×
         </button>
       `;
-      fileList.appendChild(
-        div
-      );
+
+      fileList.appendChild(div);
+
     }
   );
+
   document
-    .querySelectorAll(
-      ".remove-file"
-    )
+    .querySelectorAll(".remove-file")
     .forEach(button => {
+
       button.addEventListener(
         "click",
         () => {
+
           const index =
             Number(
               button.dataset.index
             );
+
           selectedFiles.splice(
             index,
             1
           );
+
           renderFiles();
+
         }
       );
+
     });
+
 }
+
 async function addFiles(files) {
+
   const incoming =
     [...files];
+
   for (
-    const file of incoming
+    const file
+    of incoming
   ) {
+
     if (
       selectedFiles.length >=
       MAX_FILES
     ) {
       break;
     }
+
     const duplicate =
       selectedFiles.some(
         item =>
@@ -1327,73 +1600,87 @@ async function addFiles(files) {
           item.file.lastModified ===
             file.lastModified
       );
+
     if (duplicate) {
       continue;
     }
+
     selectedFiles.push({
       file,
-      kind:null,
-      status:
-        "processing",
-      message:
-        "Подготавливаю...",
-      extractedText:
-        "",
-      dataUrl:
-        null
+      kind: null,
+      status: "processing",
+      message: "Подготавливаю...",
+      extractedText: "",
+      dataUrl: null
     });
+
   }
+
   renderFiles();
+
   const newItems =
     selectedFiles.filter(
       item =>
         item.status ===
         "processing"
     );
+
   for (
-    const item of newItems
+    const item
+    of newItems
   ) {
-    await processFile(
-      item
-    );
+
+    await processFile(item);
+
   }
+
 }
+
 /* =========================
    BUILD REQUEST
 ========================= */
+
 function buildRequest() {
+
   let text =
     messageEl.value.trim();
+
   const extractedParts =
     [];
+
   for (
-    const item of
-    selectedFiles
+    const item
+    of selectedFiles
   ) {
+
     if (
-      item.kind ===
-        "text" &&
-      item.status ===
-        "ready" &&
+      item.kind === "text" &&
+      item.status === "ready" &&
       item.extractedText
     ) {
+
       extractedParts.push(
         "\n\n===== ФАЙЛ: " +
         item.file.name +
         " =====\n" +
         item.extractedText
       );
+
     }
+
   }
+
   if (
     extractedParts.length
   ) {
+
     const available =
       Math.max(
         0,
         MAX_TOTAL_EXTRACTED -
-          text.length
+        text.length
       );
+
     text +=
       extractedParts
         .join("")
@@ -1401,173 +1688,247 @@ function buildRequest() {
           0,
           available
         );
+
   }
+
   const attachments =
     [];
+
   for (
-    const item of
-    selectedFiles
+    const item
+    of selectedFiles
   ) {
+
     if (
-      item.kind ===
-        "image" &&
-      item.status ===
-        "ready" &&
+      item.kind === "image" &&
+      item.status === "ready" &&
       item.dataUrl
     ) {
+
       attachments.push({
         name:
           item.file.name,
+
         mimeType:
           item.file.type,
+
         data:
           item.dataUrl
       });
+
     }
+
   }
-  /*
-   * Для режима "Перевести на английский"
-   * язык результата должен быть английским,
-   * независимо от выбранного общего языка.
-   */
+
+  const language =
+    getSelectedLanguage();
+
   let languageInstruction =
-    getLanguageInstruction();
+    "Отвечай полностью на " +
+    (
+      languageNames[language] ||
+      languageNames.ru
+    ) +
+    ". " +
+    "Не переключайся на другой язык " +
+    "без прямой просьбы пользователя.";
+
+  /*
+    Режим перевода на английский
+    имеет приоритет над выбранным
+    языком ответа.
+  */
+
   if (
     modeEl.value ===
     "english"
   ) {
-    languageInstruction = `
-Выполни перевод текста на английский язык.
-Итоговый результат должен быть полностью на английском языке.
-Не добавляй русский перевод, если пользователь отдельно его не просил.
-`.trim();
+
+    languageInstruction =
+      "Переведи исходный текст " +
+      "на английский язык. " +
+      "Ответ должен быть полностью " +
+      "на английском языке. " +
+      "Не добавляй объяснений, если " +
+      "пользователь их не просил.";
+
   }
+
+  const instruction =
+    languageInstruction +
+    "\n\n" +
+    "Выполни выбранное пользователем " +
+    "действие максимально точно." +
+    "\n\n";
+
   /*
-   * Для Auto язык определяется по запросу.
-   */
-  const finalMessage = `
-ЯЗЫК ОТВЕТА:
-${languageInstruction}
-ВАЖНО:
-Не объясняй пользователю эти инструкции.
-Не упоминай внутренние правила выбора языка.
-Просто дай нормальный ответ на нужном языке.
-ЗАДАЧА ПОЛЬЗОВАТЕЛЯ:
-${text}
-`.trim();
+    Оставляем место для инструкции,
+    чтобы backend не обрезал её
+    лимитом 10000 символов.
+  */
+
+  const maxUserText =
+    Math.max(
+      0,
+      MAX_TEXT -
+      instruction.length
+    );
+
+  const aiMessage =
+    instruction +
+    text.slice(
+      0,
+      maxUserText
+    );
+
   return {
-    /*
-     * В API отправляем инструкцию
-     * вместе с запросом.
-     */
+
     message:
-      finalMessage.slice(
+      aiMessage,
+
+    originalMessage:
+      text.slice(
         0,
         MAX_TEXT
       ),
+
     mode:
       modeEl.value,
-    attachments
+
+    language:
+      language,
+
+    attachments:
+      attachments
+
   };
+
 }
+
 /* =========================
    SEND TO API
 ========================= */
+
 async function processText() {
+
   const request =
     buildRequest();
+
   const hasText =
-    messageEl.value
+    request.originalMessage
       .trim()
       .length > 0;
+
   const hasImages =
     request.attachments
       .length > 0;
+
   if (
     !hasText &&
     !hasImages
   ) {
+
     setResult(
       "Введите текст или выберите изображение для анализа."
     );
+
     return;
   }
+
   lastRequest =
     request;
+
   setLoading(true);
+
   setResult(
     "Обрабатываю...",
     ""
   );
+
   try {
+
     const response =
       await fetch(
         "/api/chat",
         {
-          method:
-            "POST",
+          method: "POST",
+
           headers: {
             "Content-Type":
               "application/json"
           },
+
           body:
             JSON.stringify(
               request
             )
         }
       );
+
     const raw =
       await response.text();
-    let data = {};
+
+    let data =
+      {};
+
     try {
+
       data =
         raw
           ? JSON.parse(raw)
           : {};
+
     } catch {
-      data = {};
+
+      data =
+        {};
+
     }
+
     if (
       !response.ok
     ) {
-      let message =
+
+      const message =
         data.error ||
         data.message ||
         `HTTP ${response.status}`;
-      if (
-        data.details
-      ) {
-        message +=
-          "\n\n" +
-          data.details;
-      }
+
       throw new Error(
         message
       );
+
     }
+
     if (
       !data.answer
     ) {
+
       throw new Error(
         "AI не вернул текстовый ответ."
       );
+
     }
+
     setResult(
       data.answer,
-      data.provider ||
-        ""
+      data.provider || ""
     );
+
     saveHistory(
-      messageEl.value.trim() ||
+      request.originalMessage ||
         "[Изображение]",
-      modeEl.value,
+      request.mode,
       data.answer
     );
+
   } catch (error) {
+
     console.error(
       "API ERROR:",
       error
     );
+
     setResult(
       "❌ " +
       (
@@ -1575,262 +1936,313 @@ async function processText() {
         "Неизвестная ошибка"
       )
     );
+
   } finally {
+
     setLoading(false);
+
   }
+
 }
+
 /* =========================
    HISTORY
 ========================= */
+
 function loadHistory() {
+
   try {
+
     return JSON.parse(
       localStorage.getItem(
         HISTORY_KEY
       ) || "[]"
     );
+
   } catch {
+
     return [];
+
   }
+
 }
+
 function saveHistory(
   text,
   mode,
   answer
 ) {
+
   try {
+
     const history =
       loadHistory();
+
     history.unshift({
+
       id:
         Date.now(),
+
       text:
-        text.slice(
-          0,
-          500
-        ),
-      mode,
+        text.slice(0, 500),
+
+      mode:
+        mode,
+
       answer:
-        answer.slice(
-          0,
-          5000
-        ),
+        answer.slice(0, 5000),
+
       date:
         new Date().toISOString(),
+
       favorite:
         false
+
     });
-    history.splice(
-      20
-    );
+
+    history.splice(20);
+
     localStorage.setItem(
       HISTORY_KEY,
-      JSON.stringify(
-        history
-      )
+      JSON.stringify(history)
     );
+
     renderHistory();
+
   } catch (error) {
+
     console.warn(
       "History save failed:",
       error
     );
+
   }
+
 }
+
 function renderHistory() {
+
   const history =
     loadHistory();
+
   if (
     !history.length
   ) {
+
     historyEl.innerHTML =
       '<div class="empty">История пока пуста</div>';
+
     return;
   }
+
   historyEl.innerHTML =
-    history
-      .map(item => {
-        const date =
-          new Date(
-            item.date
-          );
-        const dateText =
-          date.toLocaleDateString(
-            "ru-RU",
-            {
-              day:"2-digit",
-              month:"2-digit"
-            }
-          ) +
-          ", " +
-          date.toLocaleTimeString(
-            "ru-RU",
-            {
-              hour:"2-digit",
-              minute:"2-digit"
-            }
-          );
-        return `
-          <div
-            class="history-item"
-          >
-            <div
-              class="history-mode"
-            >
-              ${escapeHtml(
-                getModeName(
-                  item.mode
-                )
-              )}
-            </div>
-            <div
-              class="history-text"
-            >
-              ${escapeHtml(
-                item.text
-              )}
-            </div>
-            <div
-              class="history-date"
-            >
-              ${dateText}
-            </div>
-            <div
-              class="history-actions"
-            >
-              <button
-                type="button"
-                data-history-use="${item.id}"
-              >
-                Использовать снова
-              </button>
-              <button
-                type="button"
-                data-history-fav="${item.id}"
-              >
-                ${
-                  item.favorite
-                    ? "★"
-                    : "☆"
-                }
-                Избранное
-              </button>
-              <button
-                type="button"
-                data-history-copy="${item.id}"
-              >
-                📋 Копировать
-              </button>
-              <button
-                type="button"
-                data-history-delete="${item.id}"
-              >
-                Удалить
-              </button>
-            </div>
+    history.map(item => {
+
+      const date =
+        new Date(
+          item.date
+        );
+
+      const dateText =
+        date.toLocaleDateString(
+          "ru-RU",
+          {
+            day: "2-digit",
+            month: "2-digit"
+          }
+        ) +
+        ", " +
+        date.toLocaleTimeString(
+          "ru-RU",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+      return `
+        <div class="history-item">
+
+          <div class="history-mode">
+            ${escapeHtml(
+              getModeName(item.mode)
+            )}
           </div>
-        `;
-      })
-      .join("");
+
+          <div class="history-text">
+            ${escapeHtml(item.text)}
+          </div>
+
+          <div class="history-date">
+            ${dateText}
+          </div>
+
+          <div class="history-actions">
+
+            <button
+              type="button"
+              data-history-use="${item.id}"
+            >
+              Использовать снова
+            </button>
+
+            <button
+              type="button"
+              data-history-fav="${item.id}"
+            >
+              ${
+                item.favorite
+                  ? "★"
+                  : "☆"
+              }
+              Избранное
+            </button>
+
+            <button
+              type="button"
+              data-history-copy="${item.id}"
+            >
+              📋 Копировать
+            </button>
+
+            <button
+              type="button"
+              data-history-delete="${item.id}"
+            >
+              Удалить
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
   document
     .querySelectorAll(
       "[data-history-use]"
     )
     .forEach(button => {
+
       button.addEventListener(
         "click",
         () => {
+
           const id =
             Number(
               button.dataset
                 .historyUse
             );
+
           const item =
             loadHistory()
               .find(
                 x =>
                   x.id === id
               );
+
           if (!item) {
             return;
           }
+
           messageEl.value =
             item.text;
+
           modeEl.value =
             item.mode;
+
           updateCounter();
+
           window.scrollTo({
-            top:0,
-            behavior:"smooth"
+            top: 0,
+            behavior: "smooth"
           });
+
         }
       );
+
     });
+
   document
     .querySelectorAll(
       "[data-history-fav]"
     )
     .forEach(button => {
+
       button.addEventListener(
         "click",
         () => {
+
           const id =
             Number(
               button.dataset
                 .historyFav
             );
+
           const history =
             loadHistory();
+
           const item =
             history.find(
               x =>
                 x.id === id
             );
+
           if (!item) {
             return;
           }
+
           item.favorite =
             !item.favorite;
+
           localStorage.setItem(
             HISTORY_KEY,
-            JSON.stringify(
-              history
-            )
+            JSON.stringify(history)
           );
+
           renderHistory();
+
         }
       );
+
     });
+
   document
     .querySelectorAll(
       "[data-history-copy]"
     )
     .forEach(button => {
+
       button.addEventListener(
         "click",
         async () => {
+
           const id =
             Number(
               button.dataset
                 .historyCopy
             );
+
           const item =
             loadHistory()
               .find(
                 x =>
                   x.id === id
               );
+
           if (!item) {
             return;
           }
-          await navigator
-            .clipboard
+
+          await navigator.clipboard
             .writeText(
-              item.answer ||
-                ""
+              item.answer || ""
             );
+
           button.textContent =
             "✓ Скопировано";
+
           setTimeout(
             () => {
               button.textContent =
@@ -1838,378 +2250,500 @@ function renderHistory() {
             },
             1200
           );
+
         }
       );
+
     });
+
   document
     .querySelectorAll(
       "[data-history-delete]"
     )
     .forEach(button => {
+
       button.addEventListener(
         "click",
         () => {
+
           const id =
             Number(
               button.dataset
                 .historyDelete
             );
+
           const history =
             loadHistory()
               .filter(
                 x =>
                   x.id !== id
               );
+
           localStorage.setItem(
             HISTORY_KEY,
-            JSON.stringify(
-              history
-            )
+            JSON.stringify(history)
           );
+
           renderHistory();
+
         }
       );
+
     });
+
 }
+
 /* =========================
    TEMPLATES
 ========================= */
+
 function loadTemplates() {
+
   try {
+
     return JSON.parse(
       localStorage.getItem(
         TEMPLATES_KEY
       ) || "[]"
     );
+
   } catch {
+
     return [];
+
   }
+
 }
+
 function renderTemplates() {
+
   const templates =
     loadTemplates();
+
   if (
     !templates.length
   ) {
+
     templatesEl.innerHTML =
       '<div class="empty">Шаблонов пока нет</div>';
+
     return;
+
   }
+
   templatesEl.innerHTML =
-    templates
-      .map(
-        item => `
-          <div
-            class="history-item"
+    templates.map(item => `
+      <div class="history-item">
+
+        <div class="history-text">
+          ${escapeHtml(
+            item.name
+          )}
+        </div>
+
+        <div class="history-actions">
+
+          <button
+            type="button"
+            data-template-use="${item.id}"
           >
-            <div
-              class="history-text"
-            >
-              ${escapeHtml(
-                item.name
-              )}
-            </div>
-            <div
-              class="history-actions"
-            >
-              <button
-                type="button"
-                data-template-use="${item.id}"
-              >
-                Использовать
-              </button>
-              <button
-                type="button"
-                data-template-delete="${item.id}"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        `
-      )
-      .join("");
+            Использовать
+          </button>
+
+          <button
+            type="button"
+            data-template-delete="${item.id}"
+          >
+            Удалить
+          </button>
+
+        </div>
+
+      </div>
+    `).join("");
+
   document
     .querySelectorAll(
       "[data-template-use]"
     )
     .forEach(button => {
+
       button.addEventListener(
         "click",
         () => {
+
           const id =
             Number(
               button.dataset
                 .templateUse
             );
+
           const item =
             loadTemplates()
               .find(
                 x =>
                   x.id === id
               );
+
           if (!item) {
             return;
           }
+
           messageEl.value =
             item.text;
+
           updateCounter();
+
         }
       );
+
     });
+
   document
     .querySelectorAll(
       "[data-template-delete]"
     )
     .forEach(button => {
+
       button.addEventListener(
         "click",
         () => {
+
           const id =
             Number(
               button.dataset
                 .templateDelete
             );
+
           const templates =
             loadTemplates()
               .filter(
                 x =>
                   x.id !== id
               );
+
           localStorage.setItem(
             TEMPLATES_KEY,
-            JSON.stringify(
-              templates
-            )
+            JSON.stringify(templates)
           );
+
           renderTemplates();
+
         }
       );
+
     });
+
 }
+
 /* =========================
    EVENTS
 ========================= */
+
 messageEl.addEventListener(
   "input",
   updateCounter
 );
+
 processBtn.addEventListener(
   "click",
   processText
 );
+
 retryBtn.addEventListener(
   "click",
   () => {
+
     processText();
+
   }
 );
+
 clearBtn.addEventListener(
   "click",
   () => {
+
     messageEl.value =
       "";
+
     updateCounter();
+
     resultCard.classList.remove(
       "visible"
     );
+
   }
 );
+
 pasteBtn.addEventListener(
   "click",
   async () => {
+
     try {
+
       const text =
-        await navigator
-          .clipboard
+        await navigator.clipboard
           .readText();
+
       if (text) {
+
         messageEl.value =
           text.slice(
             0,
             MAX_TEXT
           );
+
         updateCounter();
+
       }
+
     } catch {
+
       setResult(
         "Не удалось получить доступ к буферу обмена. Вставьте текст вручную."
       );
+
     }
+
   }
 );
+
 fileBtn.addEventListener(
   "click",
   () =>
     fileInput.click()
 );
+
 fileDrop.addEventListener(
   "click",
   () =>
     fileInput.click()
 );
+
 fileInput.addEventListener(
   "change",
   async event => {
+
     await addFiles(
       event.target.files
     );
+
     fileInput.value =
       "";
+
   }
 );
+
 fileDrop.addEventListener(
   "dragover",
   event => {
+
     event.preventDefault();
+
     fileDrop.classList.add(
       "drag"
     );
+
   }
 );
+
 fileDrop.addEventListener(
   "dragleave",
   () => {
+
     fileDrop.classList.remove(
       "drag"
     );
+
   }
 );
+
 fileDrop.addEventListener(
   "drop",
   async event => {
+
     event.preventDefault();
+
     fileDrop.classList.remove(
       "drag"
     );
+
     await addFiles(
       event.dataTransfer.files
     );
+
   }
 );
-/* =========================
-   COPY
-========================= */
+
 copyBtn.addEventListener(
   "click",
   async () => {
+
     const text =
       resultText.textContent;
+
     if (!text) {
       return;
     }
+
     try {
-      await navigator
-        .clipboard
+
+      await navigator.clipboard
         .writeText(text);
+
       copyBtn.textContent =
         "✓ Скопировано";
+
       setTimeout(
         () => {
+
           copyBtn.textContent =
             "📋 Скопировать";
+
         },
         1200
       );
+
     } catch {
+
       alert(
         "Не удалось скопировать текст."
       );
+
     }
+
   }
 );
+
 /* =========================
-   SPEECH
+   SPEECH OUTPUT
 ========================= */
+
 speakBtn.addEventListener(
   "click",
   () => {
+
     const text =
-      resultText.textContent
+      resultText
+        .textContent
         .trim();
+
     if (!text) {
       return;
     }
+
     if (
-      !(
-        "speechSynthesis"
-        in window
-      )
+      !("speechSynthesis" in window)
     ) {
+
       alert(
         "Озвучка не поддерживается этим браузером."
       );
+
       return;
     }
-    window
-      .speechSynthesis
+
+    window.speechSynthesis
       .cancel();
+
     const utterance =
       new SpeechSynthesisUtterance(
         text
       );
+
     utterance.lang =
-      getSpeechLanguage();
-    window
-      .speechSynthesis
+      speechLanguages[
+        getSelectedLanguage()
+      ] || "ru-RU";
+
+    window.speechSynthesis
       .speak(
         utterance
       );
+
   }
 );
+
 stopSpeakBtn.addEventListener(
   "click",
   () => {
+
     if (
-      "speechSynthesis"
-      in window
-    ) {
+      "speechSynthesis" in
       window
-        .speechSynthesis
+    ) {
+
+      window.speechSynthesis
         .cancel();
+
     }
+
   }
 );
+
 /* =========================
    VOICE INPUT
 ========================= */
+
 voiceBtn.addEventListener(
   "click",
   () => {
+
     const SpeechRecognition =
       window.SpeechRecognition ||
       window.webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
+
       alert(
         "Голосовой ввод не поддерживается этим браузером."
       );
+
       return;
     }
+
     if (recognition) {
+
       recognition.stop();
+
       recognition =
         null;
+
       voiceBtn.textContent =
         "🎙 Голос";
+
       return;
+
     }
+
     recognition =
       new SpeechRecognition();
+
     recognition.lang =
-      getSpeechLanguage();
+      speechLanguages[
+        getSelectedLanguage()
+      ] || "ru-RU";
+
     recognition.continuous =
       false;
+
     recognition.interimResults =
       true;
+
     recognition.onstart =
       () => {
+
         voiceBtn.textContent =
           "⏹ Слушаю...";
+
       };
+
     recognition.onresult =
       event => {
+
         let text =
           "";
+
         for (
           let i =
             event.resultIndex;
@@ -2217,131 +2751,171 @@ voiceBtn.addEventListener(
             event.results.length;
           i++
         ) {
+
           text +=
             event.results[i][0]
               .transcript;
+
         }
+
         messageEl.value =
           text.slice(
             0,
             MAX_TEXT
           );
+
         updateCounter();
+
       };
+
     recognition.onerror =
       () => {
+
         voiceBtn.textContent =
           "🎙 Голос";
+
         recognition =
           null;
+
       };
+
     recognition.onend =
       () => {
+
         voiceBtn.textContent =
           "🎙 Голос";
+
         recognition =
           null;
+
       };
+
     recognition.start();
+
   }
 );
+
+/* =========================
+   LANGUAGE CHANGE
+========================= */
+
+languageEl.addEventListener(
+  "change",
+  () => {
+
+    /*
+      Если сейчас активен голосовой ввод,
+      останавливаем его, чтобы новый язык
+      применился при следующем запуске.
+    */
+
+    if (recognition) {
+
+      recognition.stop();
+
+      recognition =
+        null;
+
+      voiceBtn.textContent =
+        "🎙 Голос";
+
+    }
+
+  }
+);
+
 /* =========================
    CREATE TEMPLATE
 ========================= */
+
 createTemplateBtn.addEventListener(
   "click",
   () => {
+
     const text =
       messageEl.value.trim();
+
     if (!text) {
+
       alert(
         "Сначала введи текст, который нужно сохранить как шаблон."
       );
+
       return;
+
     }
+
     const name =
       prompt(
         "Название шаблона:"
       );
+
     if (
       !name ||
       !name.trim()
     ) {
+
       return;
+
     }
+
     const templates =
       loadTemplates();
+
     templates.unshift({
+
       id:
         Date.now(),
+
       name:
         name.trim(),
+
       text
+
     });
-    templates.splice(
-      30
-    );
+
+    templates.splice(30);
+
     localStorage.setItem(
       TEMPLATES_KEY,
-      JSON.stringify(
-        templates
-      )
+      JSON.stringify(templates)
     );
+
     renderTemplates();
+
   }
 );
+
 /* =========================
    HISTORY CLEAR
 ========================= */
+
 clearHistoryBtn.addEventListener(
   "click",
   () => {
+
     localStorage.removeItem(
       HISTORY_KEY
     );
+
     renderHistory();
+
   }
 );
-/* =========================
-   LANGUAGE CHANGE
-========================= */
-languageEl.addEventListener(
-  "change",
-  () => {
-    /*
-     * Меняем placeholder в зависимости
-     * от выбранного языка.
-     */
-    const language =
-      getSelectedLanguage();
-    if (
-      language === "pl"
-    ) {
-      messageEl.placeholder =
-        "Wpisz tekst...";
-    } else if (
-      language === "uk"
-    ) {
-      messageEl.placeholder =
-        "Введіть текст...";
-    } else if (
-      language === "en"
-    ) {
-      messageEl.placeholder =
-        "Enter text...";
-    } else {
-      messageEl.placeholder =
-        "Введите текст...";
-    }
-  }
-);
+
 /* =========================
    START
 ========================= */
+
+languageEl.value =
+  "ru";
+
 updateCounter();
 renderFiles();
 renderHistory();
 renderTemplates();
+
 </script>
+
 </body>
 </html>
