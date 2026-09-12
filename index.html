@@ -2,73 +2,58 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
-  <meta
-    name="theme-color"
-    content="#08090d"
-  >
-  <meta
-    name="description"
-    content="AI Помощник — улучшение, перевод, создание и переработка текста с помощью искусственного интеллекта."
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="AI Помощник — улучшение, перевод, создание и переработка текста с помощью искусственного интеллекта.">
   <title>AI Помощник</title>
-
   <style>
     * {
       box-sizing: border-box;
     }
-
     html {
       min-height: 100%;
       background: #08090d;
     }
-
     body {
       margin: 0;
       min-height: 100vh;
       background:
-        radial-gradient(
-          circle at 50% -10%,
-          rgba(104, 117, 255, 0.10),
-          transparent 38%
-        ),
+        radial-gradient(circle at 50% -10%, rgba(104,117,255,.10), transparent 38%),
         #08090d;
       color: #f5f5f7;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-
-    button,
-    select,
-    textarea {
+    button, select, textarea {
       font: inherit;
     }
-
-    button,
-    select {
+    button, select {
       -webkit-tap-highlight-color: transparent;
     }
-
     .container {
       width: min(100% - 32px, 980px);
       margin: 0 auto;
-      padding:
-        0 0
-        max(40px, env(safe-area-inset-bottom));
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
     }
-
     header {
+      position: relative;
       text-align: center;
       padding: 64px 20px 42px;
     }
-
+    .language-selector {
+      position: absolute;
+      top: 20px;
+      right: 0;
+    }
+    .language-selector select {
+      width: auto;
+      min-width: 105px;
+      height: 40px;
+      padding: 0 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      background: #11141c;
+    }
     .badge {
       display: inline-flex;
       align-items: center;
@@ -76,56 +61,45 @@
       padding: 7px 12px;
       border: 1px solid #292d39;
       border-radius: 999px;
-      background: rgba(17, 19, 26, 0.65);
+      background: rgba(17,19,26,.65);
       color: #9da7ff;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: .08em;
     }
-
     h1 {
       margin: 20px 0 12px;
-      font-size:
-        clamp(40px, 7vw, 68px);
+      font-size: clamp(40px, 7vw, 68px);
       line-height: 1.05;
       letter-spacing: -.055em;
     }
-
     .subtitle {
       max-width: 620px;
       margin: 0 auto;
       color: #858a9a;
-      font-size:
-        clamp(14px, 2vw, 17px);
+      font-size: clamp(14px, 2vw, 17px);
       line-height: 1.65;
     }
-
-    .app {
+    .app,
+    .templates,
+    .history {
       width: 100%;
-      padding:
-        clamp(16px, 3vw, 26px);
       border: 1px solid #242833;
-      border-radius: 24px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(17, 19, 26, 0.98),
-          rgba(13, 15, 21, 0.98)
-        );
-      box-shadow:
-        0 20px 70px rgba(0, 0, 0, 0.28);
+      background: linear-gradient(180deg, rgba(17,19,26,.98), rgba(13,15,21,.98));
+      box-shadow: 0 20px 70px rgba(0,0,0,.28);
     }
-
+    .app {
+      padding: clamp(16px,3vw,26px);
+      border-radius: 24px;
+    }
     label {
       display: block;
-      margin:
-        0 0 8px 2px;
+      margin: 0 0 8px 2px;
       color: #777d90;
       font-size: 12px;
       font-weight: 700;
       letter-spacing: .04em;
     }
-
     select,
     textarea {
       width: 100%;
@@ -133,11 +107,8 @@
       outline: none;
       background: #0b0d12;
       color: #fff;
-      transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
+      transition: border-color .2s ease, box-shadow .2s ease;
     }
-
     select {
       height: 54px;
       padding: 0 15px;
@@ -145,7 +116,6 @@
       font-size: 15px;
       cursor: pointer;
     }
-
     textarea {
       display: block;
       min-height: 210px;
@@ -156,22 +126,17 @@
       font-size: 16px;
       line-height: 1.65;
     }
-
     select:focus,
     textarea:focus {
       border-color: #6875ff;
-      box-shadow:
-        0 0 0 3px
-        rgba(104, 117, 255, 0.10);
+      box-shadow: 0 0 0 3px rgba(104,117,255,.10);
     }
-
     .counter {
       margin-top: 7px;
       text-align: right;
       color: #555b6b;
       font-size: 11px;
     }
-
     #process {
       display: block;
       width: 100%;
@@ -180,55 +145,33 @@
       padding: 0 18px;
       border: 0;
       border-radius: 14px;
-      background:
-        linear-gradient(
-          135deg,
-          #6875ff,
-          #886cff
-        );
+      background: linear-gradient(135deg,#6875ff,#886cff);
       color: white;
       font-size: 16px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow:
-        0 10px 30px
-        rgba(104, 117, 255, 0.16);
-      transition:
-        transform .15s ease,
-        opacity .2s ease,
-        box-shadow .2s ease;
+      box-shadow: 0 10px 30px rgba(104,117,255,.16);
+      transition: transform .15s ease, opacity .2s ease, box-shadow .2s ease;
     }
-
     #process:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow:
-        0 14px 34px
-        rgba(104, 117, 255, 0.24);
+      box-shadow: 0 14px 34px rgba(104,117,255,.24);
     }
-
-    #process:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
     button:disabled {
       opacity: .55;
       cursor: not-allowed;
     }
-
     .result {
       display: none;
       margin-top: 16px;
-      padding:
-        clamp(16px, 3vw, 22px);
+      padding: clamp(16px,3vw,22px);
       border: 1px solid #292d39;
       border-radius: 16px;
       background: #0b0d12;
     }
-
     .result.show {
       display: block;
     }
-
     .result-title {
       margin-bottom: 12px;
       color: #9da7ff;
@@ -236,7 +179,6 @@
       font-weight: 800;
       letter-spacing: .05em;
     }
-
     .provider {
       display: none;
       width: fit-content;
@@ -248,9 +190,7 @@
       color: #858ca0;
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: .04em;
     }
-
     .result-text {
       white-space: pre-wrap;
       word-break: break-word;
@@ -258,182 +198,43 @@
       font-size: 16px;
       line-height: 1.75;
     }
-
     .copy,
-    .retry {
-      width: 100%;
-      min-height: 44px;
-      border-radius: 12px;
-      background: #171a23;
-      border: 1px solid #292d39;
-      color: #aeb3c2;
-      font-size: 13px;
-      cursor: pointer;
-      transition:
-        background .2s ease,
-        border-color .2s ease;
-    }
-
-    .copy {
-      display: none;
-      margin-top: 16px;
-    }
-
-    .retry {
-      display: none;
-      margin-top: 10px;
-    }
-
-    .retry.show {
-      display: block;
-    }
-
-    .copy:hover:not(:disabled),
-    .retry:hover:not(:disabled) {
-      background: #1c202b;
-      border-color: #373c4b;
-    }
-
-    /*
-     * ШАБЛОНЫ
-     */
-
-    .templates {
-      margin-top: 16px;
-      padding:
-        clamp(16px, 3vw, 22px);
-      border: 1px solid #242833;
-      border-radius: 20px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(17, 19, 26, 0.98),
-          rgba(13, 15, 21, 0.98)
-        );
-    }
-
-    .templates-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .templates-title {
-      color: #d8c47c;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .05em;
-    }
-
-    .add-template {
-      min-height: 38px;
-      padding: 0 12px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #11141c;
-      color: #aeb3c2;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .add-template:hover {
-      background: #181b24;
-      border-color: #373c4b;
-    }
-
-    .templates-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .templates-empty {
-      padding: 24px 12px;
-      border: 1px dashed #292d39;
-      border-radius: 14px;
-      color: #626879;
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .template-item {
-      padding: 14px;
-      border: 1px solid #242833;
-      border-radius: 14px;
-      background: #0b0d12;
-    }
-
-    .template-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .template-name {
-      color: #e5e6eb;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .template-mode {
-      margin-top: 4px;
-      color: #777d90;
-      font-size: 10px;
-    }
-
-    .template-text {
-      margin-top: 10px;
-      color: #858a9a;
-      font-size: 12px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .template-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 12px;
-    }
-
+    .retry,
+    .clear-history,
+    .history-tab,
+    .history-action,
+    .add-template,
     .template-action {
-      min-height: 40px;
-      padding: 0 11px;
       border: 1px solid #292d39;
       border-radius: 10px;
       background: #11141c;
       color: #858ca0;
-      font-size: 11px;
       cursor: pointer;
     }
-
-    .template-action:hover {
-      background: #181b24;
-      border-color: #373c4b;
+    .copy,
+    .retry {
+      width: 100%;
+      min-height: 44px;
+      font-size: 13px;
     }
-
-    /*
-     * ИСТОРИЯ
-     */
-
+    .copy {
+      display: none;
+      margin-top: 16px;
+    }
+    .retry {
+      display: none;
+      margin-top: 10px;
+    }
+    .retry.show {
+      display: block;
+    }
+    .templates,
     .history {
       margin-top: 16px;
-      padding:
-        clamp(16px, 3vw, 22px);
-      border: 1px solid #242833;
+      padding: clamp(16px,3vw,22px);
       border-radius: 20px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(17, 19, 26, 0.98),
-          rgba(13, 15, 21, 0.98)
-        );
     }
-
+    .templates-header,
     .history-header {
       display: flex;
       align-items: center;
@@ -441,53 +242,30 @@
       gap: 12px;
       margin-bottom: 14px;
     }
-
+    .templates-title {
+      color: #d8c47c;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
     .history-title {
       color: #9da7ff;
       font-size: 12px;
       font-weight: 800;
       letter-spacing: .05em;
     }
-
+    .add-template,
     .clear-history {
       min-height: 38px;
       padding: 0 12px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #11141c;
-      color: #858ca0;
       font-size: 11px;
-      cursor: pointer;
     }
-
-    .clear-history:hover {
-      background: #181b24;
-      border-color: #373c4b;
+    .templates-list,
+    .history-list {
+      display: grid;
+      gap: 10px;
     }
-
-    .history-tabs {
-      display: flex;
-      gap: 7px;
-      margin-bottom: 12px;
-    }
-
-    .history-tab {
-      min-height: 38px;
-      padding: 0 13px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #0b0d12;
-      color: #777d90;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .history-tab.active {
-      border-color: #6875ff;
-      background: rgba(104, 117, 255, 0.10);
-      color: #b8beff;
-    }
-
+    .templates-empty,
     .history-empty {
       padding: 24px 12px;
       border: 1px dashed #292d39;
@@ -497,40 +275,34 @@
       font-size: 12px;
       line-height: 1.6;
     }
-
-    .history-list {
-      display: grid;
-      gap: 10px;
-    }
-
+    .template-item,
     .history-item {
       padding: 14px;
       border: 1px solid #242833;
       border-radius: 14px;
       background: #0b0d12;
     }
-
+    .template-top,
     .history-item-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 10px;
     }
-
-    .history-mode {
-      color: #aeb4ff;
-      font-size: 11px;
+    .template-name {
+      color: #e5e6eb;
+      font-size: 13px;
       font-weight: 800;
-      line-height: 1.4;
     }
-
-    .history-time {
-      flex-shrink: 0;
-      color: #555b6b;
+    .template-mode,
+    .history-mode {
+      margin-top: 4px;
+      color: #aeb4ff;
       font-size: 10px;
     }
-
-    .history-source {
+    .template-text,
+    .history-source,
+    .history-result {
       margin-top: 10px;
       color: #858a9a;
       font-size: 12px;
@@ -538,53 +310,50 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
-
     .history-result {
-      margin-top: 10px;
       padding-top: 10px;
       border-top: 1px solid #1e212a;
       color: #e5e6eb;
       font-size: 13px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-break: break-word;
     }
-
+    .history-time {
+      flex-shrink: 0;
+      color: #555b6b;
+      font-size: 10px;
+    }
+    .template-actions,
     .history-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 7px;
       margin-top: 12px;
     }
-
-    .history-action {
+    .template-action,
+    .history-action,
+    .history-tab {
       min-height: 40px;
       padding: 0 11px;
-      border: 1px solid #292d39;
-      border-radius: 10px;
-      background: #11141c;
-      color: #858ca0;
       font-size: 11px;
-      cursor: pointer;
     }
-
-    .history-action:hover {
-      background: #181b24;
-      border-color: #373c4b;
+    .history-tabs {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 12px;
     }
-
+    .history-tab.active {
+      border-color: #6875ff;
+      background: rgba(104,117,255,.10);
+      color: #b8beff;
+    }
     .history-action.favorite {
       color: #d8c47c;
     }
-
     .features {
       display: grid;
-      grid-template-columns:
-        repeat(3, 1fr);
+      grid-template-columns: repeat(3,1fr);
       gap: 12px;
       margin-top: 14px;
     }
-
     .feature {
       min-height: 116px;
       padding: 20px 12px;
@@ -592,26 +361,15 @@
       border-radius: 16px;
       background: #0e1016;
       text-align: center;
-      transition:
-        border-color .2s ease,
-        transform .2s ease;
     }
-
-    .feature:hover {
-      transform: translateY(-2px);
-      border-color: #292e3a;
-    }
-
     .icon {
       font-size: 21px;
     }
-
     .feature strong {
       display: block;
       margin-top: 8px;
       font-size: 12px;
     }
-
     .feature span {
       display: block;
       margin-top: 5px;
@@ -619,2294 +377,1552 @@
       font-size: 10px;
       line-height: 1.4;
     }
-
     footer {
       padding: 30px 0 10px;
       text-align: center;
       color: #4f5462;
       font-size: 11px;
     }
-
-    @media (min-width: 601px) {
+    @media (min-width:601px) {
       .container {
-        width:
-          min(100% - 48px, 980px);
+        width: min(100% - 48px,980px);
       }
-
       .app {
         padding: 28px;
       }
-
       textarea {
         min-height: 240px;
       }
-
       #process {
         min-height: 58px;
       }
-
       .copy,
       .retry {
         width: auto;
         padding: 0 22px;
       }
     }
-
-    @media (min-width: 900px) {
+    @media (min-width:900px) {
       header {
         padding-top: 78px;
       }
-
-      .app {
-        border-radius: 26px;
-      }
-
       textarea {
         min-height: 260px;
       }
-
-      .features {
-        gap: 14px;
-      }
-
       .feature {
         min-height: 128px;
-        padding:
-          23px 16px;
+        padding: 23px 16px;
       }
-
       .feature strong {
         font-size: 13px;
       }
-
       .feature span {
         font-size: 11px;
       }
     }
-
-    @media (max-width: 600px) {
+    @media (max-width:600px) {
       .container {
-        width:
-          calc(100% - 18px);
+        width: calc(100% - 18px);
       }
-
       header {
-        padding:
-          36px 8px 28px;
+        padding: 70px 8px 28px;
       }
-
+      .language-selector {
+        top: 18px;
+        right: 4px;
+      }
       h1 {
         margin-top: 17px;
-        font-size:
-          clamp(36px, 11vw, 48px);
+        font-size: clamp(36px,11vw,48px);
       }
-
       .subtitle {
         font-size: 14px;
       }
-
       .app {
         padding: 13px;
         border-radius: 20px;
       }
-
       textarea {
         min-height: 190px;
       }
-
-      .templates {
-        padding: 14px;
-      }
-
-      .template-actions {
-        display: grid;
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
-
-      .template-action {
-        width: 100%;
-      }
-
+      .templates,
       .history {
         padding: 14px;
       }
-
-      .history-header {
-        align-items: flex-start;
-      }
-
+      .template-actions,
       .history-actions {
         display: grid;
-        grid-template-columns:
-          repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
       }
-
+      .template-action,
       .history-action {
         width: 100%;
       }
-
       .features {
         gap: 6px;
       }
-
       .feature {
         min-height: 104px;
-        padding:
-          15px 5px;
+        padding: 15px 5px;
       }
-
       .feature strong {
         font-size: 10px;
       }
-
       .feature span {
         font-size: 8px;
       }
-
-      footer {
-        padding-bottom: 20px;
-      }
     }
-
-    @media (max-width: 380px) {
-      .container {
-        width:
-          calc(100% - 12px);
-      }
-
-      .template-actions {
-        grid-template-columns:
-          1fr;
-      }
-
+    @media (max-width:380px) {
       .features {
-        grid-template-columns:
-          1fr;
+        grid-template-columns: 1fr;
       }
-
       .feature {
         min-height: auto;
         padding: 13px;
       }
-
-      .feature span {
-        font-size: 9px;
-      }
-
+      .template-actions,
       .history-actions {
-        grid-template-columns:
-          1fr;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition:
-          none !important;
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
-
 <body>
-
-  <div class="container">
-
-    <header>
-      <div class="badge">
-        ● AI POWERED
-      </div>
-
-      <h1>
-        ✦ AI Помощник
-      </h1>
-
-      <p class="subtitle">
-        Напиши текст — AI поможет его улучшить,
-        создать, перевести или переработать.
-      </p>
-    </header>
-
-    <main class="app">
-
-      <label for="action">
-        ДЕЙСТВИЕ
-      </label>
-
-      <select id="action">
-
-        <option value="improve">
-          ✨ Улучшить текст
-        </option>
-
-        <option value="polish">
-          🇵🇱 Перевести на польский
-        </option>
-
-        <option value="english">
-          🇬🇧 Перевести на английский
-        </option>
-
-        <option value="tiktok">
-          🎵 Создать текст для TikTok
-        </option>
-
-        <option value="shorten">
-          ✂️ Сократить текст
-        </option>
-
-        <option value="write">
-          📝 Написать текст
-        </option>
-
-        <option value="reply">
-          💬 Ответить на сообщение
-        </option>
-
-        <option value="business">
-          📧 Деловой текст
-        </option>
-
-        <option value="summarize">
-          📋 Краткое резюме
-        </option>
-
+<div class="container">
+  <header>
+    <div class="language-selector">
+      <select id="interfaceLanguage" aria-label="Interface language">
+        <option value="ru">🇷🇺 RU</option>
+        <option value="pl">🇵🇱 PL</option>
+        <option value="en">🇬🇧 EN</option>
+        <option value="uk">🇺🇦 UK</option>
+        <option value="de">🇩🇪 DE</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="it">🇮🇹 IT</option>
+        <option value="cs">🇨🇿 CS</option>
+        <option value="sk">🇸🇰 SK</option>
+        <option value="nl">🇳🇱 NL</option>
+        <option value="pt">🇵🇹 PT</option>
+        <option value="tr">🇹🇷 TR</option>
       </select>
-
-      <textarea
-        id="text"
-        maxlength="10000"
-        placeholder="Напиши здесь свой текст..."
-      ></textarea>
-
-      <div
-        class="counter"
-        id="counter"
-      >
-        0 / 10 000
+    </div>
+    <div class="badge" id="badge">
+      ● AI POWERED
+    </div>
+    <h1 id="title">
+      ✦ AI Помощник
+    </h1>
+    <p class="subtitle" id="subtitle">
+      Напиши текст — AI поможет его улучшить, создать, перевести или переработать.
+    </p>
+  </header>
+  <main class="app">
+    <label for="action" id="actionLabel">
+      ДЕЙСТВИЕ
+    </label>
+    <select id="action">
+      <option value="improve">✨ Улучшить текст</option>
+      <option value="polish">🇵🇱 Перевести на польский</option>
+      <option value="english">🇬🇧 Перевести на английский</option>
+      <option value="tiktok">🎵 Создать текст для TikTok</option>
+      <option value="shorten">✂️ Сократить текст</option>
+      <option value="write">📝 Написать текст</option>
+      <option value="reply">💬 Ответить на сообщение</option>
+      <option value="business">📧 Деловой текст</option>
+      <option value="summarize">📋 Краткое резюме</option>
+    </select>
+    <textarea
+      id="text"
+      maxlength="10000"
+      placeholder="Напиши здесь свой текст..."
+    ></textarea>
+    <div class="counter" id="counter">
+      0 / 10 000
+    </div>
+    <button id="process" type="button">
+      ✨ Обработать
+    </button>
+    <div class="result" id="resultBox">
+      <div class="result-title" id="resultTitle">
+        ✦ РЕЗУЛЬТАТ AI
       </div>
-
-      <button
-        id="process"
-        type="button"
-        onclick="processText()"
-      >
-        ✨ Обработать
+      <div class="provider" id="provider"></div>
+      <div class="result-text" id="resultText"></div>
+      <button class="copy" id="copyButton" type="button">
+        📋 Скопировать
       </button>
-
-      <div
-        class="result"
-        id="resultBox"
-      >
-
-        <div class="result-title">
-          ✦ РЕЗУЛЬТАТ AI
-        </div>
-
-        <div
-          class="provider"
-          id="provider"
-        ></div>
-
-        <div
-          class="result-text"
-          id="resultText"
-        ></div>
-
-        <button
-          class="copy"
-          id="copyButton"
-          type="button"
-          onclick="copyResult()"
-        >
-          📋 Скопировать
-        </button>
-
-        <button
-          class="retry"
-          id="retryButton"
-          type="button"
-          onclick="processText()"
-        >
-          🔄 Попробовать снова
-        </button>
-
+      <button class="retry" id="retryButton" type="button">
+        🔄 Попробовать снова
+      </button>
+    </div>
+  </main>
+  <section class="templates">
+    <div class="templates-header">
+      <div class="templates-title" id="templatesTitle">
+        ★ МОИ ШАБЛОНЫ
       </div>
-
-    </main>
-
-    <!-- ШАБЛОНЫ -->
-
-    <section
-      class="templates"
-      id="templatesSection"
-    >
-
-      <div class="templates-header">
-
-        <div class="templates-title">
-          ★ МОИ ШАБЛОНЫ
-        </div>
-
-        <button
-          class="add-template"
-          id="addTemplateButton"
-          type="button"
-        >
-          ＋ Добавить
-        </button>
-
+      <button class="add-template" id="addTemplateButton" type="button">
+        ＋ Добавить
+      </button>
+    </div>
+    <div class="templates-list" id="templatesList"></div>
+  </section>
+  <section class="history">
+    <div class="history-header">
+      <div class="history-title" id="historyTitle">
+        ✦ ИСТОРИЯ
       </div>
-
-      <div
-        class="templates-list"
-        id="templatesList"
-      ></div>
-
-    </section>
-
-    <!-- ИСТОРИЯ -->
-
-    <section
-      class="history"
-      id="historySection"
-    >
-
-      <div class="history-header">
-
-        <div class="history-title">
-          ✦ ИСТОРИЯ
-        </div>
-
-        <button
-          class="clear-history"
-          id="clearHistoryButton"
-          type="button"
-        >
-          🧹 Очистить
-        </button>
-
-      </div>
-
-      <div class="history-tabs">
-
-        <button
-          class="history-tab active"
-          id="allHistoryTab"
-          type="button"
-        >
-          Все
-        </button>
-
-        <button
-          class="history-tab"
-          id="favoriteHistoryTab"
-          type="button"
-        >
-          ⭐ Избранное
-        </button>
-
-      </div>
-
-      <div
-        class="history-list"
-        id="historyList"
-      ></div>
-
-    </section>
-
-    <section class="features">
-
-      <div class="feature">
-
-        <div class="icon">
-          ⚡
-        </div>
-
-        <strong>
-          Быстро
-        </strong>
-
-        <span>
-          За считанные секунды
-        </span>
-
-      </div>
-
-      <div class="feature">
-
-        <div class="icon">
-          🧠
-        </div>
-
-        <strong>
-          Несколько AI
-        </strong>
-
-        <span>
-          Автоматический fallback
-        </span>
-
-      </div>
-
-      <div class="feature">
-
-        <div class="icon">
-          🌍
-        </div>
-
-        <strong>
-          Много языков
-        </strong>
-
-        <span>
-          Перевод и редактура
-        </span>
-
-      </div>
-
-    </section>
-
-    <footer>
-      AI Помощник · Gemini · Groq · OpenRouter
-    </footer>
-
-  </div>
-
-  <script>
-
-    /*
-     * ОСНОВНЫЕ ЭЛЕМЕНТЫ
-     */
-
-    const textInput =
-      document.getElementById("text");
-
-    const counter =
-      document.getElementById("counter");
-
-    const processButton =
-      document.getElementById("process");
-
-    const resultBox =
-      document.getElementById("resultBox");
-
-    const resultText =
-      document.getElementById("resultText");
-
-    const provider =
-      document.getElementById("provider");
-
-    const retryButton =
-      document.getElementById("retryButton");
-
-    const copyButton =
-      document.getElementById("copyButton");
-
-    const actionSelect =
-      document.getElementById("action");
-
-    const historyList =
-      document.getElementById("historyList");
-
-    const clearHistoryButton =
-      document.getElementById(
-        "clearHistoryButton"
-      );
-
-    const allHistoryTab =
-      document.getElementById(
-        "allHistoryTab"
-      );
-
-    const favoriteHistoryTab =
-      document.getElementById(
-        "favoriteHistoryTab"
-      );
-
-    const templatesList =
-      document.getElementById(
-        "templatesList"
-      );
-
-    const addTemplateButton =
-      document.getElementById(
-        "addTemplateButton"
-      );
-
-    let retryTimer = null;
-    let rateLimited = false;
-
-    /*
-     * НАСТРОЙКИ ИСТОРИИ
-     */
-
-    const HISTORY_KEY =
-      "ai_helper_history_v1";
-
-    const MAX_HISTORY =
-      20;
-
-    let historyFilter =
-      "all";
-
-    /*
-     * НАСТРОЙКИ ШАБЛОНОВ
-     */
-
-    const TEMPLATES_KEY =
-      "ai_helper_templates_v1";
-
-    const MAX_TEMPLATES =
-      30;
-
-    /*
-     * НАЗВАНИЯ РЕЖИМОВ
-     */
-
-    const modeLabels = {
-
-      improve:
-        "✨ Улучшить текст",
-
-      polish:
-        "🇵🇱 Перевести на польский",
-
-      english:
-        "🇬🇧 Перевести на английский",
-
-      tiktok:
-        "🎵 Текст для TikTok",
-
-      shorten:
-        "✂️ Сократить текст",
-
-      write:
-        "📝 Написать текст",
-
-      reply:
-        "💬 Ответить на сообщение",
-
-      business:
-        "📧 Деловой текст",
-
-      summarize:
-        "📋 Краткое резюме"
-
-    };
-
-    /*
-     * ПОДСКАЗКИ
-     */
-
-    const placeholders = {
-
-      improve:
-        "Напиши здесь свой текст...",
-
-      polish:
-        "Введи текст, который нужно перевести на польский...",
-
-      english:
-        "Введи текст, который нужно перевести на английский...",
-
-      tiktok:
-        "Введи текст или факт, который нужно превратить в TikTok-текст...",
-
-      shorten:
-        "Вставь длинный текст, который нужно сократить...",
-
-      write:
-        "Например: Напиши пост о том, почему стоит посетить Гданьск...",
-
-      reply:
-        "Вставь сообщение, на которое нужно ответить...",
-
-      business:
-        "Введи сообщение, которое нужно сделать деловым и профессиональным...",
-
-      summarize:
-        "Вставь текст, который нужно кратко пересказать..."
-
-    };
-
-    /*
-     * СЧЁТЧИК
-     */
-
-    textInput.addEventListener(
-      "input",
-      () => {
-
-        counter.textContent =
-          `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
-
+      <button class="clear-history" id="clearHistoryButton" type="button">
+        🧹 Очистить
+      </button>
+    </div>
+    <div class="history-tabs">
+      <button class="history-tab active" id="allHistoryTab" type="button">
+        Все
+      </button>
+      <button class="history-tab" id="favoriteHistoryTab" type="button">
+        ⭐ Избранное
+      </button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </section>
+  <section class="features">
+    <div class="feature">
+      <div class="icon">⚡</div>
+      <strong id="featureFastTitle">Быстро</strong>
+      <span id="featureFastText">За считанные секунды</span>
+    </div>
+    <div class="feature">
+      <div class="icon">🧠</div>
+      <strong id="featureAiTitle">Несколько AI</strong>
+      <span id="featureAiText">Автоматический fallback</span>
+    </div>
+    <div class="feature">
+      <div class="icon">🌍</div>
+      <strong id="featureLanguagesTitle">Много языков</strong>
+      <span id="featureLanguagesText">Перевод и редактура</span>
+    </div>
+  </section>
+  <footer id="footer">
+    AI Помощник · Gemini · Groq · OpenRouter
+  </footer>
+</div>
+<script>
+  /*
+   * ============================================================
+   * МУЛЬТИЯЗЫЧНОСТЬ
+   * ============================================================
+   */
+  const LANGUAGE_KEY = "ai_helper_language_v1";
+  const translations = {
+    ru: {
+      htmlLang: "ru",
+      title: "✦ AI Помощник",
+      subtitle: "Напиши текст — AI поможет его улучшить, создать, перевести или переработать.",
+      action: "ДЕЙСТВИЕ",
+      result: "✦ РЕЗУЛЬТАТ AI",
+      process: "✨ Обработать",
+      processing: "⏳ AI обрабатывает...",
+      copy: "📋 Скопировать",
+      copied: "✓ Скопировано",
+      retry: "🔄 Попробовать снова",
+      templates: "★ МОИ ШАБЛОНЫ",
+      add: "＋ Добавить",
+      history: "✦ ИСТОРИЯ",
+      clear: "🧹 Очистить",
+      all: "Все",
+      favorites: "⭐ Избранное",
+      fast: "Быстро",
+      fastText: "За считанные секунды",
+      ai: "Несколько AI",
+      aiText: "Автоматический fallback",
+      languages: "Много языков",
+      languagesText: "Перевод и редактура",
+      emptyHistory: "Здесь появятся твои последние запросы после обработки текста.",
+      emptyFavorites: "В избранном пока ничего нет.",
+      emptyTemplates: "Здесь будут твои часто используемые запросы. Введи текст и нажми «＋ Добавить».",
+      request: "Запрос: ",
+      useAgain: "🔄 Использовать снова",
+      favorite: "☆ В избранное",
+      favorited: "★ В избранном",
+      copy: "📋 Копировать",
+      delete: "🗑 Удалить",
+      use: "▶ Использовать",
+      promptName: "Название шаблона:",
+      deleteHistory: "Удалить всю историю запросов?",
+      noText: "⚠️ Сначала напиши текст.",
+      tooLong: "⚠️ Текст слишком длинный.",
+      noCopy: "Не удалось скопировать текст.",
+      limit: "❌ ⚠️ Лимит AI временно исчерпан.",
+      retryIn: "Повторить можно через",
+      seconds: "сек.",
+      limitActive: "⏳ Лимит активен...",
+      limitOff: "Лимит снят. Теперь можно снова отправить запрос.",
+      serverError: "Сервер вернул некорректный ответ.",
+      aiNoAnswer: "AI не вернул текстовый ответ.",
+      unknownError: "Произошла неизвестная ошибка.",
+      noTemplates: "Нет шаблонов.",
+      modes: {
+        improve: "✨ Улучшить текст",
+        polish: "🇵🇱 Перевести на польский",
+        english: "🇬🇧 Перевести на английский",
+        tiktok: "🎵 Текст для TikTok",
+        shorten: "✂️ Сократить текст",
+        write: "📝 Написать текст",
+        reply: "💬 Ответить на сообщение",
+        business: "📧 Деловой текст",
+        summarize: "📋 Краткое резюме"
+      },
+      placeholders: {
+        improve: "Напиши здесь свой текст...",
+        polish: "Введи текст, который нужно перевести на польский...",
+        english: "Введи текст, который нужно перевести на английский...",
+        tiktok: "Введи текст или факт, который нужно превратить в TikTok-текст...",
+        shorten: "Вставь длинный текст, который нужно сократить...",
+        write: "Например: Напиши пост о том, почему стоит посетить Гданьск...",
+        reply: "Вставь сообщение, на которое нужно ответить...",
+        business: "Введи сообщение, которое нужно сделать деловым и профессиональным...",
+        summarize: "Вставь текст, который нужно кратко пересказать..."
       }
+    },
+    pl: {
+      htmlLang: "pl",
+      title: "✦ AI Pomocnik",
+      subtitle: "Napisz tekst — AI pomoże Ci go poprawić, stworzyć, przetłumaczyć lub przerobić.",
+      action: "DZIAŁANIE",
+      result: "✦ WYNIK AI",
+      process: "✨ Przetwórz",
+      processing: "⏳ AI przetwarza...",
+      copy: "📋 Kopiuj",
+      copied: "✓ Skopiowano",
+      retry: "🔄 Spróbuj ponownie",
+      templates: "★ MOJE SZABLONY",
+      add: "＋ Dodaj",
+      history: "✦ HISTORIA",
+      clear: "🧹 Wyczyść",
+      all: "Wszystkie",
+      favorites: "⭐ Ulubione",
+      fast: "Szybko",
+      fastText: "W kilka sekund",
+      ai: "Kilka AI",
+      aiText: "Automatyczny fallback",
+      languages: "Wiele języków",
+      languagesText: "Tłumaczenie i redakcja",
+      emptyHistory: "Tutaj pojawią się Twoje ostatnie zapytania.",
+      emptyFavorites: "Brak ulubionych.",
+      emptyTemplates: "Tutaj pojawią się często używane zapytania.",
+      request: "Zapytanie: ",
+      useAgain: "🔄 Użyj ponownie",
+      favorite: "☆ Dodaj do ulubionych",
+      favorited: "★ W ulubionych",
+      delete: "🗑 Usuń",
+      use: "▶ Użyj",
+      promptName: "Nazwa szablonu:",
+      deleteHistory: "Usunąć całą historię?",
+      noText: "⚠️ Najpierw wpisz tekst.",
+      tooLong: "⚠️ Tekst jest za długi.",
+      noCopy: "Nie udało się skopiować tekstu.",
+      limit: "❌ ⚠️ Limit AI został tymczasowo wyczerpany.",
+      retryIn: "Spróbuj ponownie za",
+      seconds: "sek.",
+      limitActive: "⏳ Limit aktywny...",
+      limitOff: "Limit został zdjęty. Możesz ponownie wysłać zapytanie.",
+      serverError: "Serwer zwrócił nieprawidłową odpowiedź.",
+      aiNoAnswer: "AI nie zwróciło odpowiedzi tekstowej.",
+      unknownError: "Wystąpił nieznany błąd.",
+      modes: {
+        improve: "✨ Popraw tekst",
+        polish: "🇵🇱 Przetłumacz na polski",
+        english: "🇬🇧 Przetłumacz na angielski",
+        tiktok: "🎵 Tekst na TikTok",
+        shorten: "✂️ Skróć tekst",
+        write: "📝 Napisz tekst",
+        reply: "💬 Odpowiedz na wiadomość",
+        business: "📧 Tekst biznesowy",
+        summarize: "📋 Krótkie podsumowanie"
+      },
+      placeholders: {
+        improve: "Wpisz tutaj swój tekst...",
+        polish: "Wpisz tekst do przetłumaczenia na polski...",
+        english: "Wpisz tekst do przetłumaczenia na angielski...",
+        tiktok: "Wpisz tekst lub fakt, który ma zostać przerobiony na TikTok...",
+        shorten: "Wklej długi tekst do skrócenia...",
+        write: "Np. Napisz post o tym, dlaczego warto odwiedzić Gdańsk...",
+        reply: "Wklej wiadomość, na którą chcesz odpowiedzieć...",
+        business: "Wpisz wiadomość, którą chcesz nadać profesjonalny charakter...",
+        summarize: "Wklej tekst do krótkiego podsumowania..."
+      }
+    },
+    en: {
+      htmlLang: "en",
+      title: "✦ AI Assistant",
+      subtitle: "Write a text — AI will help you improve, create, translate or rewrite it.",
+      action: "ACTION",
+      result: "✦ AI RESULT",
+      process: "✨ Process",
+      processing: "⏳ AI is processing...",
+      copy: "📋 Copy",
+      copied: "✓ Copied",
+      retry: "🔄 Try again",
+      templates: "★ MY TEMPLATES",
+      add: "＋ Add",
+      history: "✦ HISTORY",
+      clear: "🧹 Clear",
+      all: "All",
+      favorites: "⭐ Favorites",
+      fast: "Fast",
+      fastText: "In just a few seconds",
+      ai: "Multiple AI",
+      aiText: "Automatic fallback",
+      languages: "Many languages",
+      languagesText: "Translation and editing",
+      emptyHistory: "Your recent requests will appear here.",
+      emptyFavorites: "No favorites yet.",
+      emptyTemplates: "Your frequently used requests will appear here.",
+      request: "Request: ",
+      useAgain: "🔄 Use again",
+      favorite: "☆ Favorite",
+      favorited: "★ Favorited",
+      delete: "🗑 Delete",
+      use: "▶ Use",
+      promptName: "Template name:",
+      deleteHistory: "Delete all history?",
+      noText: "⚠️ Enter some text first.",
+      tooLong: "⚠️ The text is too long.",
+      noCopy: "Could not copy the text.",
+      limit: "❌ ⚠️ AI limit temporarily reached.",
+      retryIn: "Try again in",
+      seconds: "sec.",
+      limitActive: "⏳ Limit active...",
+      limitOff: "The limit has been removed. You can send another request.",
+      serverError: "The server returned an invalid response.",
+      aiNoAnswer: "AI did not return a text response.",
+      unknownError: "An unknown error occurred.",
+      modes: {
+        improve: "✨ Improve text",
+        polish: "🇵🇱 Translate to Polish",
+        english: "🇬🇧 Translate to English",
+        tiktok: "🎵 TikTok text",
+        shorten: "✂️ Shorten text",
+        write: "📝 Write text",
+        reply: "💬 Reply to message",
+        business: "📧 Business text",
+        summarize: "📋 Short summary"
+      },
+      placeholders: {
+        improve: "Write your text here...",
+        polish: "Enter text to translate into Polish...",
+        english: "Enter text to translate into English...",
+        tiktok: "Enter text or a fact to turn into a TikTok text...",
+        shorten: "Paste the long text you want to shorten...",
+        write: "Example: Write a post about why people should visit Gdańsk...",
+        reply: "Paste the message you want to reply to...",
+        business: "Enter the message you want to make professional...",
+        summarize: "Paste the text you want to summarize..."
+      }
+    },
+    uk: {
+      htmlLang: "uk",
+      title: "✦ AI Помічник",
+      subtitle: "Напиши текст — AI допоможе його покращити, створити, перекласти або переробити.",
+      action: "ДІЯ",
+      result: "✦ РЕЗУЛЬТАТ AI",
+      process: "✨ Обробити",
+      processing: "⏳ AI обробляє...",
+      copy: "📋 Копіювати",
+      copied: "✓ Скопійовано",
+      retry: "🔄 Спробувати ще раз",
+      templates: "★ МОЇ ШАБЛОНИ",
+      add: "＋ Додати",
+      history: "✦ ІСТОРІЯ",
+      clear: "🧹 Очистити",
+      all: "Усі",
+      favorites: "⭐ Обране",
+      fast: "Швидко",
+      fastText: "За лічені секунди",
+      ai: "Кілька AI",
+      aiText: "Автоматичний fallback",
+      languages: "Багато мов",
+      languagesText: "Переклад і редагування",
+      emptyHistory: "Тут з'являться твої останні запити.",
+      emptyFavorites: "В обраному поки нічого немає.",
+      emptyTemplates: "Тут будуть твої часто використовувані запити.",
+      request: "Запит: ",
+      useAgain: "🔄 Використати ще раз",
+      favorite: "☆ В обране",
+      favorited: "★ В обраному",
+      delete: "🗑 Видалити",
+      use: "▶ Використати",
+      promptName: "Назва шаблону:",
+      deleteHistory: "Видалити всю історію?",
+      noText: "⚠️ Спочатку введи текст.",
+      tooLong: "⚠️ Текст занадто довгий.",
+      noCopy: "Не вдалося скопіювати текст.",
+      limit: "❌ ⚠️ Ліміт AI тимчасово вичерпано.",
+      retryIn: "Повторити можна через",
+      seconds: "сек.",
+      limitActive: "⏳ Ліміт активний...",
+      limitOff: "Ліміт знято. Тепер можна знову надіслати запит.",
+      serverError: "Сервер повернув некоректну відповідь.",
+      aiNoAnswer: "AI не повернув текстової відповіді.",
+      unknownError: "Сталася невідома помилка.",
+      modes: {
+        improve: "✨ Покращити текст",
+        polish: "🇵🇱 Перекласти польською",
+        english: "🇬🇧 Перекласти англійською",
+        tiktok: "🎵 Текст для TikTok",
+        shorten: "✂️ Скоротити текст",
+        write: "📝 Написати текст",
+        reply: "💬 Відповісти на повідомлення",
+        business: "📧 Діловий текст",
+        summarize: "📋 Коротке резюме"
+      },
+      placeholders: {
+        improve: "Напиши тут свій текст...",
+        polish: "Введи текст для перекладу польською...",
+        english: "Введи текст для перекладу англійською...",
+        tiktok: "Введи текст або факт для TikTok...",
+        shorten: "Встав довгий текст для скорочення...",
+        write: "Наприклад: Напиши пост про те, чому варто відвідати Гданськ...",
+        reply: "Встав повідомлення, на яке потрібно відповісти...",
+        business: "Введи повідомлення, яке потрібно зробити професійним...",
+        summarize: "Встав текст для короткого резюме..."
+      }
+    }
+  };
+  /*
+   * Для остальных языков используем английский интерфейс
+   * как резервный вариант до добавления полного перевода.
+   */
+  translations.de = {
+    ...translations.en,
+    htmlLang: "de",
+    title: "✦ AI Assistent",
+    subtitle: "Schreibe einen Text – die KI hilft dir, ihn zu verbessern, erstellen, übersetzen oder umzuformulieren.",
+    action: "AKTION",
+    result: "✦ AI-ERGEBNIS"
+  };
+  translations.fr = {
+    ...translations.en,
+    htmlLang: "fr",
+    title: "✦ Assistant IA",
+    subtitle: "Écris un texte — l’IA t’aidera à l’améliorer, le créer, le traduire ou le reformuler.",
+    action: "ACTION",
+    result: "✦ RÉSULTAT IA"
+  };
+  translations.es = {
+    ...translations.en,
+    htmlLang: "es",
+    title: "✦ Asistente IA",
+    subtitle: "Escribe un texto — la IA te ayudará a mejorarlo, crearlo, traducirlo o reformularlo.",
+    action: "ACCIÓN",
+    result: "✦ RESULTADO IA"
+  };
+  translations.it = {
+    ...translations.en,
+    htmlLang: "it",
+    title: "✦ Assistente IA",
+    subtitle: "Scrivi un testo — l'IA ti aiuterà a migliorarlo, crearlo, tradurlo o riscriverlo.",
+    action: "AZIONE",
+    result: "✦ RISULTATO IA"
+  };
+  translations.cs = {
+    ...translations.en,
+    htmlLang: "cs",
+    title: "✦ AI Asistent",
+    subtitle: "Napiš text — AI ti pomůže ho vylepšit, vytvořit, přeložit nebo přepracovat.",
+    action: "AKCE",
+    result: "✦ VÝSLEDEK AI"
+  };
+  translations.sk = {
+    ...translations.en,
+    htmlLang: "sk",
+    title: "✦ AI Asistent",
+    subtitle: "Napíš text — AI ti pomôže ho vylepšiť, vytvoriť, preložiť alebo prepracovať.",
+    action: "AKCIA",
+    result: "✦ VÝSLEDOK AI"
+  };
+  translations.nl = {
+    ...translations.en,
+    htmlLang: "nl",
+    title: "✦ AI Assistent",
+    subtitle: "Schrijf een tekst — AI helpt je deze te verbeteren, maken, vertalen of herschrijven.",
+    action: "ACTIE",
+    result: "✦ AI-RESULTAAT"
+  };
+  translations.pt = {
+    ...translations.en,
+    htmlLang: "pt",
+    title: "✦ Assistente IA",
+    subtitle: "Escreva um texto — a IA ajudará a melhorar, criar, traduzir ou reformular.",
+    action: "AÇÃO",
+    result: "✦ RESULTADO IA"
+  };
+  translations.tr = {
+    ...translations.en,
+    htmlLang: "tr",
+    title: "✦ AI Asistan",
+    subtitle: "Bir metin yaz — AI onu geliştirmenize, oluşturmanıza, çevirmenize veya yeniden yazmanıza yardımcı olur.",
+    action: "İŞLEM",
+    result: "✦ AI SONUCU"
+  };
+  /*
+   * ============================================================
+   * ОСНОВНЫЕ ЭЛЕМЕНТЫ
+   * ============================================================
+   */
+  const textInput = document.getElementById("text");
+  const counter = document.getElementById("counter");
+  const processButton = document.getElementById("process");
+  const resultBox = document.getElementById("resultBox");
+  const resultText = document.getElementById("resultText");
+  const provider = document.getElementById("provider");
+  const retryButton = document.getElementById("retryButton");
+  const copyButton = document.getElementById("copyButton");
+  const actionSelect = document.getElementById("action");
+  const historyList = document.getElementById("historyList");
+  const clearHistoryButton = document.getElementById("clearHistoryButton");
+  const allHistoryTab = document.getElementById("allHistoryTab");
+  const favoriteHistoryTab = document.getElementById("favoriteHistoryTab");
+  const templatesList = document.getElementById("templatesList");
+  const addTemplateButton = document.getElementById("addTemplateButton");
+  const interfaceLanguage = document.getElementById("interfaceLanguage");
+  let retryTimer = null;
+  let rateLimited = false;
+  const HISTORY_KEY = "ai_helper_history_v1";
+  const MAX_HISTORY = 20;
+  const TEMPLATES_KEY = "ai_helper_templates_v1";
+  const MAX_TEMPLATES = 30;
+  let historyFilter = "all";
+  let currentLanguage = "ru";
+  /*
+   * ============================================================
+   * ПЕРЕВОД ИНТЕРФЕЙСА
+   * ============================================================
+   */
+  function getTranslation() {
+    return translations[currentLanguage] || translations.en;
+  }
+  function getModeLabel(mode) {
+    const t = getTranslation();
+    return t.modes[mode] || mode;
+  }
+  function getPlaceholder(mode) {
+    const t = getTranslation();
+    return t.placeholders[mode] || "";
+  }
+  function applyLanguage(lang) {
+    if (!translations[lang]) {
+      lang = "en";
+    }
+    currentLanguage = lang;
+    localStorage.setItem(
+      LANGUAGE_KEY,
+      lang
     );
-
-    /*
-     * СМЕНА РЕЖИМА
-     */
-
-    actionSelect.addEventListener(
-      "change",
-      () => {
-
-        const mode =
-          actionSelect.value;
-
-        textInput.placeholder =
-          placeholders[mode] ||
-          "Напиши здесь свой текст...";
-
-      }
-    );
-
-    /*
-     * ПРОВАЙДЕР
-     */
-
-    function getProviderName(name) {
-
-      const providers = {
-
-        gemini:
-          "✦ Gemini",
-
-        groq:
-          "⚡ Groq",
-
-        openrouter:
-          "◈ OpenRouter"
-
-      };
-
-      return (
-        providers[name] ||
-        "✦ AI"
-      );
-
-    }
-
-    /*
-     * БЕЗОПАСНАЯ РАБОТА С LOCALSTORAGE
-     */
-
-    function loadHistory() {
-
-      try {
-
-        const raw =
-          localStorage.getItem(
-            HISTORY_KEY
-          );
-
-        if (!raw) {
-          return [];
-        }
-
-        const parsed =
-          JSON.parse(raw);
-
-        if (!Array.isArray(parsed)) {
-          return [];
-        }
-
-        return parsed
-          .filter(
-            item =>
-              item &&
-              typeof item === "object" &&
-              typeof item.sourceText === "string" &&
-              typeof item.resultText === "string" &&
-              typeof item.mode === "string"
-          )
-          .slice(
-            0,
-            MAX_HISTORY
-          );
-
-      } catch {
-
-        return [];
-
-      }
-
-    }
-
-    function saveHistory(history) {
-
-      try {
-
-        localStorage.setItem(
-          HISTORY_KEY,
-          JSON.stringify(
-            history.slice(
-              0,
-              MAX_HISTORY
-            )
-          )
-        );
-
-        return true;
-
-      } catch {
-
-        return false;
-
-      }
-
-    }
-
-    /*
-     * СОЗДАНИЕ ID
-     */
-
-    function createHistoryId() {
-
-      if (
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-      ) {
-
-        return crypto.randomUUID();
-
-      }
-
-      return (
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2)
-      );
-
-    }
-
-    /*
-     * ДОБАВЛЕНИЕ В ИСТОРИЮ
-     */
-
-    function addToHistory(
-      sourceText,
-      resultTextValue,
-      mode,
-      providerName
-    ) {
-
-      const history =
-        loadHistory();
-
-      const item = {
-
-        id:
-          createHistoryId(),
-
-        mode:
-          mode,
-
-        sourceText:
-          sourceText,
-
-        resultText:
-          resultTextValue,
-
-        provider:
-          providerName || "",
-
-        createdAt:
-          Date.now(),
-
-        favorite:
-          false
-
-      };
-
-      history.unshift(item);
-
-      saveHistory(history);
-
-      renderHistory();
-
-    }
-
-    /*
-     * ФОРМАТ ВРЕМЕНИ
-     */
-
-    function formatHistoryTime(
-      timestamp
-    ) {
-
-      const date =
-        new Date(timestamp);
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-
-        return "";
-
-      }
-
-      return date.toLocaleString(
-        "ru-RU",
-        {
-          day: "2-digit",
-          month: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
-        }
-      );
-
-    }
-
-    /*
-     * СОКРАЩЕНИЕ ПРЕВЬЮ
-     */
-
-    function previewText(
-      text,
-      maxLength
-    ) {
-
-      if (
-        text.length <=
-        maxLength
-      ) {
-
-        return text;
-
-      }
-
-      return (
-        text.slice(
-          0,
-          maxLength
-        ) +
-        "…"
-      );
-
-    }
-
-    /*
-     * ПОКАЗ ИСТОРИИ
-     */
-
-    function renderHistory() {
-
-      const history =
-        loadHistory();
-
-      historyList.textContent =
-        "";
-
-      let visibleHistory =
-        history;
-
-      if (
-        historyFilter ===
-        "favorites"
-      ) {
-
-        visibleHistory =
-          history.filter(
-            item =>
-              item.favorite ===
-              true
-          );
-
-      }
-
-      if (
-        visibleHistory.length ===
-        0
-      ) {
-
-        const empty =
-          document.createElement(
-            "div"
-          );
-
-        empty.className =
-          "history-empty";
-
-        empty.textContent =
-          history.length === 0
-            ? "Здесь появятся твои последние запросы после обработки текста."
-            : "В избранном пока ничего нет.";
-
-        historyList.appendChild(
-          empty
-        );
-
-        return;
-
-      }
-
-      visibleHistory.forEach(
-        item => {
-
-          const card =
-            document.createElement(
-              "article"
-            );
-
-          card.className =
-            "history-item";
-
-          const top =
-            document.createElement(
-              "div"
-            );
-
-          top.className =
-            "history-item-top";
-
-          const mode =
-            document.createElement(
-              "div"
-            );
-
-          mode.className =
-            "history-mode";
-
-          mode.textContent =
-            modeLabels[item.mode] ||
-            "✦ AI";
-
-          const time =
-            document.createElement(
-              "div"
-            );
-
-          time.className =
-            "history-time";
-
-          time.textContent =
-            formatHistoryTime(
-              item.createdAt
-            );
-
-          top.appendChild(mode);
-          top.appendChild(time);
-
-          const source =
-            document.createElement(
-              "div"
-            );
-
-          source.className =
-            "history-source";
-
-          source.textContent =
-            "Запрос: " +
-            previewText(
-              item.sourceText,
-              500
-            );
-
-          const result =
-            document.createElement(
-              "div"
-            );
-
-          result.className =
-            "history-result";
-
-          result.textContent =
-            previewText(
-              item.resultText,
-              1000
-            );
-
-          const actions =
-            document.createElement(
-              "div"
-            );
-
-          actions.className =
-            "history-actions";
-
-          const useButton =
-            document.createElement(
-              "button"
-            );
-
-          useButton.type =
-            "button";
-
-          useButton.className =
-            "history-action";
-
-          useButton.textContent =
-            "🔄 Использовать снова";
-
-          useButton.addEventListener(
-            "click",
-            () => {
-
-              useHistoryItem(
-                item
-              );
-
-            }
-          );
-
-          const copyHistoryButton =
-            document.createElement(
-              "button"
-            );
-
-          copyHistoryButton.type =
-            "button";
-
-          copyHistoryButton.className =
-            "history-action";
-
-          copyHistoryButton.textContent =
-            "📋 Копировать";
-
-          copyHistoryButton.addEventListener(
-            "click",
-            () => {
-
-              copyText(
-                item.resultText,
-                copyHistoryButton
-              );
-
-            }
-          );
-
-          const favoriteButton =
-            document.createElement(
-              "button"
-            );
-
-          favoriteButton.type =
-            "button";
-
-          favoriteButton.className =
-            "history-action";
-
-          if (
-            item.favorite
-          ) {
-
-            favoriteButton.classList.add(
-              "favorite"
-            );
-
-            favoriteButton.textContent =
-              "★ В избранном";
-
-          } else {
-
-            favoriteButton.textContent =
-              "☆ В избранное";
-
-          }
-
-          favoriteButton.addEventListener(
-            "click",
-            () => {
-
-              toggleFavorite(
-                item.id
-              );
-
-            }
-          );
-
-          const deleteButton =
-            document.createElement(
-              "button"
-            );
-
-          deleteButton.type =
-            "button";
-
-          deleteButton.className =
-            "history-action";
-
-          deleteButton.textContent =
-            "🗑 Удалить";
-
-          deleteButton.addEventListener(
-            "click",
-            () => {
-
-              deleteHistoryItem(
-                item.id
-              );
-
-            }
-          );
-
-          actions.appendChild(
-            useButton
-          );
-
-          actions.appendChild(
-            copyHistoryButton
-          );
-
-          actions.appendChild(
-            favoriteButton
-          );
-
-          actions.appendChild(
-            deleteButton
-          );
-
-          card.appendChild(
-            top
-          );
-
-          card.appendChild(
-            source
-          );
-
-          card.appendChild(
-            result
-          );
-
-          card.appendChild(
-            actions
-          );
-
-          historyList.appendChild(
-            card
-          );
-
-        }
-      );
-
-    }
-
-    /*
-     * ИСПОЛЬЗОВАТЬ ЗАПРОС СНОВА
-     */
-
-    function useHistoryItem(item) {
-
-      if (!item) {
-        return;
-      }
-
-      actionSelect.value =
-        item.mode;
-
-      textInput.value =
-        item.sourceText;
-
-      textInput.placeholder =
-        placeholders[item.mode] ||
-        "Напиши здесь свой текст...";
-
-      counter.textContent =
-        `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
-
-      resultBox.classList.remove(
-        "show"
-      );
-
-      window.scrollTo({
-
-        top:
-          document.querySelector(
-            ".app"
-          ).offsetTop - 15,
-
-        behavior:
-          "smooth"
-
-      });
-
-    }
-
-    /*
-     * ИЗБРАННОЕ
-     */
-
-    function toggleFavorite(id) {
-
-      const history =
-        loadHistory();
-
-      const item =
-        history.find(
-          entry =>
-            entry.id === id
-        );
-
-      if (!item) {
-        return;
-      }
-
-      item.favorite =
-        !item.favorite;
-
-      saveHistory(history);
-
-      renderHistory();
-
-    }
-
-    /*
-     * УДАЛЕНИЕ ИСТОРИИ
-     */
-
-    function deleteHistoryItem(id) {
-
-      const history =
-        loadHistory();
-
-      const updated =
-        history.filter(
-          item =>
-            item.id !== id
-        );
-
-      saveHistory(updated);
-
-      renderHistory();
-
-    }
-
-    /*
-     * ОЧИСТКА ИСТОРИИ
-     */
-
-    clearHistoryButton.addEventListener(
-      "click",
-      () => {
-
-        const history =
-          loadHistory();
-
-        if (
-          history.length === 0
-        ) {
-
-          return;
-
-        }
-
-        const confirmed =
-          window.confirm(
-            "Удалить всю историю запросов?"
-          );
-
-        if (!confirmed) {
-          return;
-        }
-
-        try {
-
-          localStorage.removeItem(
-            HISTORY_KEY
-          );
-
-        } catch {
-
-          /* Ничего не делаем */
-
-        }
-
-        renderHistory();
-
-      }
-    );
-
-    /*
-     * ФИЛЬТРЫ ИСТОРИИ
-     */
-
-    allHistoryTab.addEventListener(
-      "click",
-      () => {
-
-        historyFilter =
-          "all";
-
-        allHistoryTab.classList.add(
-          "active"
-        );
-
-        favoriteHistoryTab.classList.remove(
-          "active"
-        );
-
-        renderHistory();
-
-      }
-    );
-
-    favoriteHistoryTab.addEventListener(
-      "click",
-      () => {
-
-        historyFilter =
-          "favorites";
-
-        favoriteHistoryTab.classList.add(
-          "active"
-        );
-
-        allHistoryTab.classList.remove(
-          "active"
-        );
-
-        renderHistory();
-
-      }
-    );
-
-    /*
-     * КОПИРОВАНИЕ ЛЮБОГО ТЕКСТА
-     */
-
-    async function copyText(
-      text,
-      button
-    ) {
-
-      if (!text) {
-        return;
-      }
-
-      try {
-
-        await navigator.clipboard.writeText(
-          text
-        );
-
-        const oldText =
-          button.textContent;
-
-        button.textContent =
-          "✓ Скопировано";
-
-        setTimeout(
-          () => {
-
-            button.textContent =
-              oldText;
-
-          },
-          1800
-        );
-
-      } catch {
-
-        alert(
-          "Не удалось скопировать текст."
-        );
-
-      }
-
-    }
-
-    /*
-     * ШАБЛОНЫ
-     */
-
-    function loadTemplates() {
-
-      try {
-
-        const raw =
-          localStorage.getItem(
-            TEMPLATES_KEY
-          );
-
-        if (!raw) {
-          return [];
-        }
-
-        const parsed =
-          JSON.parse(raw);
-
-        if (!Array.isArray(parsed)) {
-          return [];
-        }
-
-        return parsed
-          .filter(
-            item =>
-              item &&
-              typeof item === "object" &&
-              typeof item.name === "string" &&
-              typeof item.text === "string" &&
-              typeof item.mode === "string"
-          )
-          .slice(
-            0,
-            MAX_TEMPLATES
-          );
-
-      } catch {
-
-        return [];
-
-      }
-
-    }
-
-    function saveTemplates(
-      templates
-    ) {
-
-      try {
-
-        localStorage.setItem(
-          TEMPLATES_KEY,
-          JSON.stringify(
-            templates.slice(
-              0,
-              MAX_TEMPLATES
-            )
-          )
-        );
-
-        return true;
-
-      } catch {
-
-        return false;
-
-      }
-
-    }
-
-    function createTemplateId() {
-
-      if (
-        typeof crypto !== "undefined" &&
-        typeof crypto.randomUUID === "function"
-      ) {
-
-        return crypto.randomUUID();
-
-      }
-
-      return (
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .slice(2)
-      );
-
-    }
-
-    /*
-     * ДОБАВИТЬ ШАБЛОН
-     */
-
-    function addTemplate() {
-
-      const currentText =
-        textInput.value.trim();
-
-      if (!currentText) {
-
-        showResult(
-          "⚠️ Сначала введи текст, который хочешь сохранить в шаблон."
-        );
-
-        return;
-
-      }
-
-      const mode =
-        actionSelect.value;
-
-      const defaultName =
-        modeLabels[mode] ||
-        "Мой шаблон";
-
-      const name =
-        window.prompt(
-          "Название шаблона:",
-          defaultName
-        );
-
-      if (
-        !name ||
-        !name.trim()
-      ) {
-
-        return;
-
-      }
-
-      const templates =
-        loadTemplates();
-
-      const template = {
-
-        id:
-          createTemplateId(),
-
-        name:
-          name
-            .trim()
-            .slice(
-              0,
-              100
-            ),
-
-        mode:
-          mode,
-
-        text:
-          currentText.slice(
-            0,
-            10000
-          ),
-
-        createdAt:
-          Date.now()
-
-      };
-
-      templates.unshift(
-        template
-      );
-
-      saveTemplates(
-        templates
-      );
-
-      renderTemplates();
-
-    }
-
-    /*
-     * ПОКАЗ ШАБЛОНОВ
-     */
-
-    function renderTemplates() {
-
-      const templates =
-        loadTemplates();
-
-      templatesList.textContent =
-        "";
-
-      if (
-        templates.length ===
-        0
-      ) {
-
-        const empty =
-          document.createElement(
-            "div"
-          );
-
-        empty.className =
-          "templates-empty";
-
-        empty.textContent =
-          "Здесь будут твои часто используемые запросы. Введи текст и нажми «＋ Добавить».";
-
-        templatesList.appendChild(
-          empty
-        );
-
-        return;
-
-      }
-
-      templates.forEach(
-        template => {
-
-          const card =
-            document.createElement(
-              "article"
-            );
-
-          card.className =
-            "template-item";
-
-          const top =
-            document.createElement(
-              "div"
-            );
-
-          top.className =
-            "template-top";
-
-          const info =
-            document.createElement(
-              "div"
-            );
-
-          const name =
-            document.createElement(
-              "div"
-            );
-
-          name.className =
-            "template-name";
-
-          name.textContent =
-            template.name;
-
-          const mode =
-            document.createElement(
-              "div"
-            );
-
-          mode.className =
-            "template-mode";
-
-          mode.textContent =
-            modeLabels[
-              template.mode
-            ] ||
-            "✦ AI";
-
-          info.appendChild(
-            name
-          );
-
-          info.appendChild(
-            mode
-          );
-
-          top.appendChild(
-            info
-          );
-
-          const text =
-            document.createElement(
-              "div"
-            );
-
-          text.className =
-            "template-text";
-
-          text.textContent =
-            template.text.length > 500
-              ? template.text.slice(
-                  0,
-                  500
-                ) + "…"
-              : template.text;
-
-          const actions =
-            document.createElement(
-              "div"
-            );
-
-          actions.className =
-            "template-actions";
-
-          const useButton =
-            document.createElement(
-              "button"
-            );
-
-          useButton.type =
-            "button";
-
-          useButton.className =
-            "template-action";
-
-          useButton.textContent =
-            "▶ Использовать";
-
-          useButton.addEventListener(
-            "click",
-            () => {
-
-              useTemplate(
-                template
-              );
-
-            }
-          );
-
-          const deleteButton =
-            document.createElement(
-              "button"
-            );
-
-          deleteButton.type =
-            "button";
-
-          deleteButton.className =
-            "template-action";
-
-          deleteButton.textContent =
-            "🗑 Удалить";
-
-          deleteButton.addEventListener(
-            "click",
-            () => {
-
-              deleteTemplate(
-                template.id
-              );
-
-            }
-          );
-
-          actions.appendChild(
-            useButton
-          );
-
-          actions.appendChild(
-            deleteButton
-          );
-
-          card.appendChild(
-            top
-          );
-
-          card.appendChild(
-            text
-          );
-
-          card.appendChild(
-            actions
-          );
-
-          templatesList.appendChild(
-            card
-          );
-
-        }
-      );
-
-    }
-
-    /*
-     * ИСПОЛЬЗОВАТЬ ШАБЛОН
-     */
-
-    function useTemplate(
-      template
-    ) {
-
-      if (!template) {
-        return;
-      }
-
-      actionSelect.value =
-        template.mode;
-
-      textInput.value =
-        template.text;
-
-      textInput.placeholder =
-        placeholders[
-          template.mode
-        ] ||
-        "Напиши здесь свой текст...";
-
-      counter.textContent =
-        `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
-
-      resultBox.classList.remove(
-        "show"
-      );
-
-      window.scrollTo({
-
-        top:
-          document.querySelector(
-            ".app"
-          ).offsetTop - 15,
-
-        behavior:
-          "smooth"
-
-      });
-
-    }
-
-    /*
-     * УДАЛИТЬ ШАБЛОН
-     */
-
-    function deleteTemplate(id) {
-
-      const templates =
-        loadTemplates();
-
-      const updated =
-        templates.filter(
-          template =>
-            template.id !== id
-        );
-
-      saveTemplates(
-        updated
-      );
-
-      renderTemplates();
-
-    }
-
-    /*
-     * КНОПКА ДОБАВЛЕНИЯ ШАБЛОНА
-     */
-
-    addTemplateButton.addEventListener(
-      "click",
-      addTemplate
-    );
-
-    /*
-     * ОБРАБОТКА
-     */
-
-    async function processText() {
-
-      if (rateLimited) {
-        return;
-      }
-
-      const text =
-        textInput.value.trim();
-
-      const mode =
-        actionSelect.value;
-
-      if (!text) {
-
-        showResult(
-          "⚠️ Сначала напиши текст."
-        );
-
-        return;
-
-      }
-
-      if (
-        text.length >
-        10000
-      ) {
-
-        showResult(
-          "⚠️ Текст слишком длинный."
-        );
-
-        return;
-
-      }
-
-      processButton.disabled =
-        true;
-
-      processButton.textContent =
-        "⏳ AI обрабатывает...";
-
-      retryButton.classList.remove(
-        "show"
-      );
-
-      retryButton.disabled =
-        false;
-
-      copyButton.style.display =
-        "none";
-
-      resultBox.classList.add(
-        "show"
-      );
-
-      provider.style.display =
-        "none";
-
-      resultText.textContent =
-        "AI готовит ответ...";
-
-      let requestRateLimited =
-        false;
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/chat",
-            {
-              method:
-                "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify({
-                  message:
-                    text,
-
-                  mode:
-                    mode
-                })
-            }
-          );
-
-        let data;
-
-        try {
-
-          data =
-            await response.json();
-
-        } catch {
-
-          throw new Error(
-            "Сервер вернул некорректный ответ."
-          );
-
-        }
-
-        /*
-         * RATE LIMIT
-         */
-
-        if (
-          response.status ===
-          429
-        ) {
-
-          requestRateLimited =
-            true;
-
-          rateLimited =
-            true;
-
-          const retryAfter =
-            Number.isFinite(
-              Number(
-                data.retryAfter
-              )
-            )
-              ? Math.max(
-                  1,
-                  Math.ceil(
-                    Number(
-                      data.retryAfter
-                    )
-                  )
-                )
-              : 60;
-
-          resultText.textContent =
-            `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${retryAfter} сек.`;
-
-          provider.style.display =
-            "none";
-
-          copyButton.style.display =
-            "none";
-
-          retryButton.classList.remove(
-            "show"
-          );
-
-          startRetryTimer(
-            retryAfter
-          );
-
-          return;
-
-        }
-
-        /*
-         * ОШИБКИ СЕРВЕРА
-         */
-
-        if (!response.ok) {
-
-          throw new Error(
-            data.error ||
-            `Ошибка сервера (${response.status})`
-          );
-
-        }
-
-        /*
-         * ПРОВЕРКА ОТВЕТА AI
-         */
-
-        if (
-          !data ||
-          typeof data.answer !==
-            "string" ||
-          !data.answer.trim()
-        ) {
-
-          throw new Error(
-            "AI не вернул текстовый ответ."
-          );
-
-        }
-
-        const finalAnswer =
-          data.answer.trim();
-
-        resultText.textContent =
-          finalAnswer;
-
-        let providerName =
-          "";
-
-        if (
-          typeof data.provider ===
-          "string"
-        ) {
-
-          providerName =
-            data.provider;
-
-          provider.textContent =
-            getProviderName(
-              data.provider
-            );
-
-          provider.style.display =
-            "inline-block";
-
-        }
-
-        copyButton.style.display =
-          "block";
-
-        /*
-         * СОХРАНЯЕМ В ИСТОРИЮ
-         */
-
-        addToHistory(
-          text,
-          finalAnswer,
-          mode,
-          providerName
-        );
-
-      } catch (error) {
-
-        resultText.textContent =
-          "❌ " +
-          (
-            error &&
-            error.message
-              ? error.message
-              : "Произошла неизвестная ошибка."
-          );
-
-        provider.style.display =
-          "none";
-
-        copyButton.style.display =
-          "none";
-
-        retryButton.classList.add(
-          "show"
-        );
-
-      } finally {
-
-        if (
-          !requestRateLimited &&
-          !rateLimited
-        ) {
-
-          processButton.disabled =
-            false;
-
-          processButton.textContent =
-            "✨ Обработать";
-
-        }
-
-      }
-
-    }
-
-    /*
-     * ПОКАЗ РЕЗУЛЬТАТА
-     */
-
-    function showResult(text) {
-
-      resultBox.classList.add(
-        "show"
-      );
-
-      provider.style.display =
-        "none";
-
-      copyButton.style.display =
-        "none";
-
-      retryButton.classList.remove(
-        "show"
-      );
-
-      resultText.textContent =
-        text;
-
-    }
-
-    /*
-     * ТАЙМЕР RATE LIMIT
-     */
-
-    function startRetryTimer(
-      seconds
-    ) {
-
-      if (retryTimer) {
-
-        clearInterval(
-          retryTimer
-        );
-
-        retryTimer =
-          null;
-
-      }
-
-      let remaining =
-        Math.max(
-          1,
-          Math.ceil(
-            Number(seconds) ||
-            60
-          )
-        );
-
-      processButton.disabled =
-        true;
-
-      processButton.textContent =
-        "⏳ Лимит активен...";
-
-      retryButton.classList.remove(
-        "show"
-      );
-
-      retryButton.disabled =
-        true;
-
-      retryTimer =
-        setInterval(
-          () => {
-
-            remaining--;
-
-            if (
-              remaining <= 0
-            ) {
-
-              clearInterval(
-                retryTimer
-              );
-
-              retryTimer =
-                null;
-
-              rateLimited =
-                false;
-
-              processButton.disabled =
-                false;
-
-              processButton.textContent =
-                "✨ Обработать";
-
-              retryButton.disabled =
-                false;
-
-              retryButton.textContent =
-                "🔄 Попробовать снова";
-
-              retryButton.classList.add(
-                "show"
-              );
-
-              resultText.textContent =
-                "Лимит снят. Теперь можно снова отправить запрос.";
-
-              return;
-
-            }
-
-            resultText.textContent =
-              `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${remaining} сек.`;
-
-          },
-          1000
-        );
-
-    }
-
-    /*
-     * КОПИРОВАНИЕ ТЕКУЩЕГО РЕЗУЛЬТАТА
-     */
-
-    async function copyResult() {
-
-      const text =
-        resultText.textContent;
-
-      if (!text) {
-        return;
-      }
-
-      try {
-
-        await navigator.clipboard.writeText(
-          text
-        );
-
-        copyButton.textContent =
-          "✓ Скопировано";
-
-        setTimeout(
-          () => {
-
-            copyButton.textContent =
-              "📋 Скопировать";
-
-          },
-          1800
-        );
-
-      } catch {
-
-        alert(
-          "Не удалось скопировать текст."
-        );
-
-      }
-
-    }
-
-    /*
-     * ПЕРВОНАЧАЛЬНАЯ ЗАГРУЗКА
-     */
-
+    document.documentElement.lang =
+      getTranslation().htmlLang;
+    const t = getTranslation();
+    document.title =
+      t.title.replace("✦ ", "");
+    document.getElementById("title").textContent =
+      t.title;
+    document.getElementById("subtitle").textContent =
+      t.subtitle;
+    document.getElementById("actionLabel").textContent =
+      t.action;
+    document.getElementById("resultTitle").textContent =
+      t.result;
+    processButton.textContent =
+      t.process;
+    copyButton.textContent =
+      t.copy;
+    retryButton.textContent =
+      t.retry;
+    document.getElementById("templatesTitle").textContent =
+      t.templates;
+    addTemplateButton.textContent =
+      t.add;
+    document.getElementById("historyTitle").textContent =
+      t.history;
+    clearHistoryButton.textContent =
+      t.clear;
+    allHistoryTab.textContent =
+      t.all;
+    favoriteHistoryTab.textContent =
+      t.favorites;
+    document.getElementById("featureFastTitle").textContent =
+      t.fast;
+    document.getElementById("featureFastText").textContent =
+      t.fastText;
+    document.getElementById("featureAiTitle").textContent =
+      t.ai;
+    document.getElementById("featureAiText").textContent =
+      t.aiText;
+    document.getElementById("featureLanguagesTitle").textContent =
+      t.languages;
+    document.getElementById("featureLanguagesText").textContent =
+      t.languagesText;
+    document.getElementById("footer").textContent =
+      currentLanguage === "en"
+        ? "AI Assistant · Gemini · Groq · OpenRouter"
+        : currentLanguage === "pl"
+          ? "AI Pomocnik · Gemini · Groq · OpenRouter"
+          : currentLanguage === "uk"
+            ? "AI Помічник · Gemini · Groq · OpenRouter"
+            : "AI Помощник · Gemini · Groq · OpenRouter";
+    updateActionOptions();
+    textInput.placeholder =
+      getPlaceholder(actionSelect.value);
     renderTemplates();
     renderHistory();
-
-  </script>
-
+  }
+  function updateActionOptions() {
+    const t = getTranslation();
+    const options = [
+      ["improve", t.modes.improve],
+      ["polish", t.modes.polish],
+      ["english", t.modes.english],
+      ["tiktok", t.modes.tiktok],
+      ["shorten", t.modes.shorten],
+      ["write", t.modes.write],
+      ["reply", t.modes.reply],
+      ["business", t.modes.business],
+      ["summarize", t.modes.summarize]
+    ];
+    actionSelect.textContent = "";
+    options.forEach(([value, label]) => {
+      const option =
+        document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      actionSelect.appendChild(option);
+    });
+  }
+  /*
+   * ============================================================
+   * ЯЗЫК ИНТЕРФЕЙСА
+   * ============================================================
+   */
+  interfaceLanguage.addEventListener(
+    "change",
+    () => {
+      applyLanguage(
+        interfaceLanguage.value
+      );
+    }
+  );
+  /*
+   * ============================================================
+   * СЧЁТЧИК
+   * ============================================================
+   */
+  textInput.addEventListener(
+    "input",
+    () => {
+      counter.textContent =
+        `${textInput.value.length.toLocaleString(currentLanguage)} / 10 000`;
+    }
+  );
+  /*
+   * ============================================================
+   * СМЕНА РЕЖИМА
+   * ============================================================
+   */
+  actionSelect.addEventListener(
+    "change",
+    () => {
+      textInput.placeholder =
+        getPlaceholder(
+          actionSelect.value
+        );
+    }
+  );
+  /*
+   * ============================================================
+   * ПРОВАЙДЕР
+   * ============================================================
+   */
+  function getProviderName(name) {
+    const providers = {
+      gemini: "✦ Gemini",
+      groq: "⚡ Groq",
+      openrouter: "◈ OpenRouter"
+    };
+    return providers[name] || "✦ AI";
+  }
+  /*
+   * ============================================================
+   * ИСТОРИЯ
+   * ============================================================
+   */
+  function loadHistory() {
+    try {
+      const raw =
+        localStorage.getItem(HISTORY_KEY);
+      if (!raw) return [];
+      const parsed =
+        JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter(item =>
+          item &&
+          typeof item === "object" &&
+          typeof item.sourceText === "string" &&
+          typeof item.resultText === "string" &&
+          typeof item.mode === "string"
+        )
+        .slice(0, MAX_HISTORY);
+    } catch {
+      return [];
+    }
+  }
+  function saveHistory(history) {
+    try {
+      localStorage.setItem(
+        HISTORY_KEY,
+        JSON.stringify(
+          history.slice(0, MAX_HISTORY)
+        )
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  function createHistoryId() {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
+      return crypto.randomUUID();
+    }
+    return Date.now() + "-" +
+      Math.random().toString(36).slice(2);
+  }
+  function addToHistory(
+    sourceText,
+    resultTextValue,
+    mode,
+    providerName
+  ) {
+    const history =
+      loadHistory();
+    history.unshift({
+      id: createHistoryId(),
+      mode,
+      sourceText,
+      resultText: resultTextValue,
+      provider: providerName || "",
+      createdAt: Date.now(),
+      favorite: false
+    });
+    saveHistory(history);
+    renderHistory();
+  }
+  function formatHistoryTime(timestamp) {
+    const date =
+      new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+    return date.toLocaleString(
+      currentLanguage,
+      {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+  }
+  function previewText(text, maxLength) {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + "…";
+  }
+  function renderHistory() {
+    const t = getTranslation();
+    const history =
+      loadHistory();
+    historyList.textContent = "";
+    let visibleHistory =
+      history;
+    if (historyFilter === "favorites") {
+      visibleHistory =
+        history.filter(
+          item => item.favorite === true
+        );
+    }
+    if (visibleHistory.length === 0) {
+      const empty =
+        document.createElement("div");
+      empty.className =
+        "history-empty";
+      empty.textContent =
+        history.length === 0
+          ? t.emptyHistory
+          : t.emptyFavorites;
+      historyList.appendChild(empty);
+      return;
+    }
+    visibleHistory.forEach(item => {
+      const card =
+        document.createElement("article");
+      card.className =
+        "history-item";
+      const top =
+        document.createElement("div");
+      top.className =
+        "history-item-top";
+      const mode =
+        document.createElement("div");
+      mode.className =
+        "history-mode";
+      mode.textContent =
+        getModeLabel(item.mode);
+      const time =
+        document.createElement("div");
+      time.className =
+        "history-time";
+      time.textContent =
+        formatHistoryTime(item.createdAt);
+      top.appendChild(mode);
+      top.appendChild(time);
+      const source =
+        document.createElement("div");
+      source.className =
+        "history-source";
+      source.textContent =
+        t.request +
+        previewText(item.sourceText, 500);
+      const result =
+        document.createElement("div");
+      result.className =
+        "history-result";
+      result.textContent =
+        previewText(item.resultText, 1000);
+      const actions =
+        document.createElement("div");
+      actions.className =
+        "history-actions";
+      const useButton =
+        document.createElement("button");
+      useButton.type = "button";
+      useButton.className = "history-action";
+      useButton.textContent = t.useAgain;
+      useButton.addEventListener(
+        "click",
+        () => useHistoryItem(item)
+      );
+      const copyHistoryButton =
+        document.createElement("button");
+      copyHistoryButton.type = "button";
+      copyHistoryButton.className = "history-action";
+      copyHistoryButton.textContent = t.copy;
+      copyHistoryButton.addEventListener(
+        "click",
+        () => copyText(
+          item.resultText,
+          copyHistoryButton
+        )
+      );
+      const favoriteButton =
+        document.createElement("button");
+      favoriteButton.type = "button";
+      favoriteButton.className = "history-action";
+      if (item.favorite) {
+        favoriteButton.classList.add("favorite");
+        favoriteButton.textContent =
+          t.favorited;
+      } else {
+        favoriteButton.textContent =
+          t.favorite;
+      }
+      favoriteButton.addEventListener(
+        "click",
+        () => toggleFavorite(item.id)
+      );
+      const deleteButton =
+        document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "history-action";
+      deleteButton.textContent = t.delete;
+      deleteButton.addEventListener(
+        "click",
+        () => deleteHistoryItem(item.id)
+      );
+      actions.appendChild(useButton);
+      actions.appendChild(copyHistoryButton);
+      actions.appendChild(favoriteButton);
+      actions.appendChild(deleteButton);
+      card.appendChild(top);
+      card.appendChild(source);
+      card.appendChild(result);
+      card.appendChild(actions);
+      historyList.appendChild(card);
+    });
+  }
+  function useHistoryItem(item) {
+    if (!item) return;
+    actionSelect.value =
+      item.mode;
+    textInput.value =
+      item.sourceText;
+    textInput.placeholder =
+      getPlaceholder(item.mode);
+    counter.textContent =
+      `${textInput.value.length.toLocaleString(currentLanguage)} / 10 000`;
+    resultBox.classList.remove("show");
+    window.scrollTo({
+      top: document.querySelector(".app").offsetTop - 15,
+      behavior: "smooth"
+    });
+  }
+  function toggleFavorite(id) {
+    const history =
+      loadHistory();
+    const item =
+      history.find(entry => entry.id === id);
+    if (!item) return;
+    item.favorite =
+      !item.favorite;
+    saveHistory(history);
+    renderHistory();
+  }
+  function deleteHistoryItem(id) {
+    const history =
+      loadHistory();
+    saveHistory(
+      history.filter(item => item.id !== id)
+    );
+    renderHistory();
+  }
+  clearHistoryButton.addEventListener(
+    "click",
+    () => {
+      const history =
+        loadHistory();
+      if (history.length === 0) return;
+      const confirmed =
+        window.confirm(
+          getTranslation().deleteHistory
+        );
+      if (!confirmed) return;
+      try {
+        localStorage.removeItem(HISTORY_KEY);
+      } catch {}
+      renderHistory();
+    }
+  );
+  allHistoryTab.addEventListener(
+    "click",
+    () => {
+      historyFilter = "all";
+      allHistoryTab.classList.add("active");
+      favoriteHistoryTab.classList.remove("active");
+      renderHistory();
+    }
+  );
+  favoriteHistoryTab.addEventListener(
+    "click",
+    () => {
+      historyFilter = "favorites";
+      favoriteHistoryTab.classList.add("active");
+      allHistoryTab.classList.remove("active");
+      renderHistory();
+    }
+  );
+  /*
+   * ============================================================
+   * КОПИРОВАНИЕ
+   * ============================================================
+   */
+  async function copyText(text, button) {
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      const oldText =
+        button.textContent;
+      button.textContent =
+        getTranslation().copied;
+      setTimeout(
+        () => {
+          button.textContent = oldText;
+        },
+        1800
+      );
+    } catch {
+      alert(
+        getTranslation().noCopy
+      );
+    }
+  }
+  async function copyResult() {
+    await copyText(
+      resultText.textContent,
+      copyButton
+    );
+  }
+  /*
+   * ============================================================
+   * ШАБЛОНЫ
+   * ============================================================
+   */
+  function loadTemplates() {
+    try {
+      const raw =
+        localStorage.getItem(TEMPLATES_KEY);
+      if (!raw) return [];
+      const parsed =
+        JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter(item =>
+          item &&
+          typeof item === "object" &&
+          typeof item.name === "string" &&
+          typeof item.text === "string" &&
+          typeof item.mode === "string"
+        )
+        .slice(0, MAX_TEMPLATES);
+    } catch {
+      return [];
+    }
+  }
+  function saveTemplates(templates) {
+    try {
+      localStorage.setItem(
+        TEMPLATES_KEY,
+        JSON.stringify(
+          templates.slice(0, MAX_TEMPLATES)
+        )
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  function createTemplateId() {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
+      return crypto.randomUUID();
+    }
+    return Date.now() + "-" +
+      Math.random().toString(36).slice(2);
+  }
+  function addTemplate() {
+    const currentText =
+      textInput.value.trim();
+    if (!currentText) {
+      showResult(
+        getTranslation().noText
+      );
+      return;
+    }
+    const mode =
+      actionSelect.value;
+    const name =
+      window.prompt(
+        getTranslation().promptName,
+        getModeLabel(mode)
+      );
+    if (!name || !name.trim()) {
+      return;
+    }
+    const templates =
+      loadTemplates();
+    templates.unshift({
+      id: createTemplateId(),
+      name:
+        name.trim().slice(0,100),
+      mode,
+      text:
+        currentText.slice(0,10000),
+      createdAt:
+        Date.now()
+    });
+    saveTemplates(templates);
+    renderTemplates();
+  }
+  function renderTemplates() {
+    const t =
+      getTranslation();
+    const templates =
+      loadTemplates();
+    templatesList.textContent = "";
+    if (templates.length === 0) {
+      const empty =
+        document.createElement("div");
+      empty.className =
+        "templates-empty";
+      empty.textContent =
+        t.emptyTemplates;
+      templatesList.appendChild(empty);
+      return;
+    }
+    templates.forEach(template => {
+      const card =
+        document.createElement("article");
+      card.className =
+        "template-item";
+      const top =
+        document.createElement("div");
+      top.className =
+        "template-top";
+      const info =
+        document.createElement("div");
+      const name =
+        document.createElement("div");
+      name.className =
+        "template-name";
+      name.textContent =
+        template.name;
+      const mode =
+        document.createElement("div");
+      mode.className =
+        "template-mode";
+      mode.textContent =
+        getModeLabel(template.mode);
+      info.appendChild(name);
+      info.appendChild(mode);
+      top.appendChild(info);
+      const text =
+        document.createElement("div");
+      text.className =
+        "template-text";
+      text.textContent =
+        template.text.length > 500
+          ? template.text.slice(0,500) + "…"
+          : template.text;
+      const actions =
+        document.createElement("div");
+      actions.className =
+        "template-actions";
+      const useButton =
+        document.createElement("button");
+      useButton.type = "button";
+      useButton.className = "template-action";
+      useButton.textContent = t.use;
+      useButton.addEventListener(
+        "click",
+        () => useTemplate(template)
+      );
+      const deleteButton =
+        document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "template-action";
+      deleteButton.textContent = t.delete;
+      deleteButton.addEventListener(
+        "click",
+        () => deleteTemplate(template.id)
+      );
+      actions.appendChild(useButton);
+      actions.appendChild(deleteButton);
+      card.appendChild(top);
+      card.appendChild(text);
+      card.appendChild(actions);
+      templatesList.appendChild(card);
+    });
+  }
+  function useTemplate(template) {
+    if (!template) return;
+    actionSelect.value =
+      template.mode;
+    textInput.value =
+      template.text;
+    textInput.placeholder =
+      getPlaceholder(template.mode);
+    counter.textContent =
+      `${textInput.value.length.toLocaleString(currentLanguage)} / 10 000`;
+    resultBox.classList.remove("show");
+    window.scrollTo({
+      top: document.querySelector(".app").offsetTop - 15,
+      behavior: "smooth"
+    });
+  }
+  function deleteTemplate(id) {
+    const templates =
+      loadTemplates();
+    saveTemplates(
+      templates.filter(
+        template => template.id !== id
+      )
+    );
+    renderTemplates();
+  }
+  addTemplateButton.addEventListener(
+    "click",
+    addTemplate
+  );
+  /*
+   * ============================================================
+   * AI ОБРАБОТКА
+   * ============================================================
+   */
+  async function processText() {
+    if (rateLimited) return;
+    const text =
+      textInput.value.trim();
+    const mode =
+      actionSelect.value;
+    const t =
+      getTranslation();
+    if (!text) {
+      showResult(t.noText);
+      return;
+    }
+    if (text.length > 10000) {
+      showResult(t.tooLong);
+      return;
+    }
+    processButton.disabled =
+      true;
+    processButton.textContent =
+      t.processing;
+    retryButton.classList.remove("show");
+    retryButton.disabled = false;
+    copyButton.style.display =
+      "none";
+    resultBox.classList.add("show");
+    provider.style.display =
+      "none";
+    resultText.textContent =
+      t.processing;
+    let requestRateLimited =
+      false;
+    try {
+      const response =
+        await fetch(
+          "/api/chat",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+            body:
+              JSON.stringify({
+                message: text,
+                mode: mode
+              })
+          }
+        );
+      let data;
+      try {
+        data =
+          await response.json();
+      } catch {
+        throw new Error(
+          t.serverError
+        );
+      }
+      if (response.status === 429) {
+        requestRateLimited =
+          true;
+        rateLimited =
+          true;
+        const retryAfter =
+          Number.isFinite(
+            Number(data.retryAfter)
+          )
+            ? Math.max(
+                1,
+                Math.ceil(
+                  Number(data.retryAfter)
+                )
+              )
+            : 60;
+        resultText.textContent =
+          `${t.limit}\n\n${t.retryIn} ${retryAfter} ${t.seconds}`;
+        provider.style.display =
+          "none";
+        copyButton.style.display =
+          "none";
+        retryButton.classList.remove(
+          "show"
+        );
+        startRetryTimer(
+          retryAfter
+        );
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          `${t.serverError} (${response.status})`
+        );
+      }
+      if (
+        !data ||
+        typeof data.answer !== "string" ||
+        !data.answer.trim()
+      ) {
+        throw new Error(
+          t.aiNoAnswer
+        );
+      }
+      const finalAnswer =
+        data.answer.trim();
+      resultText.textContent =
+        finalAnswer;
+      let providerName = "";
+      if (
+        typeof data.provider === "string"
+      ) {
+        providerName =
+          data.provider;
+        provider.textContent =
+          getProviderName(
+            data.provider
+          );
+        provider.style.display =
+          "inline-block";
+      }
+      copyButton.style.display =
+        "block";
+      addToHistory(
+        text,
+        finalAnswer,
+        mode,
+        providerName
+      );
+    } catch (error) {
+      resultText.textContent =
+        "❌ " +
+        (
+          error &&
+          error.message
+            ? error.message
+            : t.unknownError
+        );
+      provider.style.display =
+        "none";
+      copyButton.style.display =
+        "none";
+      retryButton.classList.add(
+        "show"
+      );
+    } finally {
+      if (
+        !requestRateLimited &&
+        !rateLimited
+      ) {
+        processButton.disabled =
+          false;
+        processButton.textContent =
+          t.process;
+      }
+    }
+  }
+  /*
+   * ============================================================
+   * ПОКАЗ ОШИБОК
+   * ============================================================
+   */
+  function showResult(text) {
+    resultBox.classList.add("show");
+    provider.style.display =
+      "none";
+    copyButton.style.display =
+      "none";
+    retryButton.classList.remove(
+      "show"
+    );
+    resultText.textContent =
+      text;
+  }
+  /*
+   * ============================================================
+   * RATE LIMIT
+   * ============================================================
+   */
+  function startRetryTimer(seconds) {
+    if (retryTimer) {
+      clearInterval(retryTimer);
+      retryTimer = null;
+    }
+    let remaining =
+      Math.max(
+        1,
+        Math.ceil(
+          Number(seconds) || 60
+        )
+      );
+    const update =
+      () => {
+        const t =
+          getTranslation();
+        resultText.textContent =
+          `${t.limit}\n\n${t.retryIn} ${remaining} ${t.seconds}`;
+      };
+    update();
+    processButton.disabled =
+      true;
+    processButton.textContent =
+      getTranslation().limitActive;
+    retryButton.classList.remove(
+      "show"
+    );
+    retryButton.disabled =
+      true;
+    retryTimer =
+      setInterval(
+        () => {
+          remaining--;
+          if (remaining <= 0) {
+            clearInterval(retryTimer);
+            retryTimer = null;
+            rateLimited = false;
+            processButton.disabled =
+              false;
+            processButton.textContent =
+              getTranslation().process;
+            retryButton.disabled =
+              false;
+            retryButton.textContent =
+              getTranslation().retry;
+            retryButton.classList.add(
+              "show"
+            );
+            resultText.textContent =
+              getTranslation().limitOff;
+            return;
+          }
+          update();
+        },
+        1000
+      );
+  }
+  /*
+   * ============================================================
+   * ЗАПУСК
+   * ============================================================
+   */
+  let savedLanguage = "ru";
+  try {
+    const stored =
+      localStorage.getItem(
+        LANGUAGE_KEY
+      );
+    if (
+      stored &&
+      translations[stored]
+    ) {
+      savedLanguage = stored;
+    }
+  } catch {}
+  interfaceLanguage.value =
+    savedLanguage;
+  applyLanguage(
+    savedLanguage
+  );
+  renderTemplates();
+  renderHistory();
+</script>
 </body>
 </html>
