@@ -226,7 +226,7 @@ button:disabled {
   letter-spacing: .05em;
 }
 .provider {
-  display: inline-block;
+  display: none;
   margin-bottom: 15px;
   padding: 6px 10px;
   border:
@@ -264,6 +264,7 @@ button:disabled {
     border-color .2s ease;
 }
 .copy {
+  display: none;
   margin-top: 16px;
 }
 .retry {
@@ -476,9 +477,9 @@ footer {
     ДЕЙСТВИЕ
   </label>
   <select id="action">
-    <option value="improve">
-      ✨ Улучшить текст
-    </option>
+<option value="improve">
+  ✨ Улучшить текст
+</option>
 <option value="polish">
   🇵🇱 Перевести на польский
 </option>
@@ -506,6 +507,7 @@ footer {
 
 <button
 id=“process”
+type=“button”
 onclick=“processText()”
 
 ✨ Обработать
@@ -520,7 +522,6 @@ onclick=“processText()”
 <div
   class="provider"
   id="provider"
-  style="display:none;"
 ></div>
 <div
   class="result-text"
@@ -529,6 +530,7 @@ onclick=“processText()”
 <button
   class="copy"
   id="copyButton"
+  type="button"
   onclick="copyResult()"
 >
   📋 Скопировать
@@ -536,6 +538,7 @@ onclick=“processText()”
 <button
   class="retry"
   id="retryButton"
+  type="button"
   onclick="processText()"
 >
   🔄 Попробовать снова
@@ -544,9 +547,9 @@ onclick=“processText()”
 </main>
 <section class="features">
   <div class="feature">
-    <div class="icon">
-      ⚡
-    </div>
+<div class="icon">
+  ⚡
+</div>
 <strong>
   Быстро
 </strong>
@@ -555,9 +558,9 @@ onclick=“processText()”
 </span>
   </div>
   <div class="feature">
-    <div class="icon">
-      🧠
-    </div>
+<div class="icon">
+  🧠
+</div>
 <strong>
   Несколько AI
 </strong>
@@ -566,9 +569,9 @@ onclick=“processText()”
 </span>
   </div>
   <div class="feature">
-    <div class="icon">
-      🌍
-    </div>
+<div class="icon">
+  🌍
+</div>
 <strong>
   Много языков
 </strong>
@@ -651,6 +654,8 @@ async function processText() {
     "show"
   );
   retryButton.disabled = false;
+  copyButton.style.display =
+    "none";
   resultBox.classList.add(
     "show"
   );
@@ -763,11 +768,6 @@ async function processText() {
       "show"
     );
   } finally {
-    /*
-      ВАЖНО:
-      При rate limit кнопку
-      нельзя разблокировать.
-    */
     if (
       !requestRateLimited &&
       !rateLimited
