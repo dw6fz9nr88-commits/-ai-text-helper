@@ -295,6 +295,128 @@
     }
 
     /*
+     * ШАБЛОНЫ
+     */
+
+    .templates {
+      margin-top: 16px;
+      padding:
+        clamp(16px, 3vw, 22px);
+      border: 1px solid #242833;
+      border-radius: 20px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(17, 19, 26, 0.98),
+          rgba(13, 15, 21, 0.98)
+        );
+    }
+
+    .templates-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .templates-title {
+      color: #d8c47c;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+
+    .add-template {
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid #292d39;
+      border-radius: 10px;
+      background: #11141c;
+      color: #aeb3c2;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .add-template:hover {
+      background: #181b24;
+      border-color: #373c4b;
+    }
+
+    .templates-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .templates-empty {
+      padding: 24px 12px;
+      border: 1px dashed #292d39;
+      border-radius: 14px;
+      color: #626879;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .template-item {
+      padding: 14px;
+      border: 1px solid #242833;
+      border-radius: 14px;
+      background: #0b0d12;
+    }
+
+    .template-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .template-name {
+      color: #e5e6eb;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .template-mode {
+      margin-top: 4px;
+      color: #777d90;
+      font-size: 10px;
+    }
+
+    .template-text {
+      margin-top: 10px;
+      color: #858a9a;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .template-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .template-action {
+      min-height: 40px;
+      padding: 0 11px;
+      border: 1px solid #292d39;
+      border-radius: 10px;
+      background: #11141c;
+      color: #858ca0;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .template-action:hover {
+      background: #181b24;
+      border-color: #373c4b;
+    }
+
+    /*
      * ИСТОРИЯ
      */
 
@@ -592,6 +714,20 @@
         min-height: 190px;
       }
 
+      .templates {
+        padding: 14px;
+      }
+
+      .template-actions {
+        display: grid;
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .template-action {
+        width: 100%;
+      }
+
       .history {
         padding: 14px;
       }
@@ -602,7 +738,8 @@
 
       .history-actions {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+          repeat(2, 1fr);
       }
 
       .history-action {
@@ -638,8 +775,14 @@
           calc(100% - 12px);
       }
 
+      .template-actions {
+        grid-template-columns:
+          1fr;
+      }
+
       .features {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
 
       .feature {
@@ -652,7 +795,8 @@
       }
 
       .history-actions {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
     }
 
@@ -694,6 +838,7 @@
       </label>
 
       <select id="action">
+
         <option value="improve">
           ✨ Улучшить текст
         </option>
@@ -729,6 +874,7 @@
         <option value="summarize">
           📋 Краткое резюме
         </option>
+
       </select>
 
       <textarea
@@ -756,6 +902,7 @@
         class="result"
         id="resultBox"
       >
+
         <div class="result-title">
           ✦ РЕЗУЛЬТАТ AI
         </div>
@@ -787,9 +934,40 @@
         >
           🔄 Попробовать снова
         </button>
+
       </div>
 
     </main>
+
+    <!-- ШАБЛОНЫ -->
+
+    <section
+      class="templates"
+      id="templatesSection"
+    >
+
+      <div class="templates-header">
+
+        <div class="templates-title">
+          ★ МОИ ШАБЛОНЫ
+        </div>
+
+        <button
+          class="add-template"
+          id="addTemplateButton"
+          type="button"
+        >
+          ＋ Добавить
+        </button>
+
+      </div>
+
+      <div
+        class="templates-list"
+        id="templatesList"
+      ></div>
+
+    </section>
 
     <!-- ИСТОРИЯ -->
 
@@ -844,6 +1022,7 @@
     <section class="features">
 
       <div class="feature">
+
         <div class="icon">
           ⚡
         </div>
@@ -855,9 +1034,11 @@
         <span>
           За считанные секунды
         </span>
+
       </div>
 
       <div class="feature">
+
         <div class="icon">
           🧠
         </div>
@@ -869,9 +1050,11 @@
         <span>
           Автоматический fallback
         </span>
+
       </div>
 
       <div class="feature">
+
         <div class="icon">
           🌍
         </div>
@@ -883,6 +1066,7 @@
         <span>
           Перевод и редактура
         </span>
+
       </div>
 
     </section>
@@ -894,6 +1078,7 @@
   </div>
 
   <script>
+
     /*
      * ОСНОВНЫЕ ЭЛЕМЕНТЫ
      */
@@ -943,6 +1128,16 @@
         "favoriteHistoryTab"
       );
 
+    const templatesList =
+      document.getElementById(
+        "templatesList"
+      );
+
+    const addTemplateButton =
+      document.getElementById(
+        "addTemplateButton"
+      );
+
     let retryTimer = null;
     let rateLimited = false;
 
@@ -960,10 +1155,21 @@
       "all";
 
     /*
+     * НАСТРОЙКИ ШАБЛОНОВ
+     */
+
+    const TEMPLATES_KEY =
+      "ai_helper_templates_v1";
+
+    const MAX_TEMPLATES =
+      30;
+
+    /*
      * НАЗВАНИЯ РЕЖИМОВ
      */
 
     const modeLabels = {
+
       improve:
         "✨ Улучшить текст",
 
@@ -990,6 +1196,7 @@
 
       summarize:
         "📋 Краткое резюме"
+
     };
 
     /*
@@ -997,6 +1204,7 @@
      */
 
     const placeholders = {
+
       improve:
         "Напиши здесь свой текст...",
 
@@ -1023,6 +1231,7 @@
 
       summarize:
         "Вставь текст, который нужно кратко пересказать..."
+
     };
 
     /*
@@ -1032,8 +1241,10 @@
     textInput.addEventListener(
       "input",
       () => {
+
         counter.textContent =
           `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
+
       }
     );
 
@@ -1044,12 +1255,14 @@
     actionSelect.addEventListener(
       "change",
       () => {
+
         const mode =
           actionSelect.value;
 
         textInput.placeholder =
           placeholders[mode] ||
           "Напиши здесь свой текст...";
+
       }
     );
 
@@ -1058,7 +1271,9 @@
      */
 
     function getProviderName(name) {
+
       const providers = {
+
         gemini:
           "✦ Gemini",
 
@@ -1067,12 +1282,14 @@
 
         openrouter:
           "◈ OpenRouter"
+
       };
 
       return (
         providers[name] ||
         "✦ AI"
       );
+
     }
 
     /*
@@ -1080,7 +1297,9 @@
      */
 
     function loadHistory() {
+
       try {
+
         const raw =
           localStorage.getItem(
             HISTORY_KEY
@@ -1110,13 +1329,19 @@
             0,
             MAX_HISTORY
           );
+
       } catch {
+
         return [];
+
       }
+
     }
 
     function saveHistory(history) {
+
       try {
+
         localStorage.setItem(
           HISTORY_KEY,
           JSON.stringify(
@@ -1128,9 +1353,13 @@
         );
 
         return true;
+
       } catch {
+
         return false;
+
       }
+
     }
 
     /*
@@ -1138,11 +1367,14 @@
      */
 
     function createHistoryId() {
+
       if (
         typeof crypto !== "undefined" &&
         typeof crypto.randomUUID === "function"
       ) {
+
         return crypto.randomUUID();
+
       }
 
       return (
@@ -1152,6 +1384,7 @@
           .toString(36)
           .slice(2)
       );
+
     }
 
     /*
@@ -1164,10 +1397,12 @@
       mode,
       providerName
     ) {
+
       const history =
         loadHistory();
 
       const item = {
+
         id:
           createHistoryId(),
 
@@ -1188,6 +1423,7 @@
 
         favorite:
           false
+
       };
 
       history.unshift(item);
@@ -1195,13 +1431,17 @@
       saveHistory(history);
 
       renderHistory();
+
     }
 
     /*
      * ФОРМАТ ВРЕМЕНИ
      */
 
-    function formatHistoryTime(timestamp) {
+    function formatHistoryTime(
+      timestamp
+    ) {
+
       const date =
         new Date(timestamp);
 
@@ -1210,7 +1450,9 @@
           date.getTime()
         )
       ) {
+
         return "";
+
       }
 
       return date.toLocaleString(
@@ -1222,6 +1464,7 @@
           minute: "2-digit"
         }
       );
+
     }
 
     /*
@@ -1232,11 +1475,14 @@
       text,
       maxLength
     ) {
+
       if (
         text.length <=
         maxLength
       ) {
+
         return text;
+
       }
 
       return (
@@ -1246,6 +1492,7 @@
         ) +
         "…"
       );
+
     }
 
     /*
@@ -1253,6 +1500,7 @@
      */
 
     function renderHistory() {
+
       const history =
         loadHistory();
 
@@ -1266,18 +1514,21 @@
         historyFilter ===
         "favorites"
       ) {
+
         visibleHistory =
           history.filter(
             item =>
               item.favorite ===
               true
           );
+
       }
 
       if (
         visibleHistory.length ===
         0
       ) {
+
         const empty =
           document.createElement(
             "div"
@@ -1296,10 +1547,12 @@
         );
 
         return;
+
       }
 
       visibleHistory.forEach(
         item => {
+
           const card =
             document.createElement(
               "article"
@@ -1307,10 +1560,6 @@
 
           card.className =
             "history-item";
-
-          /*
-           * Верхняя строка
-           */
 
           const top =
             document.createElement(
@@ -1348,10 +1597,6 @@
           top.appendChild(mode);
           top.appendChild(time);
 
-          /*
-           * Исходный текст
-           */
-
           const source =
             document.createElement(
               "div"
@@ -1367,10 +1612,6 @@
               500
             );
 
-          /*
-           * Результат
-           */
-
           const result =
             document.createElement(
               "div"
@@ -1385,10 +1626,6 @@
               1000
             );
 
-          /*
-           * Кнопки
-           */
-
           const actions =
             document.createElement(
               "div"
@@ -1396,10 +1633,6 @@
 
           actions.className =
             "history-actions";
-
-          /*
-           * Использовать снова
-           */
 
           const useButton =
             document.createElement(
@@ -1418,15 +1651,13 @@
           useButton.addEventListener(
             "click",
             () => {
+
               useHistoryItem(
                 item
               );
+
             }
           );
-
-          /*
-           * Копировать
-           */
 
           const copyHistoryButton =
             document.createElement(
@@ -1445,16 +1676,14 @@
           copyHistoryButton.addEventListener(
             "click",
             () => {
+
               copyText(
                 item.resultText,
                 copyHistoryButton
               );
+
             }
           );
-
-          /*
-           * Избранное
-           */
 
           const favoriteButton =
             document.createElement(
@@ -1470,29 +1699,31 @@
           if (
             item.favorite
           ) {
+
             favoriteButton.classList.add(
               "favorite"
             );
 
             favoriteButton.textContent =
               "★ В избранном";
+
           } else {
+
             favoriteButton.textContent =
               "☆ В избранное";
+
           }
 
           favoriteButton.addEventListener(
             "click",
             () => {
+
               toggleFavorite(
                 item.id
               );
+
             }
           );
-
-          /*
-           * Удалить
-           */
 
           const deleteButton =
             document.createElement(
@@ -1511,9 +1742,11 @@
           deleteButton.addEventListener(
             "click",
             () => {
+
               deleteHistoryItem(
                 item.id
               );
+
             }
           );
 
@@ -1533,16 +1766,29 @@
             deleteButton
           );
 
-          card.appendChild(top);
-          card.appendChild(source);
-          card.appendChild(result);
-          card.appendChild(actions);
+          card.appendChild(
+            top
+          );
+
+          card.appendChild(
+            source
+          );
+
+          card.appendChild(
+            result
+          );
+
+          card.appendChild(
+            actions
+          );
 
           historyList.appendChild(
             card
           );
+
         }
       );
+
     }
 
     /*
@@ -1550,6 +1796,7 @@
      */
 
     function useHistoryItem(item) {
+
       if (!item) {
         return;
       }
@@ -1572,6 +1819,7 @@
       );
 
       window.scrollTo({
+
         top:
           document.querySelector(
             ".app"
@@ -1579,7 +1827,9 @@
 
         behavior:
           "smooth"
+
       });
+
     }
 
     /*
@@ -1587,6 +1837,7 @@
      */
 
     function toggleFavorite(id) {
+
       const history =
         loadHistory();
 
@@ -1606,13 +1857,15 @@
       saveHistory(history);
 
       renderHistory();
+
     }
 
     /*
-     * УДАЛЕНИЕ
+     * УДАЛЕНИЕ ИСТОРИИ
      */
 
     function deleteHistoryItem(id) {
+
       const history =
         loadHistory();
 
@@ -1625,22 +1878,26 @@
       saveHistory(updated);
 
       renderHistory();
+
     }
 
     /*
-     * ОЧИСТКА
+     * ОЧИСТКА ИСТОРИИ
      */
 
     clearHistoryButton.addEventListener(
       "click",
       () => {
+
         const history =
           loadHistory();
 
         if (
           history.length === 0
         ) {
+
           return;
+
         }
 
         const confirmed =
@@ -1653,14 +1910,19 @@
         }
 
         try {
+
           localStorage.removeItem(
             HISTORY_KEY
           );
+
         } catch {
+
           /* Ничего не делаем */
+
         }
 
         renderHistory();
+
       }
     );
 
@@ -1671,6 +1933,7 @@
     allHistoryTab.addEventListener(
       "click",
       () => {
+
         historyFilter =
           "all";
 
@@ -1683,12 +1946,14 @@
         );
 
         renderHistory();
+
       }
     );
 
     favoriteHistoryTab.addEventListener(
       "click",
       () => {
+
         historyFilter =
           "favorites";
 
@@ -1701,6 +1966,7 @@
         );
 
         renderHistory();
+
       }
     );
 
@@ -1712,11 +1978,13 @@
       text,
       button
     ) {
+
       if (!text) {
         return;
       }
 
       try {
+
         await navigator.clipboard.writeText(
           text
         );
@@ -1729,23 +1997,483 @@
 
         setTimeout(
           () => {
+
             button.textContent =
               oldText;
+
           },
           1800
         );
+
       } catch {
+
         alert(
           "Не удалось скопировать текст."
         );
+
       }
+
     }
+
+    /*
+     * ШАБЛОНЫ
+     */
+
+    function loadTemplates() {
+
+      try {
+
+        const raw =
+          localStorage.getItem(
+            TEMPLATES_KEY
+          );
+
+        if (!raw) {
+          return [];
+        }
+
+        const parsed =
+          JSON.parse(raw);
+
+        if (!Array.isArray(parsed)) {
+          return [];
+        }
+
+        return parsed
+          .filter(
+            item =>
+              item &&
+              typeof item === "object" &&
+              typeof item.name === "string" &&
+              typeof item.text === "string" &&
+              typeof item.mode === "string"
+          )
+          .slice(
+            0,
+            MAX_TEMPLATES
+          );
+
+      } catch {
+
+        return [];
+
+      }
+
+    }
+
+    function saveTemplates(
+      templates
+    ) {
+
+      try {
+
+        localStorage.setItem(
+          TEMPLATES_KEY,
+          JSON.stringify(
+            templates.slice(
+              0,
+              MAX_TEMPLATES
+            )
+          )
+        );
+
+        return true;
+
+      } catch {
+
+        return false;
+
+      }
+
+    }
+
+    function createTemplateId() {
+
+      if (
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+      ) {
+
+        return crypto.randomUUID();
+
+      }
+
+      return (
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2)
+      );
+
+    }
+
+    /*
+     * ДОБАВИТЬ ШАБЛОН
+     */
+
+    function addTemplate() {
+
+      const currentText =
+        textInput.value.trim();
+
+      if (!currentText) {
+
+        showResult(
+          "⚠️ Сначала введи текст, который хочешь сохранить в шаблон."
+        );
+
+        return;
+
+      }
+
+      const mode =
+        actionSelect.value;
+
+      const defaultName =
+        modeLabels[mode] ||
+        "Мой шаблон";
+
+      const name =
+        window.prompt(
+          "Название шаблона:",
+          defaultName
+        );
+
+      if (
+        !name ||
+        !name.trim()
+      ) {
+
+        return;
+
+      }
+
+      const templates =
+        loadTemplates();
+
+      const template = {
+
+        id:
+          createTemplateId(),
+
+        name:
+          name
+            .trim()
+            .slice(
+              0,
+              100
+            ),
+
+        mode:
+          mode,
+
+        text:
+          currentText.slice(
+            0,
+            10000
+          ),
+
+        createdAt:
+          Date.now()
+
+      };
+
+      templates.unshift(
+        template
+      );
+
+      saveTemplates(
+        templates
+      );
+
+      renderTemplates();
+
+    }
+
+    /*
+     * ПОКАЗ ШАБЛОНОВ
+     */
+
+    function renderTemplates() {
+
+      const templates =
+        loadTemplates();
+
+      templatesList.textContent =
+        "";
+
+      if (
+        templates.length ===
+        0
+      ) {
+
+        const empty =
+          document.createElement(
+            "div"
+          );
+
+        empty.className =
+          "templates-empty";
+
+        empty.textContent =
+          "Здесь будут твои часто используемые запросы. Введи текст и нажми «＋ Добавить».";
+
+        templatesList.appendChild(
+          empty
+        );
+
+        return;
+
+      }
+
+      templates.forEach(
+        template => {
+
+          const card =
+            document.createElement(
+              "article"
+            );
+
+          card.className =
+            "template-item";
+
+          const top =
+            document.createElement(
+              "div"
+            );
+
+          top.className =
+            "template-top";
+
+          const info =
+            document.createElement(
+              "div"
+            );
+
+          const name =
+            document.createElement(
+              "div"
+            );
+
+          name.className =
+            "template-name";
+
+          name.textContent =
+            template.name;
+
+          const mode =
+            document.createElement(
+              "div"
+            );
+
+          mode.className =
+            "template-mode";
+
+          mode.textContent =
+            modeLabels[
+              template.mode
+            ] ||
+            "✦ AI";
+
+          info.appendChild(
+            name
+          );
+
+          info.appendChild(
+            mode
+          );
+
+          top.appendChild(
+            info
+          );
+
+          const text =
+            document.createElement(
+              "div"
+            );
+
+          text.className =
+            "template-text";
+
+          text.textContent =
+            template.text.length > 500
+              ? template.text.slice(
+                  0,
+                  500
+                ) + "…"
+              : template.text;
+
+          const actions =
+            document.createElement(
+              "div"
+            );
+
+          actions.className =
+            "template-actions";
+
+          const useButton =
+            document.createElement(
+              "button"
+            );
+
+          useButton.type =
+            "button";
+
+          useButton.className =
+            "template-action";
+
+          useButton.textContent =
+            "▶ Использовать";
+
+          useButton.addEventListener(
+            "click",
+            () => {
+
+              useTemplate(
+                template
+              );
+
+            }
+          );
+
+          const deleteButton =
+            document.createElement(
+              "button"
+            );
+
+          deleteButton.type =
+            "button";
+
+          deleteButton.className =
+            "template-action";
+
+          deleteButton.textContent =
+            "🗑 Удалить";
+
+          deleteButton.addEventListener(
+            "click",
+            () => {
+
+              deleteTemplate(
+                template.id
+              );
+
+            }
+          );
+
+          actions.appendChild(
+            useButton
+          );
+
+          actions.appendChild(
+            deleteButton
+          );
+
+          card.appendChild(
+            top
+          );
+
+          card.appendChild(
+            text
+          );
+
+          card.appendChild(
+            actions
+          );
+
+          templatesList.appendChild(
+            card
+          );
+
+        }
+      );
+
+    }
+
+    /*
+     * ИСПОЛЬЗОВАТЬ ШАБЛОН
+     */
+
+    function useTemplate(
+      template
+    ) {
+
+      if (!template) {
+        return;
+      }
+
+      actionSelect.value =
+        template.mode;
+
+      textInput.value =
+        template.text;
+
+      textInput.placeholder =
+        placeholders[
+          template.mode
+        ] ||
+        "Напиши здесь свой текст...";
+
+      counter.textContent =
+        `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
+
+      resultBox.classList.remove(
+        "show"
+      );
+
+      window.scrollTo({
+
+        top:
+          document.querySelector(
+            ".app"
+          ).offsetTop - 15,
+
+        behavior:
+          "smooth"
+
+      });
+
+    }
+
+    /*
+     * УДАЛИТЬ ШАБЛОН
+     */
+
+    function deleteTemplate(id) {
+
+      const templates =
+        loadTemplates();
+
+      const updated =
+        templates.filter(
+          template =>
+            template.id !== id
+        );
+
+      saveTemplates(
+        updated
+      );
+
+      renderTemplates();
+
+    }
+
+    /*
+     * КНОПКА ДОБАВЛЕНИЯ ШАБЛОНА
+     */
+
+    addTemplateButton.addEventListener(
+      "click",
+      addTemplate
+    );
 
     /*
      * ОБРАБОТКА
      */
 
     async function processText() {
+
       if (rateLimited) {
         return;
       }
@@ -1757,22 +2485,26 @@
         actionSelect.value;
 
       if (!text) {
+
         showResult(
           "⚠️ Сначала напиши текст."
         );
 
         return;
+
       }
 
       if (
         text.length >
         10000
       ) {
+
         showResult(
           "⚠️ Текст слишком длинный."
         );
 
         return;
+
       }
 
       processButton.disabled =
@@ -1805,6 +2537,7 @@
         false;
 
       try {
+
         const response =
           await fetch(
             "/api/chat",
@@ -1831,12 +2564,16 @@
         let data;
 
         try {
+
           data =
             await response.json();
+
         } catch {
+
           throw new Error(
             "Сервер вернул некорректный ответ."
           );
+
         }
 
         /*
@@ -1847,6 +2584,7 @@
           response.status ===
           429
         ) {
+
           requestRateLimited =
             true;
 
@@ -1887,6 +2625,7 @@
           );
 
           return;
+
         }
 
         /*
@@ -1894,10 +2633,12 @@
          */
 
         if (!response.ok) {
+
           throw new Error(
             data.error ||
             `Ошибка сервера (${response.status})`
           );
+
         }
 
         /*
@@ -1910,9 +2651,11 @@
             "string" ||
           !data.answer.trim()
         ) {
+
           throw new Error(
             "AI не вернул текстовый ответ."
           );
+
         }
 
         const finalAnswer =
@@ -1928,6 +2671,7 @@
           typeof data.provider ===
           "string"
         ) {
+
           providerName =
             data.provider;
 
@@ -1938,6 +2682,7 @@
 
           provider.style.display =
             "inline-block";
+
         }
 
         copyButton.style.display =
@@ -1955,6 +2700,7 @@
         );
 
       } catch (error) {
+
         resultText.textContent =
           "❌ " +
           (
@@ -1975,17 +2721,22 @@
         );
 
       } finally {
+
         if (
           !requestRateLimited &&
           !rateLimited
         ) {
+
           processButton.disabled =
             false;
 
           processButton.textContent =
             "✨ Обработать";
+
         }
+
       }
+
     }
 
     /*
@@ -1993,6 +2744,7 @@
      */
 
     function showResult(text) {
+
       resultBox.classList.add(
         "show"
       );
@@ -2009,20 +2761,26 @@
 
       resultText.textContent =
         text;
+
     }
 
     /*
      * ТАЙМЕР RATE LIMIT
      */
 
-    function startRetryTimer(seconds) {
+    function startRetryTimer(
+      seconds
+    ) {
+
       if (retryTimer) {
+
         clearInterval(
           retryTimer
         );
 
         retryTimer =
           null;
+
       }
 
       let remaining =
@@ -2050,11 +2808,13 @@
       retryTimer =
         setInterval(
           () => {
+
             remaining--;
 
             if (
               remaining <= 0
             ) {
+
               clearInterval(
                 retryTimer
               );
@@ -2085,13 +2845,16 @@
                 "Лимит снят. Теперь можно снова отправить запрос.";
 
               return;
+
             }
 
             resultText.textContent =
               `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${remaining} сек.`;
+
           },
           1000
         );
+
     }
 
     /*
@@ -2099,6 +2862,7 @@
      */
 
     async function copyResult() {
+
       const text =
         resultText.textContent;
 
@@ -2107,6 +2871,7 @@
       }
 
       try {
+
         await navigator.clipboard.writeText(
           text
         );
@@ -2116,23 +2881,29 @@
 
         setTimeout(
           () => {
+
             copyButton.textContent =
               "📋 Скопировать";
+
           },
           1800
         );
 
       } catch {
+
         alert(
           "Не удалось скопировать текст."
         );
+
       }
+
     }
 
     /*
-     * ПЕРВОНАЧАЛЬНАЯ ЗАГРУЗКА ИСТОРИИ
+     * ПЕРВОНАЧАЛЬНАЯ ЗАГРУЗКА
      */
 
+    renderTemplates();
     renderHistory();
 
   </script>
