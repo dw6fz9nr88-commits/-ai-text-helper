@@ -1,714 +1,774 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
-<meta
-  name="theme-color"
-  content="#08090d"
->
-<meta
-  name="description"
-  content="AI Помощник — улучшение, перевод, сокращение и переработка текста с помощью искусственного интеллекта."
->
-<title>AI Помощник</title>
-<style>
-* {
-  box-sizing: border-box;
-}
-html {
-  min-height: 100%;
-  background: #08090d;
-}
-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(
-      circle at 50% -10%,
-      rgba(104, 117, 255, 0.10),
-      transparent 38%
-    ),
-    #08090d;
-  color: #f5f5f7;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-button,
-select,
-textarea {
-  font: inherit;
-}
-button,
-select {
-  -webkit-tap-highlight-color: transparent;
-}
-.container {
-  width: min(100% - 32px, 980px);
-  margin: 0 auto;
-  padding:
-    0 0
-    max(40px, env(safe-area-inset-bottom));
-}
-/* ==============================
-   HEADER
-============================== */
-header {
-  text-align: center;
-  padding:
-    64px 20px 42px;
-}
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border: 1px solid #292d39;
-  border-radius: 999px;
-  background: rgba(17, 19, 26, 0.65);
-  color: #9da7ff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .08em;
-}
-h1 {
-  margin: 20px 0 12px;
-  font-size:
-    clamp(40px, 7vw, 68px);
-  line-height: 1.05;
-  letter-spacing: -.055em;
-}
-.subtitle {
-  max-width: 620px;
-  margin: 0 auto;
-  color: #858a9a;
-  font-size:
-    clamp(14px, 2vw, 17px);
-  line-height: 1.65;
-}
-/* ==============================
-   MAIN APP
-============================== */
-.app {
-  width: 100%;
-  padding: clamp(16px, 3vw, 26px);
-  border:
-    1px solid #242833;
-  border-radius: 24px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(17, 19, 26, 0.98),
-      rgba(13, 15, 21, 0.98)
-    );
-  box-shadow:
-    0 20px 70px rgba(0, 0, 0, 0.28);
-}
-label {
-  display: block;
-  margin:
-    0 0 8px 2px;
-  color: #777d90;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .04em;
-}
-select,
-textarea {
-  width: 100%;
-  border:
-    1px solid #292d39;
-  outline: none;
-  background: #0b0d12;
-  color: #fff;
-  transition:
-    border-color .2s ease,
-    box-shadow .2s ease;
-}
-select {
-  height: 54px;
-  padding:
-    0 15px;
-  border-radius: 14px;
-  font-size: 15px;
-  cursor: pointer;
-}
-textarea {
-  display: block;
-  min-height: 210px;
-  margin-top: 14px;
-  padding: 17px;
-  border-radius: 15px;
-  resize: vertical;
-  font-size: 16px;
-  line-height: 1.65;
-}
-select:focus,
-textarea:focus {
-  border-color: #6875ff;
-  box-shadow:
-    0 0 0 3px
-    rgba(104, 117, 255, 0.10);
-}
-.counter {
-  margin-top: 7px;
-  text-align: right;
-  color: #555b6b;
-  font-size: 11px;
-}
-/* ==============================
-   MAIN BUTTON
-============================== */
-#process {
-  width: 100%;
-  min-height: 56px;
-  margin-top: 14px;
-  border: 0;
-  border-radius: 14px;
-  background:
-    linear-gradient(
-      135deg,
-      #6875ff,
-      #886cff
-    );
-  color: white;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow:
-    0 10px 30px
-    rgba(104, 117, 255, 0.16);
-  transition:
-    transform .15s ease,
-    opacity .2s ease,
-    box-shadow .2s ease;
-}
-#process:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    0 14px 34px
-    rgba(104, 117, 255, 0.24);
-}
-#process:active:not(:disabled) {
-  transform: translateY(0);
-}
-button:disabled {
-  opacity: .55;
-  cursor: not-allowed;
-}
-/* ==============================
-   RESULT
-============================== */
-.result {
-  display: none;
-  margin-top: 16px;
-  padding: clamp(16px, 3vw, 22px);
-  border:
-    1px solid #292d39;
-  border-radius: 16px;
-  background: #0b0d12;
-}
-.result.show {
-  display: block;
-}
-.result-title {
-  margin-bottom: 12px;
-  color: #9da7ff;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .05em;
-}
-.provider {
-  display: none;
-  margin-bottom: 15px;
-  padding: 6px 10px;
-  border:
-    1px solid #292d39;
-  border-radius: 999px;
-  background: #11141c;
-  color: #858ca0;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .04em;
-}
-.result-text {
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #e5e6eb;
-  font-size: 16px;
-  line-height: 1.75;
-}
-/* ==============================
-   SECONDARY BUTTONS
-============================== */
-.copy,
-.retry {
-  width: 100%;
-  min-height: 44px;
-  border-radius: 12px;
-  background: #171a23;
-  border:
-    1px solid #292d39;
-  color: #aeb3c2;
-  font-size: 13px;
-  cursor: pointer;
-  transition:
-    background .2s ease,
-    border-color .2s ease;
-}
-.copy {
-  display: none;
-  margin-top: 16px;
-}
-.retry {
-  display: none;
-  margin-top: 10px;
-}
-.retry.show {
-  display: block;
-}
-.copy:hover:not(:disabled),
-.retry:hover:not(:disabled) {
-  background: #1c202b;
-  border-color: #373c4b;
-}
-/* ==============================
-   FEATURES
-============================== */
-.features {
-  display: grid;
-  grid-template-columns:
-    repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 14px;
-}
-.feature {
-  min-height: 116px;
-  padding: 20px 12px;
-  border:
-    1px solid #1e212a;
-  border-radius: 16px;
-  background: #0e1016;
-  text-align: center;
-  transition:
-    border-color .2s ease,
-    transform .2s ease;
-}
-.feature:hover {
-  transform: translateY(-2px);
-  border-color: #292e3a;
-}
-.icon {
-  font-size: 21px;
-}
-.feature strong {
-  display: block;
-  margin-top: 8px;
-  font-size: 12px;
-}
-.feature span {
-  display: block;
-  margin-top: 5px;
-  color: #626879;
-  font-size: 10px;
-  line-height: 1.4;
-}
-/* ==============================
-   FOOTER
-============================== */
-footer {
-  padding:
-    30px 0 10px;
-  text-align: center;
-  color: #4f5462;
-  font-size: 11px;
-}
-/* ==============================
-   TABLET
-============================== */
-@media (min-width: 601px) {
-  .container {
-    width: min(100% - 48px, 980px);
-  }
-  .app {
-    padding: 28px;
-  }
-  textarea {
-    min-height: 240px;
-  }
-  #process {
-    min-height: 58px;
-  }
-  .copy,
-  .retry {
-    width: auto;
-    padding:
-      0 22px;
-  }
-}
-/* ==============================
-   DESKTOP
-============================== */
-@media (min-width: 900px) {
-  header {
-    padding-top: 78px;
-  }
-  .app {
-    border-radius: 26px;
-  }
-  textarea {
-    min-height: 260px;
-  }
-  .features {
-    gap: 14px;
-  }
-  .feature {
-    min-height: 128px;
-    padding: 23px 16px;
-  }
-  .feature strong {
-    font-size: 13px;
-  }
-  .feature span {
-    font-size: 11px;
-  }
-}
-/* ==============================
-   SMALL PHONES
-============================== */
-@media (max-width: 600px) {
-  .container {
-    width:
-      calc(100% - 18px);
-  }
-  header {
-    padding:
-      36px 8px 28px;
-  }
-  h1 {
-    margin-top: 17px;
-    font-size:
-      clamp(36px, 11vw, 48px);
-  }
-  .subtitle {
-    font-size: 14px;
-  }
-  .app {
-    padding: 13px;
-    border-radius: 20px;
-  }
-  textarea {
-    min-height: 190px;
-  }
-  .features {
-    gap: 6px;
-  }
-  .feature {
-    min-height: 104px;
-    padding:
-      15px 5px;
-  }
-  .feature strong {
-    font-size: 10px;
-  }
-  .feature span {
-    font-size: 8px;
-  }
-  footer {
-    padding-bottom: 20px;
-  }
-}
-/* ==============================
-   VERY SMALL PHONES
-============================== */
-@media (max-width: 380px) {
-  .container {
-    width:
-      calc(100% - 12px);
-  }
-  .features {
-    grid-template-columns:
-      1fr;
-  }
-  .feature {
-    min-height: auto;
-    padding: 13px;
-  }
-  .feature span {
-    font-size: 9px;
-  }
-}
-/* ==============================
-   REDUCED MOTION
-============================== */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition: none !important;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+  <meta
+    name="theme-color"
+    content="#08090d"
+  >
+  <meta
+    name="description"
+    content="AI Помощник — улучшение, перевод, сокращение и переработка текста с помощью искусственного интеллекта."
+  >
+  <title>AI Помощник</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html {
+      min-height: 100%;
+      background: #08090d;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(104, 117, 255, 0.10),
+          transparent 38%
+        ),
+        #08090d;
+      color: #f5f5f7;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button,
+    select,
+    textarea {
+      font: inherit;
+    }
+    button,
+    select {
+      -webkit-tap-highlight-color: transparent;
+    }
+    .container {
+      width: min(100% - 32px, 980px);
+      margin: 0 auto;
+      padding:
+        0 0
+        max(40px, env(safe-area-inset-bottom));
+    }
+    /* ==============================
+       HEADER
+    ============================== */
+    header {
+      text-align: center;
+      padding: 64px 20px 42px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border: 1px solid #292d39;
+      border-radius: 999px;
+      background: rgba(17, 19, 26, 0.65);
+      color: #9da7ff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    h1 {
+      margin: 20px 0 12px;
+      font-size: clamp(40px, 7vw, 68px);
+      line-height: 1.05;
+      letter-spacing: -.055em;
+    }
+    .subtitle {
+      max-width: 620px;
+      margin: 0 auto;
+      color: #858a9a;
+      font-size: clamp(14px, 2vw, 17px);
+      line-height: 1.65;
+    }
+    /* ==============================
+       MAIN APP
+    ============================== */
+    .app {
+      width: 100%;
+      padding: clamp(16px, 3vw, 26px);
+      border: 1px solid #242833;
+      border-radius: 24px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(17, 19, 26, 0.98),
+          rgba(13, 15, 21, 0.98)
+        );
+      box-shadow:
+        0 20px 70px rgba(0, 0, 0, 0.28);
+    }
+    label {
+      display: block;
+      margin: 0 0 8px 2px;
+      color: #777d90;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #292d39;
+      outline: none;
+      background: #0b0d12;
+      color: #fff;
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+    select {
+      height: 54px;
+      padding: 0 15px;
+      border-radius: 14px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    textarea {
+      display: block;
+      min-height: 210px;
+      margin-top: 14px;
+      padding: 17px;
+      border-radius: 15px;
+      resize: vertical;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    select:focus,
+    textarea:focus {
+      border-color: #6875ff;
+      box-shadow:
+        0 0 0 3px
+        rgba(104, 117, 255, 0.10);
+    }
+    .counter {
+      margin-top: 7px;
+      text-align: right;
+      color: #555b6b;
+      font-size: 11px;
+    }
+    /* ==============================
+       MAIN BUTTON
+    ============================== */
+    #process {
+      display: block;
+      width: 100%;
+      min-height: 56px;
+      margin-top: 14px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 14px;
+      background:
+        linear-gradient(
+          135deg,
+          #6875ff,
+          #886cff
+        );
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow:
+        0 10px 30px
+        rgba(104, 117, 255, 0.16);
+      transition:
+        transform .15s ease,
+        opacity .2s ease,
+        box-shadow .2s ease;
+    }
+    #process:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 34px
+        rgba(104, 117, 255, 0.24);
+    }
+    #process:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+    /* ==============================
+       RESULT
+    ============================== */
+    .result {
+      display: none;
+      margin-top: 16px;
+      padding: clamp(16px, 3vw, 22px);
+      border: 1px solid #292d39;
+      border-radius: 16px;
+      background: #0b0d12;
+    }
+    .result.show {
+      display: block;
+    }
+    .result-title {
+      margin-bottom: 12px;
+      color: #9da7ff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+    .provider {
+      display: none;
+      width: fit-content;
+      margin-bottom: 15px;
+      padding: 6px 10px;
+      border: 1px solid #292d39;
+      border-radius: 999px;
+      background: #11141c;
+      color: #858ca0;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+    .result-text {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #e5e6eb;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+    /* ==============================
+       SECONDARY BUTTONS
+    ============================== */
+    .copy,
+    .retry {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      background: #171a23;
+      border: 1px solid #292d39;
+      color: #aeb3c2;
+      font-size: 13px;
+      cursor: pointer;
+      transition:
+        background .2s ease,
+        border-color .2s ease;
+    }
+    .copy {
+      display: none;
+      margin-top: 16px;
+    }
+    .retry {
+      display: none;
+      margin-top: 10px;
+    }
+    .retry.show {
+      display: block;
+    }
+    .copy:hover:not(:disabled),
+    .retry:hover:not(:disabled) {
+      background: #1c202b;
+      border-color: #373c4b;
+    }
+    /* ==============================
+       FEATURES
+    ============================== */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .feature {
+      min-height: 116px;
+      padding: 20px 12px;
+      border: 1px solid #1e212a;
+      border-radius: 16px;
+      background: #0e1016;
+      text-align: center;
+      transition:
+        border-color .2s ease,
+        transform .2s ease;
+    }
+    .feature:hover {
+      transform: translateY(-2px);
+      border-color: #292e3a;
+    }
+    .icon {
+      font-size: 21px;
+    }
+    .feature strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+    .feature span {
+      display: block;
+      margin-top: 5px;
+      color: #626879;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+    /* ==============================
+       FOOTER
+    ============================== */
+    footer {
+      padding: 30px 0 10px;
+      text-align: center;
+      color: #4f5462;
+      font-size: 11px;
+    }
+    /* ==============================
+       TABLET
+    ============================== */
+    @media (min-width: 601px) {
+      .container {
+        width: min(100% - 48px, 980px);
+      }
+      .app {
+        padding: 28px;
+      }
+      textarea {
+        min-height: 240px;
+      }
+      #process {
+        min-height: 58px;
+      }
+      .copy,
+      .retry {
+        width: auto;
+        padding: 0 22px;
+      }
+    }
+    /* ==============================
+       DESKTOP
+    ============================== */
+    @media (min-width: 900px) {
+      header {
+        padding-top: 78px;
+      }
+      .app {
+        border-radius: 26px;
+      }
+      textarea {
+        min-height: 260px;
+      }
+      .features {
+        gap: 14px;
+      }
+      .feature {
+        min-height: 128px;
+        padding: 23px 16px;
+      }
+      .feature strong {
+        font-size: 13px;
+      }
+      .feature span {
+        font-size: 11px;
+      }
+    }
+    /* ==============================
+       SMALL PHONES
+    ============================== */
+    @media (max-width: 600px) {
+      .container {
+        width: calc(100% - 18px);
+      }
+      header {
+        padding: 36px 8px 28px;
+      }
+      h1 {
+        margin-top: 17px;
+        font-size: clamp(36px, 11vw, 48px);
+      }
+      .subtitle {
+        font-size: 14px;
+      }
+      .app {
+        padding: 13px;
+        border-radius: 20px;
+      }
+      textarea {
+        min-height: 190px;
+      }
+      .features {
+        gap: 6px;
+      }
+      .feature {
+        min-height: 104px;
+        padding: 15px 5px;
+      }
+      .feature strong {
+        font-size: 10px;
+      }
+      .feature span {
+        font-size: 8px;
+      }
+      footer {
+        padding-bottom: 20px;
+      }
+    }
+    /* ==============================
+       VERY SMALL PHONES
+    ============================== */
+    @media (max-width: 380px) {
+      .container {
+        width: calc(100% - 12px);
+      }
+      .features {
+        grid-template-columns: 1fr;
+      }
+      .feature {
+        min-height: auto;
+        padding: 13px;
+      }
+      .feature span {
+        font-size: 9px;
+      }
+    }
+    /* ==============================
+       REDUCED MOTION
+    ============================== */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-<header>
-  <div class="badge">
-    ● AI POWERED
+  <div class="container">
+    <header>
+      <div class="badge">
+        ● AI POWERED
+      </div>
+      <h1>
+        ✦ AI Помощник
+      </h1>
+      <p class="subtitle">
+        Напиши текст — AI поможет его улучшить,
+        перевести или переработать.
+      </p>
+    </header>
+    <main class="app">
+      <label for="action">
+        ДЕЙСТВИЕ
+      </label>
+      <select id="action">
+        <option value="improve">
+          ✨ Улучшить текст
+        </option>
+        <option value="polish">
+          🇵🇱 Перевести на польский
+        </option>
+        <option value="english">
+          🇬🇧 Перевести на английский
+        </option>
+        <option value="tiktok">
+          🎵 Создать текст для TikTok
+        </option>
+        <option value="shorten">
+          ✂️ Сократить текст
+        </option>
+      </select>
+      <textarea
+        id="text"
+        maxlength="10000"
+        placeholder="Напиши здесь свой текст..."
+      ></textarea>
+      <div
+        class="counter"
+        id="counter"
+      >
+        0 / 10 000
+      </div>
+      <!-- ИСПРАВЛЕННАЯ КНОПКА -->
+      <button
+        id="process"
+        type="button"
+        onclick="processText()"
+      >
+        ✨ Обработать
+      </button>
+      <div
+        class="result"
+        id="resultBox"
+      >
+        <div class="result-title">
+          ✦ РЕЗУЛЬТАТ AI
+        </div>
+        <div
+          class="provider"
+          id="provider"
+        ></div>
+        <div
+          class="result-text"
+          id="resultText"
+        ></div>
+        <button
+          class="copy"
+          id="copyButton"
+          type="button"
+          onclick="copyResult()"
+        >
+          📋 Скопировать
+        </button>
+        <button
+          class="retry"
+          id="retryButton"
+          type="button"
+          onclick="processText()"
+        >
+          🔄 Попробовать снова
+        </button>
+      </div>
+    </main>
+    <section class="features">
+      <div class="feature">
+        <div class="icon">
+          ⚡
+        </div>
+        <strong>
+          Быстро
+        </strong>
+        <span>
+          За считанные секунды
+        </span>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          🧠
+        </div>
+        <strong>
+          Несколько AI
+        </strong>
+        <span>
+          Автоматический fallback
+        </span>
+      </div>
+      <div class="feature">
+        <div class="icon">
+          🌍
+        </div>
+        <strong>
+          Много языков
+        </strong>
+        <span>
+          Перевод и редактура
+        </span>
+      </div>
+    </section>
+    <footer>
+      AI Помощник · Gemini · Groq · OpenRouter
+    </footer>
   </div>
-  <h1>
-    ✦ AI Помощник
-  </h1>
-  <p class="subtitle">
-    Напиши текст — AI поможет его улучшить,
-    перевести или переработать.
-  </p>
-</header>
-<main class="app">
-  <label for="action">
-    ДЕЙСТВИЕ
-  </label>
-  <select id="action">
-<option value="improve">
-  ✨ Улучшить текст
-</option>
-<option value="polish">
-  🇵🇱 Перевести на польский
-</option>
-<option value="english">
-  🇬🇧 Перевести на английский
-</option>
-<option value="tiktok">
-  🎵 Создать текст для TikTok
-</option>
-<option value="shorten">
-  ✂️ Сократить текст
-</option>
-  </select>
-  <textarea
-    id="text"
-    maxlength="10000"
-    placeholder="Напиши здесь свой текст..."
-  ></textarea>
-  <div
-    class="counter"
-    id="counter"
-  >
-    0 / 10 000
-  </div>
-
-<button
-id=“process”
-type=“button”
-onclick=“processText()”
-
-✨ Обработать
-  </button>
-  <div
-    class="result"
-    id="resultBox"
-  >
-<div class="result-title">
-  ✦ РЕЗУЛЬТАТ AI
-</div>
-<div
-  class="provider"
-  id="provider"
-></div>
-<div
-  class="result-text"
-  id="resultText"
-></div>
-<button
-  class="copy"
-  id="copyButton"
-  type="button"
-  onclick="copyResult()"
->
-  📋 Скопировать
-</button>
-<button
-  class="retry"
-  id="retryButton"
-  type="button"
-  onclick="processText()"
->
-  🔄 Попробовать снова
-</button>
-  </div>
-</main>
-<section class="features">
-  <div class="feature">
-<div class="icon">
-  ⚡
-</div>
-<strong>
-  Быстро
-</strong>
-<span>
-  За считанные секунды
-</span>
-  </div>
-  <div class="feature">
-<div class="icon">
-  🧠
-</div>
-<strong>
-  Несколько AI
-</strong>
-<span>
-  Автоматический fallback
-</span>
-  </div>
-  <div class="feature">
-<div class="icon">
-  🌍
-</div>
-<strong>
-  Много языков
-</strong>
-<span>
-  Перевод и редактура
-</span>
-  </div>
-</section>
-<footer>
-  AI Помощник · Gemini · Groq · OpenRouter
-</footer>
-</div>
-<script>
-const textInput =
-  document.getElementById("text");
-const counter =
-  document.getElementById("counter");
-const processButton =
-  document.getElementById("process");
-const resultBox =
-  document.getElementById("resultBox");
-const resultText =
-  document.getElementById("resultText");
-const provider =
-  document.getElementById("provider");
-const retryButton =
-  document.getElementById("retryButton");
-const copyButton =
-  document.getElementById("copyButton");
-let retryTimer = null;
-let rateLimited = false;
-/* ==============================
-   СЧЁТЧИК
-============================== */
-textInput.addEventListener(
-  "input",
-  () => {
-    counter.textContent =
-      `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
-  }
-);
-/* ==============================
-   ПРОВАЙДЕР
-============================== */
-function getProviderName(name) {
-  const providers = {
-    gemini: "✦ Gemini",
-    groq: "⚡ Groq",
-    openrouter: "◈ OpenRouter"
-  };
-  return providers[name] || "✦ AI";
-}
-/* ==============================
-   ОБРАБОТКА
-============================== */
-async function processText() {
-  if (rateLimited) {
-    return;
-  }
-  const text =
-    textInput.value.trim();
-  const mode =
-    document.getElementById("action").value;
-  if (!text) {
-    showResult(
-      "⚠️ Сначала напиши текст."
+  <script>
+    const textInput =
+      document.getElementById("text");
+    const counter =
+      document.getElementById("counter");
+    const processButton =
+      document.getElementById("process");
+    const resultBox =
+      document.getElementById("resultBox");
+    const resultText =
+      document.getElementById("resultText");
+    const provider =
+      document.getElementById("provider");
+    const retryButton =
+      document.getElementById("retryButton");
+    const copyButton =
+      document.getElementById("copyButton");
+    let retryTimer = null;
+    let rateLimited = false;
+    /* ==============================
+       СЧЁТЧИК
+    ============================== */
+    textInput.addEventListener(
+      "input",
+      () => {
+        counter.textContent =
+          `${textInput.value.length.toLocaleString("ru-RU")} / 10 000`;
+      }
     );
-    return;
-  }
-  if (text.length > 10000) {
-    showResult(
-      "⚠️ Текст слишком длинный."
-    );
-    return;
-  }
-  processButton.disabled = true;
-  processButton.textContent =
-    "⏳ AI обрабатывает...";
-  retryButton.classList.remove(
-    "show"
-  );
-  retryButton.disabled = false;
-  copyButton.style.display =
-    "none";
-  resultBox.classList.add(
-    "show"
-  );
-  provider.style.display =
-    "none";
-  resultText.textContent =
-    "AI готовит ответ...";
-  let requestRateLimited = false;
-  try {
-    const response =
-      await fetch(
-        "/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body:
-            JSON.stringify({
-              message: text,
-              mode: mode
-            })
-        }
-      );
-    let data;
-    try {
-      data =
-        await response.json();
-    } catch {
-      throw new Error(
-        "Сервер вернул некорректный ответ."
-      );
+    /* ==============================
+       ПРОВАЙДЕР
+    ============================== */
+    function getProviderName(name) {
+      const providers = {
+        gemini: "✦ Gemini",
+        groq: "⚡ Groq",
+        openrouter: "◈ OpenRouter"
+      };
+      return providers[name] || "✦ AI";
     }
-    /* ==========================
-       RATE LIMIT
-    ========================== */
-    if (response.status === 429) {
-      requestRateLimited = true;
-      rateLimited = true;
-      const retryAfter =
-        Number.isFinite(
-          Number(data.retryAfter)
-        )
-          ? Math.max(
-              1,
-              Math.ceil(
-                Number(data.retryAfter)
-              )
-            )
-          : 60;
+    /* ==============================
+       ОБРАБОТКА
+    ============================== */
+    async function processText() {
+      if (rateLimited) {
+        return;
+      }
+      const text =
+        textInput.value.trim();
+      const mode =
+        document.getElementById("action").value;
+      if (!text) {
+        showResult(
+          "⚠️ Сначала напиши текст."
+        );
+        return;
+      }
+      if (text.length > 10000) {
+        showResult(
+          "⚠️ Текст слишком длинный."
+        );
+        return;
+      }
+      processButton.disabled = true;
+      processButton.textContent =
+        "⏳ AI обрабатывает...";
+      retryButton.classList.remove(
+        "show"
+      );
+      retryButton.disabled = false;
+      copyButton.style.display =
+        "none";
+      resultBox.classList.add(
+        "show"
+      );
+      provider.style.display =
+        "none";
       resultText.textContent =
-        `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${retryAfter} сек.`;
+        "AI готовит ответ...";
+      let requestRateLimited = false;
+      try {
+        const response =
+          await fetch(
+            "/api/chat",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+              body:
+                JSON.stringify({
+                  message: text,
+                  mode: mode
+                })
+            }
+          );
+        let data;
+        try {
+          data =
+            await response.json();
+        } catch {
+          throw new Error(
+            "Сервер вернул некорректный ответ."
+          );
+        }
+        /* ==========================
+           RATE LIMIT
+        ========================== */
+        if (response.status === 429) {
+          requestRateLimited = true;
+          rateLimited = true;
+          const retryAfter =
+            Number.isFinite(
+              Number(data.retryAfter)
+            )
+              ? Math.max(
+                  1,
+                  Math.ceil(
+                    Number(data.retryAfter)
+                  )
+                )
+              : 60;
+          resultText.textContent =
+            `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${retryAfter} сек.`;
+          provider.style.display =
+            "none";
+          copyButton.style.display =
+            "none";
+          retryButton.classList.remove(
+            "show"
+          );
+          startRetryTimer(
+            retryAfter
+          );
+          return;
+        }
+        /* ==========================
+           ДРУГИЕ ОШИБКИ
+        ========================== */
+        if (!response.ok) {
+          throw new Error(
+            data.error ||
+            `Ошибка сервера (${response.status})`
+          );
+        }
+        /* ==========================
+           ПРОВЕРКА AI ОТВЕТА
+        ========================== */
+        if (
+          !data ||
+          typeof data.answer !== "string" ||
+          !data.answer.trim()
+        ) {
+          throw new Error(
+            "AI не вернул текстовый ответ."
+          );
+        }
+        resultText.textContent =
+          data.answer.trim();
+        if (
+          typeof data.provider === "string"
+        ) {
+          provider.textContent =
+            getProviderName(
+              data.provider
+            );
+          provider.style.display =
+            "inline-block";
+        }
+        copyButton.style.display =
+          "block";
+      } catch (error) {
+        resultText.textContent =
+          "❌ " +
+          error.message;
+        provider.style.display =
+          "none";
+        copyButton.style.display =
+          "none";
+        retryButton.classList.add(
+          "show"
+        );
+      } finally {
+        if (
+          !requestRateLimited &&
+          !rateLimited
+        ) {
+          processButton.disabled =
+            false;
+          processButton.textContent =
+            "✨ Обработать";
+        }
+      }
+    }
+    /* ==============================
+       ПОКАЗ РЕЗУЛЬТАТА
+    ============================== */
+    function showResult(text) {
+      resultBox.classList.add(
+        "show"
+      );
       provider.style.display =
         "none";
       copyButton.style.display =
@@ -716,171 +776,94 @@ async function processText() {
       retryButton.classList.remove(
         "show"
       );
-      startRetryTimer(
-        retryAfter
-      );
-      return;
+      resultText.textContent =
+        text;
     }
-    /* ==========================
-       ДРУГИЕ ОШИБКИ
-    ========================== */
-    if (!response.ok) {
-      throw new Error(
-        data.error ||
-        `Ошибка сервера (${response.status})`
-      );
-    }
-    /* ==========================
-       ПРОВЕРКА AI ОТВЕТА
-    ========================== */
-    if (
-      !data ||
-      typeof data.answer !== "string" ||
-      !data.answer.trim()
-    ) {
-      throw new Error(
-        "AI не вернул текстовый ответ."
-      );
-    }
-    resultText.textContent =
-      data.answer.trim();
-    if (
-      typeof data.provider === "string"
-    ) {
-      provider.textContent =
-        getProviderName(
-          data.provider
+    /* ==============================
+       ТАЙМЕР RATE LIMIT
+    ============================== */
+    function startRetryTimer(seconds) {
+      if (retryTimer) {
+        clearInterval(
+          retryTimer
         );
-      provider.style.display =
-        "inline-block";
-    }
-    copyButton.style.display =
-      "block";
-  } catch (error) {
-    resultText.textContent =
-      "❌ " +
-      error.message;
-    provider.style.display =
-      "none";
-    copyButton.style.display =
-      "none";
-    retryButton.classList.add(
-      "show"
-    );
-  } finally {
-    if (
-      !requestRateLimited &&
-      !rateLimited
-    ) {
+        retryTimer = null;
+      }
+      let remaining =
+        Math.max(
+          1,
+          Math.ceil(
+            Number(seconds) || 60
+          )
+        );
       processButton.disabled =
-        false;
+        true;
       processButton.textContent =
-        "✨ Обработать";
+        "⏳ Лимит активен...";
+      retryButton.classList.remove(
+        "show"
+      );
+      retryButton.disabled =
+        true;
+      retryTimer =
+        setInterval(
+          () => {
+            remaining--;
+            if (remaining <= 0) {
+              clearInterval(
+                retryTimer
+              );
+              retryTimer = null;
+              rateLimited = false;
+              processButton.disabled =
+                false;
+              processButton.textContent =
+                "✨ Обработать";
+              retryButton.disabled =
+                false;
+              retryButton.textContent =
+                "🔄 Попробовать снова";
+              retryButton.classList.add(
+                "show"
+              );
+              resultText.textContent =
+                "Лимит снят. Теперь можно снова отправить запрос.";
+              return;
+            }
+            resultText.textContent =
+              `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${remaining} сек.`;
+          },
+          1000
+        );
     }
-  }
-}
-/* ==============================
-   ПОКАЗ РЕЗУЛЬТАТА
-============================== */
-function showResult(text) {
-  resultBox.classList.add(
-    "show"
-  );
-  provider.style.display =
-    "none";
-  copyButton.style.display =
-    "none";
-  retryButton.classList.remove(
-    "show"
-  );
-  resultText.textContent =
-    text;
-}
-/* ==============================
-   ТАЙМЕР RATE LIMIT
-============================== */
-function startRetryTimer(seconds) {
-  if (retryTimer) {
-    clearInterval(
-      retryTimer
-    );
-    retryTimer = null;
-  }
-  let remaining =
-    Math.max(
-      1,
-      Math.ceil(
-        Number(seconds) || 60
-      )
-    );
-  processButton.disabled =
-    true;
-  processButton.textContent =
-    "⏳ Лимит активен...";
-  retryButton.classList.remove(
-    "show"
-  );
-  retryButton.disabled =
-    true;
-  retryTimer =
-    setInterval(
-      () => {
-        remaining--;
-        if (remaining <= 0) {
-          clearInterval(
-            retryTimer
-          );
-          retryTimer = null;
-          rateLimited = false;
-          processButton.disabled =
-            false;
-          processButton.textContent =
-            "✨ Обработать";
-          retryButton.disabled =
-            false;
-          retryButton.textContent =
-            "🔄 Попробовать снова";
-          retryButton.classList.add(
-            "show"
-          );
-          resultText.textContent =
-            "Лимит снят. Теперь можно снова отправить запрос.";
-          return;
-        }
-        resultText.textContent =
-          `❌ ⚠️ Лимит AI временно исчерпан.\n\nПовторить можно через ${remaining} сек.`;
-      },
-      1000
-    );
-}
-/* ==============================
-   КОПИРОВАНИЕ
-============================== */
-async function copyResult() {
-  const text =
-    resultText.textContent;
-  if (!text) {
-    return;
-  }
-  try {
-    await navigator.clipboard.writeText(
-      text
-    );
-    copyButton.textContent =
-      "✓ Скопировано";
-    setTimeout(
-      () => {
+    /* ==============================
+       КОПИРОВАНИЕ
+    ============================== */
+    async function copyResult() {
+      const text =
+        resultText.textContent;
+      if (!text) {
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(
+          text
+        );
         copyButton.textContent =
-          "📋 Скопировать";
-      },
-      1800
-    );
-  } catch {
-    alert(
-      "Не удалось скопировать текст."
-    );
-  }
-}
-</script>
+          "✓ Скопировано";
+        setTimeout(
+          () => {
+            copyButton.textContent =
+              "📋 Скопировать";
+          },
+          1800
+        );
+      } catch {
+        alert(
+          "Не удалось скопировать текст."
+        );
+      }
+    }
+  </script>
 </body>
 </html>
