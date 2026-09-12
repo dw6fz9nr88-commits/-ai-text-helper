@@ -2,2070 +2,1873 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#08090d">
   <title>AI Помощник</title>
 
-  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
-  <!-- DOCX -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
-
-  <!-- XLS/XLSX -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
   <style>
-    :root{
-      --bg:#08090d;
-      --panel:#11131a;
-      --panel2:#171a23;
-      --border:#272b38;
-      --text:#f4f6fb;
-      --muted:#8e95a7;
-      --accent:#6d7cff;
-      --accent2:#9b5cff;
-      --danger:#ff5964;
-      --success:#48d597;
-      --shadow:0 20px 60px rgba(0,0,0,.35);
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      background:
-        radial-gradient(circle at 20% 0%,rgba(109,124,255,.13),transparent 30%),
-        radial-gradient(circle at 90% 10%,rgba(155,92,255,.11),transparent 30%),
-        var(--bg);
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-      min-height:100vh;
+    html {
+      scroll-behavior: smooth;
     }
 
-    button,input,textarea,select{font:inherit}
-
-    button{
-      border:0;
-      cursor:pointer;
-      -webkit-tap-highlight-color:transparent;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #08090d;
+      color: #f5f7fb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
-    .wrap{
-      width:min(900px,calc(100% - 28px));
-      margin:0 auto;
-      padding:28px 0 50px;
+    button,
+    textarea,
+    select,
+    input {
+      font: inherit;
     }
 
-    .hero{
-      text-align:center;
-      padding:18px 0 25px;
+    .app {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
     }
 
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:7px 12px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.035);
-      border-radius:999px;
-      color:#b9c0d0;
-      font-size:11px;
-      letter-spacing:.12em;
-      font-weight:800;
+    .hero {
+      text-align: center;
+      padding: 24px 0 28px;
     }
 
-    .badge span{
-      color:var(--success);
+    .badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border: 1px solid #30364d;
+      border-radius: 999px;
+      color: #aeb8ff;
+      background: #11131d;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
     }
 
-    h1{
-      margin:17px 0 8px;
-      font-size:clamp(34px,8vw,58px);
-      line-height:1;
-      letter-spacing:-.045em;
+    h1 {
+      margin: 18px 0 8px;
+      font-size: clamp(32px, 8vw, 56px);
+      line-height: 1;
+      letter-spacing: -2px;
     }
 
-    .hero p{
-      margin:0 auto;
-      color:var(--muted);
-      max-width:600px;
-      line-height:1.5;
-      font-size:15px;
+    .subtitle {
+      margin: 0 auto;
+      max-width: 600px;
+      color: #8e94a6;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
-    .card{
-      background:rgba(17,19,26,.9);
-      border:1px solid var(--border);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:var(--shadow);
-      margin-bottom:16px;
+    .panel {
+      background: #101219;
+      border: 1px solid #202431;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, .22);
     }
 
-    .label{
-      display:block;
-      margin-bottom:8px;
-      color:#aeb5c5;
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.12em;
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      color: #8e94a6;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
     }
 
     select,
-    textarea{
-      width:100%;
-      color:var(--text);
-      background:var(--panel2);
-      border:1px solid var(--border);
-      outline:none;
-      border-radius:15px;
+    textarea {
+      width: 100%;
+      border: 1px solid #292e3c;
+      border-radius: 14px;
+      background: #0a0c11;
+      color: #f5f7fb;
+      outline: none;
     }
 
-    select{
-      height:48px;
-      padding:0 14px;
+    select {
+      min-height: 48px;
+      padding: 0 14px;
+      margin-bottom: 14px;
     }
 
-    textarea{
-      min-height:190px;
-      resize:vertical;
-      padding:15px;
-      line-height:1.55;
-      font-size:16px;
-      margin-top:12px;
+    textarea {
+      min-height: 180px;
+      padding: 16px;
+      resize: vertical;
+      line-height: 1.55;
+      font-size: 16px;
     }
 
     textarea:focus,
-    select:focus{
-      border-color:rgba(109,124,255,.7);
-      box-shadow:0 0 0 3px rgba(109,124,255,.09);
+    select:focus {
+      border-color: #6571ff;
     }
 
-    .toolbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      margin-top:9px;
-      flex-wrap:wrap;
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
     }
 
-    .counter{
-      color:var(--muted);
-      font-size:12px;
+    button {
+      border: 0;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
     }
 
-    .mini-actions{
-      display:flex;
-      gap:7px;
-      flex-wrap:wrap;
+    button:active {
+      transform: scale(.98);
     }
 
-    .mini{
-      background:#1b1e27;
-      color:#d9ddea;
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:8px 11px;
-      font-size:12px;
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
     }
 
-    .mini:hover{
-      border-color:#42485c;
+    .main-btn {
+      flex: 1;
+      min-height: 52px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, #5965ff, #a149ff);
     }
 
-    .help{
-      color:var(--muted);
-      font-size:12px;
-      margin:9px 2px 0;
-      line-height:1.4;
+    .secondary-btn {
+      min-height: 52px;
+      padding: 0 16px;
+      color: #dfe3f2;
+      background: #191d28;
+      border: 1px solid #292e3c;
     }
 
-    .main-btn{
-      width:100%;
-      margin-top:13px;
-      min-height:53px;
-      border-radius:15px;
-      color:white;
-      font-weight:900;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:0 12px 30px rgba(109,124,255,.2);
+    .file-zone {
+      margin-top: 12px;
+      padding: 15px;
+      border: 1px dashed #353b4d;
+      border-radius: 15px;
+      background: #0b0d13;
+      text-align: center;
+      cursor: pointer;
     }
 
-    .main-btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
+    .file-zone.dragover {
+      border-color: #6874ff;
+      background: #111522;
     }
 
-    .file-zone{
-      margin-top:13px;
-      padding:15px;
-      border:1px dashed #3a4050;
-      border-radius:16px;
-      background:rgba(255,255,255,.025);
+    .file-zone-title {
+      color: #dce1ef;
+      font-weight: 700;
+      font-size: 14px;
     }
 
-    .file-zone-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
+    .file-zone-subtitle {
+      margin-top: 5px;
+      color: #707789;
+      font-size: 12px;
     }
 
-    .file-zone-title{
-      font-size:13px;
-      font-weight:800;
+    #fileInput {
+      display: none;
     }
 
-    .file-zone-sub{
-      color:var(--muted);
-      font-size:11px;
-      margin-top:3px;
+    .files {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
     }
 
-    .file-add{
-      background:#202431;
-      color:#fff;
-      border:1px solid var(--border);
-      border-radius:11px;
-      padding:9px 12px;
-      font-weight:700;
-      font-size:12px;
-      white-space:nowrap;
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #151822;
+      border: 1px solid #272c3a;
+      border-radius: 12px;
     }
 
-    .file-list{
-      display:grid;
-      gap:8px;
-      margin-top:12px;
+    .file-icon {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: #202538;
+      font-size: 18px;
     }
 
-    .file-item{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:11px;
-      border:1px solid var(--border);
-      background:#0d0f15;
-      border-radius:13px;
-      min-width:0;
+    .file-info {
+      min-width: 0;
+      flex: 1;
     }
 
-    .file-icon{
-      width:34px;
-      height:34px;
-      flex:0 0 34px;
-      display:grid;
-      place-items:center;
-      border-radius:9px;
-      background:#191d27;
-      font-size:16px;
+    .file-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 13px;
+      color: #e9ebf3;
     }
 
-    .file-details{
-      min-width:0;
-      flex:1;
+    .file-size {
+      margin-top: 3px;
+      color: #747b8d;
+      font-size: 11px;
     }
 
-    .file-name{
-      font-size:13px;
-      font-weight:700;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
+    .remove-file {
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      color: #858c9e;
+      font-size: 18px;
     }
 
-    .file-meta{
-      color:var(--muted);
-      font-size:10px;
-      margin-top:3px;
-      line-height:1.35;
+    .status {
+      min-height: 20px;
+      margin-top: 10px;
+      color: #7f8799;
+      font-size: 12px;
+      line-height: 1.4;
     }
 
-    .file-status{
-      font-size:10px;
-      color:var(--success);
-      margin-top:3px;
+    .result {
+      display: none;
+      margin-top: 18px;
     }
 
-    .file-status.warn{
-      color:#ffc857;
+    .result.show {
+      display: block;
     }
 
-    .file-remove{
-      background:none;
-      color:#777e90;
-      padding:7px;
-      font-size:17px;
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
-    .result{
-      display:none;
+    .result-title {
+      color: #bfc6ff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.4px;
     }
 
-    .result.show{
-      display:block;
+    .result-actions {
+      display: flex;
+      gap: 7px;
     }
 
-    .result-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:12px;
+    .small-btn {
+      padding: 8px 10px;
+      border-radius: 10px;
+      color: #cbd0df;
+      background: #181c27;
+      border: 1px solid #292e3c;
+      font-size: 12px;
     }
 
-    .result-title{
-      font-weight:900;
-      font-size:14px;
-      letter-spacing:.08em;
+    .answer {
+      min-height: 100px;
+      padding: 17px;
+      border: 1px solid #292e3c;
+      border-radius: 15px;
+      background: #0a0c11;
+      color: #e9ebf3;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.65;
+      font-size: 15px;
     }
 
-    .provider{
-      color:#aeb5c5;
-      font-size:11px;
-      padding:6px 9px;
-      border-radius:999px;
-      background:#191c25;
-      border:1px solid var(--border);
+    .provider {
+      margin-top: 9px;
+      color: #666e82;
+      font-size: 11px;
     }
 
-    .answer{
-      background:#0b0d12;
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-      line-height:1.65;
-      white-space:pre-wrap;
-      word-break:break-word;
-      min-height:80px;
+    .section {
+      margin-top: 18px;
     }
 
-    .result-actions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
+    .section-title {
+      margin-bottom: 9px;
+      color: #8e94a6;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
     }
 
-    .result-actions button{
-      flex:1;
-      min-width:100px;
-      background:#191c25;
-      border:1px solid var(--border);
-      color:#e8ebf3;
-      border-radius:11px;
-      padding:10px;
-      font-size:12px;
-      font-weight:700;
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
 
-    .section-title{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:12px;
-      font-weight:900;
-      font-size:14px;
+    .card {
+      padding: 15px;
+      border: 1px solid #202431;
+      border-radius: 16px;
+      background: #101219;
     }
 
-    .tabs{
-      display:flex;
-      gap:7px;
-      overflow:auto;
-      margin-bottom:12px;
+    .card-title {
+      font-weight: 800;
+      font-size: 14px;
     }
 
-    .tab{
-      background:#191c25;
-      color:#9da5b7;
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:8px 11px;
-      font-size:11px;
-      white-space:nowrap;
-    }
-
-    .tab.active{
-      color:#fff;
-      border-color:#5963a8;
-      background:#222641;
+    .card-text {
+      margin-top: 5px;
+      color: #737b8e;
+      font-size: 12px;
+      line-height: 1.4;
     }
 
     .history-list,
-    .template-list{
-      display:grid;
-      gap:9px;
+    .templates-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .history-item,
-    .template-item{
-      border:1px solid var(--border);
-      background:#0d0f15;
-      border-radius:14px;
-      padding:12px;
+    .template-item {
+      padding: 12px;
+      border: 1px solid #202431;
+      border-radius: 13px;
+      background: #101219;
+      cursor: pointer;
     }
 
-    .history-top,
-    .template-top{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
+    .history-item:hover,
+    .template-item:hover {
+      border-color: #343b50;
     }
 
-    .history-mode,
-    .template-name{
-      font-size:12px;
-      font-weight:800;
+    .history-text,
+    .template-text {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      color: #cbd0dc;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
-    .history-date{
-      color:#697082;
-      font-size:10px;
+    .history-meta {
+      margin-top: 6px;
+      color: #656d80;
+      font-size: 10px;
     }
 
-    .history-preview,
-    .template-preview{
-      color:#9299a9;
-      font-size:11px;
-      line-height:1.45;
-      margin:7px 0;
-      white-space:pre-wrap;
+    footer {
+      padding: 30px 0 10px;
+      text-align: center;
+      color: #555c6c;
+      font-size: 11px;
     }
 
-    .item-actions{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
+    .hidden {
+      display: none !important;
     }
 
-    .item-actions button{
-      background:#181b23;
-      border:1px solid var(--border);
-      color:#bfc5d3;
-      border-radius:8px;
-      padding:6px 8px;
-      font-size:10px;
-    }
-
-    .features{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-    }
-
-    .feature{
-      padding:15px;
-      border:1px solid var(--border);
-      background:#11131a;
-      border-radius:16px;
-    }
-
-    .feature strong{
-      display:block;
-      margin-bottom:5px;
-      font-size:13px;
-    }
-
-    .feature span{
-      color:var(--muted);
-      font-size:11px;
-      line-height:1.4;
-    }
-
-    footer{
-      text-align:center;
-      color:#606778;
-      font-size:11px;
-      padding:20px 0;
-    }
-
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:20px;
-      transform:translate(-50%,20px);
-      opacity:0;
-      pointer-events:none;
-      background:#191d27;
-      border:1px solid var(--border);
-      color:#fff;
-      padding:11px 15px;
-      border-radius:12px;
-      font-size:12px;
-      z-index:100;
-      transition:.2s;
-      max-width:calc(100% - 30px);
-      text-align:center;
-    }
-
-    .toast.show{
-      opacity:1;
-      transform:translate(-50%,0);
-    }
-
-    .empty{
-      color:#6e7586;
-      text-align:center;
-      padding:15px 5px;
-      font-size:12px;
-    }
-
-    @media(max-width:620px){
-      .wrap{
-        width:min(100% - 18px,900px);
-        padding-top:15px;
+    @media (max-width: 650px) {
+      .app {
+        padding: 16px 12px 30px;
       }
 
-      .card{
-        padding:14px;
-        border-radius:19px;
+      .hero {
+        padding-top: 18px;
       }
 
-      .features{
-        grid-template-columns:1fr;
+      .panel {
+        padding: 13px;
+        border-radius: 18px;
       }
 
-      .file-zone-head{
-        align-items:flex-start;
+      .cards {
+        grid-template-columns: 1fr;
       }
 
-      .result-actions button{
-        flex:1 1 calc(50% - 8px);
+      .actions {
+        flex-direction: column;
+      }
+
+      .secondary-btn {
+        width: 100%;
+      }
+
+      .result-header {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
   </style>
 </head>
 
 <body>
-<div class="wrap">
+  <main class="app">
 
-  <header class="hero">
-    <div class="badge"><span>●</span> AI POWERED</div>
-    <h1>✦ AI Помощник</h1>
-    <p>Напиши текст — AI поможет его улучшить, перевести или переработать.</p>
-  </header>
+    <section class="hero">
+      <div class="badge">● AI POWERED</div>
 
-  <section class="card">
+      <h1>✦ AI Помощник</h1>
 
-    <label class="label" for="action">ДЕЙСТВИЕ</label>
+      <p class="subtitle">
+        Напиши текст или прикрепи файл — AI поможет его улучшить,
+        перевести, переработать или проанализировать.
+      </p>
+    </section>
 
-    <select id="action">
-      <optgroup label="Текст">
-        <option value="improve">Улучшить текст</option>
-        <option value="polish">Сделать грамотнее</option>
-        <option value="english">Перевести на английский</option>
-        <option value="shorten">Сократить</option>
-        <option value="summarize">Сделать краткое содержание</option>
-        <option value="explain">Объяснить проще</option>
-      </optgroup>
+    <section class="panel">
 
-      <optgroup label="Создать">
-        <option value="write">Написать текст</option>
-        <option value="reply">Написать ответ</option>
-        <option value="business">Деловой текст</option>
-        <option value="tiktok">Текст для TikTok</option>
-      </optgroup>
-    </select>
+      <label class="label" for="mode">ДЕЙСТВИЕ</label>
 
-    <div id="help" class="help">
-      Исправляет ошибки, улучшает стиль и делает текст естественнее.
-    </div>
+      <select id="mode">
+        <optgroup label="ТЕКСТ">
+          <option value="improve">Улучшить текст</option>
+          <option value="polish">Исправить ошибки</option>
+          <option value="english">Перевести на английский</option>
+          <option value="shorten">Сократить</option>
+          <option value="summarize">Сделать краткое содержание</option>
+          <option value="explain">Объяснить</option>
+        </optgroup>
 
-    <textarea
-      id="text"
-      maxlength="10000"
-      placeholder="Введите текст..."
-      spellcheck="true"
-    ></textarea>
+        <optgroup label="СОЗДАНИЕ">
+          <option value="write">Написать текст</option>
+          <option value="reply">Написать ответ</option>
+          <option value="business">Деловой текст</option>
+          <option value="tiktok">Текст для TikTok</option>
+        </optgroup>
 
-    <div class="toolbar">
-      <div id="counter" class="counter">0 / 10000</div>
+        <optgroup label="ФАЙЛЫ">
+          <option value="analyze">Проанализировать файл</option>
+        </optgroup>
+      </select>
 
-      <div class="mini-actions">
-        <button class="mini" id="pasteBtn" type="button">📋 Вставить</button>
-        <button class="mini" id="voiceBtn" type="button">🎙 Голос</button>
-        <button class="mini" id="clearBtn" type="button">✕ Очистить</button>
-      </div>
-    </div>
+      <textarea
+        id="textInput"
+        maxlength="10000"
+        placeholder="Напиши здесь текст..."
+        autocomplete="off"
+        spellcheck="true"
+      ></textarea>
 
-    <!-- UNIVERSAL FILES -->
-    <div class="file-zone">
-
-      <div class="file-zone-head">
-        <div>
-          <div class="file-zone-title">📎 Файлы</div>
-          <div class="file-zone-sub">
-            Можно выбрать файлы любого формата
-          </div>
+      <div
+        class="file-zone"
+        id="fileZone"
+        role="button"
+        tabindex="0"
+      >
+        <div class="file-zone-title">
+          📎 Добавить файлы
         </div>
 
-        <button class="file-add" id="fileAddBtn" type="button">
-          + Добавить
+        <div class="file-zone-subtitle">
+          Можно выбрать несколько файлов любого формата
+        </div>
+
+        <input
+          id="fileInput"
+          type="file"
+          multiple
+          accept="*/*"
+        >
+      </div>
+
+      <div class="files" id="filesList"></div>
+
+      <div class="status" id="status"></div>
+
+      <div class="actions">
+        <button
+          class="main-btn"
+          id="processBtn"
+          type="button"
+        >
+          ✨ Обработать
+        </button>
+
+        <button
+          class="secondary-btn"
+          id="clearBtn"
+          type="button"
+        >
+          Очистить
         </button>
       </div>
 
-      <input
-        id="fileInput"
-        type="file"
-        multiple
-        accept="*/*"
-        hidden
-      >
-
-      <div id="fileList" class="file-list"></div>
-    </div>
-
-    <button class="main-btn" id="processBtn" type="button">
-      ✨ Обработать
-    </button>
-
-  </section>
-
-  <section class="card result" id="resultCard">
-
-    <div class="result-head">
-      <div class="result-title">✦ РЕЗУЛЬТАТ AI</div>
-      <div class="provider" id="provider">AI</div>
-    </div>
-
-    <div class="answer" id="answer"></div>
-
-    <div class="result-actions">
-      <button id="copyBtn" type="button">📋 Скопировать</button>
-      <button id="retryBtn" type="button">↻ Повторить</button>
-      <button id="speakBtn" type="button">🔊 Озвучить</button>
-      <button id="stopSpeakBtn" type="button">⏹ Стоп</button>
-    </div>
-
-  </section>
-
-  <section class="card">
-    <div class="section-title">
-      <span>История</span>
-      <button class="mini" id="clearHistoryBtn" type="button">
-        Очистить
-      </button>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" data-filter="all" type="button">Все</button>
-      <button class="tab" data-filter="favorite" type="button">Избранное</button>
-    </div>
-
-    <div id="historyList" class="history-list"></div>
-  </section>
-
-  <section class="card">
-    <div class="section-title">
-      <span>Шаблоны</span>
-      <button class="mini" id="newTemplateBtn" type="button">+ Создать</button>
-    </div>
-
-    <div id="templateList" class="template-list"></div>
-  </section>
-
-  <section class="features">
-    <div class="feature">
-      <strong>⚡ Быстро</strong>
-      <span>За считанные секунды</span>
-    </div>
-
-    <div class="feature">
-      <strong>🧠 Умно</strong>
-      <span>Gemini · Groq · OpenRouter</span>
-    </div>
-
-    <div class="feature">
-      <strong>🌍 Много языков</strong>
-      <span>Перевод и редактура</span>
-    </div>
-  </section>
-
-  <footer>
-    AI Помощник · Gemini · Groq · OpenRouter
-  </footer>
-
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-"use strict";
-
-/* =========================
-   CONFIG
-========================= */
-
-const MAX_TEXT = 10000;
-const MAX_HISTORY = 20;
-const MAX_TEMPLATES = 30;
-
-const MAX_FILES = 5;
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const MAX_TOTAL_EXTRACTED = 8500;
-
-const HISTORY_KEY = "ai_helper_history_v3";
-const TEMPLATES_KEY = "ai_helper_templates_v3";
-
-let historyFilter = "all";
-let retryTimer = null;
-let recognition = null;
-let lastRequest = null;
-
-let selectedFiles = [];
-
-/* =========================
-   DOM
-========================= */
-
-const textInput = document.getElementById("text");
-const action = document.getElementById("action");
-const processBtn = document.getElementById("processBtn");
-const resultCard = document.getElementById("resultCard");
-const answer = document.getElementById("answer");
-const provider = document.getElementById("provider");
-const counter = document.getElementById("counter");
-const help = document.getElementById("help");
-const fileInput = document.getElementById("fileInput");
-const fileList = document.getElementById("fileList");
-const toast = document.getElementById("toast");
-
-/* =========================
-   TOAST
-========================= */
-
-let toastTimer = null;
-
-function showToast(message){
-  clearTimeout(toastTimer);
-
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2800);
-}
-
-/* =========================
-   TEXT
-========================= */
-
-function updateCounter(){
-  counter.textContent =
-    `${textInput.value.length} / ${MAX_TEXT}`;
-}
-
-function updateHelp(){
-  const helps = {
-    improve:"Исправляет ошибки, улучшает стиль и делает текст естественнее.",
-    polish:"Исправляет грамматику, пунктуацию и стилистические ошибки.",
-    english:"Переводит текст на естественный английский язык.",
-    shorten:"Сохраняет смысл, но делает текст короче.",
-    summarize:"Выделяет главное и делает краткое содержание.",
-    explain:"Объясняет сложный текст простыми словами.",
-    write:"Создаёт новый текст по твоему описанию.",
-    reply:"Помогает написать подходящий ответ.",
-    business:"Создаёт аккуратный деловой и профессиональный текст.",
-    tiktok:"Создаёт цепляющий текст для TikTok."
-  };
-
-  help.textContent =
-    helps[action.value] || helps.improve;
-}
-
-function resetResult(){
-  resultCard.classList.remove("show");
-  answer.textContent = "";
-  provider.textContent = "AI";
-}
-
-function getModeLabel(mode){
-  const labels = {
-    improve:"Улучшить текст",
-    polish:"Сделать грамотнее",
-    english:"Перевести на английский",
-    shorten:"Сократить",
-    summarize:"Краткое содержание",
-    explain:"Объяснить проще",
-    write:"Написать текст",
-    reply:"Написать ответ",
-    business:"Деловой текст",
-    tiktok:"TikTok"
-  };
-
-  return labels[mode] || mode;
-}
-
-/* =========================
-   FILES
-========================= */
-
-function getExtension(name){
-  const parts = name.toLowerCase().split(".");
-  return parts.length > 1 ? parts.pop() : "";
-}
-
-function formatBytes(bytes){
-  if(bytes < 1024) return `${bytes} Б`;
-  if(bytes < 1024 * 1024){
-    return `${(bytes / 1024).toFixed(1)} КБ`;
-  }
-  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`;
-}
-
-function getFileKind(file){
-  const ext = getExtension(file.name);
-
-  const textExt = new Set([
-    "txt","md","markdown","csv","tsv",
-    "json","jsonl","xml","html","htm",
-    "css","scss","less",
-    "js","jsx","ts","tsx",
-    "py","java","c","cpp","h","hpp",
-    "cs","go","rs","php","rb",
-    "swift","kt","kts",
-    "sql","sh","bash","bat","ps1",
-    "yaml","yml","toml","ini","cfg",
-    "log","srt","vtt","tex","svg"
-  ]);
-
-  if(textExt.has(ext) || file.type.startsWith("text/")){
-    return "text";
-  }
-
-  if(ext === "pdf" || file.type === "application/pdf"){
-    return "pdf";
-  }
-
-  if(ext === "docx"){
-    return "docx";
-  }
-
-  if(ext === "xlsx" || ext === "xls"){
-    return "spreadsheet";
-  }
-
-  if([
-    "jpg","jpeg","png","webp","gif","bmp","svg"
-  ].includes(ext) || file.type.startsWith("image/")){
-    return "image";
-  }
-
-  if([
-    "mp3","wav","m4a","aac","ogg","flac"
-  ].includes(ext) || file.type.startsWith("audio/")){
-    return "audio";
-  }
-
-  if([
-    "mp4","mov","avi","mkv","webm"
-  ].includes(ext) || file.type.startsWith("video/")){
-    return "video";
-  }
-
-  if([
-    "zip","rar","7z","tar","gz"
-  ].includes(ext)){
-    return "archive";
-  }
-
-  return "binary";
-}
-
-function getFileIcon(kind){
-  const icons = {
-    text:"📄",
-    pdf:"📕",
-    docx:"📘",
-    spreadsheet:"📊",
-    image:"🖼️",
-    audio:"🎵",
-    video:"🎬",
-    archive:"🗜️",
-    binary:"📦"
-  };
-
-  return icons[kind] || "📎";
-}
-
-function statusText(item){
-  if(item.status === "processing"){
-    return "⏳ Обрабатывается...";
-  }
-
-  if(item.status === "ready"){
-    return "✓ Текст извлечён";
-  }
-
-  if(item.status === "metadata"){
-    return "⚠ Файл выбран, но содержимое не извлечено";
-  }
-
-  if(item.status === "error"){
-    return "⚠ Ошибка обработки";
-  }
-
-  return "";
-}
-
-function renderFiles(){
-  fileList.innerHTML = "";
-
-  if(!selectedFiles.length) return;
-
-  selectedFiles.forEach(item => {
-    const el = document.createElement("div");
-    el.className = "file-item";
-
-    const icon = document.createElement("div");
-    icon.className = "file-icon";
-    icon.textContent = getFileIcon(item.kind);
-
-    const details = document.createElement("div");
-    details.className = "file-details";
-
-    const name = document.createElement("div");
-    name.className = "file-name";
-    name.textContent = item.file.name;
-
-    const meta = document.createElement("div");
-    meta.className = "file-meta";
-    meta.textContent =
-      `${item.file.type || "неизвестный формат"} · ${formatBytes(item.file.size)}`;
-
-    const status = document.createElement("div");
-    status.className =
-      "file-status" +
-      (item.status === "metadata" || item.status === "error"
-        ? " warn"
-        : "");
-
-    status.textContent = statusText(item);
-
-    details.append(name,meta,status);
-
-    const remove = document.createElement("button");
-    remove.className = "file-remove";
-    remove.type = "button";
-    remove.textContent = "×";
-    remove.title = "Удалить файл";
-
-    remove.addEventListener("click",() => {
-      selectedFiles =
-        selectedFiles.filter(x => x.id !== item.id);
-
-      renderFiles();
-    });
-
-    el.append(icon,details,remove);
-    fileList.appendChild(el);
-  });
-}
-
-/* =========================
-   FILE EXTRACTION
-========================= */
-
-async function extractTextFile(file){
-  return await file.text();
-}
-
-async function extractPdf(file){
-  if(!window.pdfjsLib){
-    throw new Error("PDF.js недоступен");
-  }
-
-  const buffer = await file.arrayBuffer();
-
-  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-  const pdf = await window.pdfjsLib
-    .getDocument({data:buffer})
-    .promise;
-
-  let result = "";
-
-  const pages = Math.min(pdf.numPages,50);
-
-  for(let pageNumber = 1; pageNumber <= pages; pageNumber++){
-    const page = await pdf.getPage(pageNumber);
-    const content = await page.getTextContent();
-
-    const pageText = content.items
-      .map(item => item.str || "")
-      .join(" ");
-
-    result += `\n[Страница ${pageNumber}]\n`;
-    result += pageText;
-  }
-
-  return result.trim();
-}
-
-async function extractDocx(file){
-  if(!window.mammoth){
-    throw new Error("DOCX-парсер недоступен");
-  }
-
-  const arrayBuffer = await file.arrayBuffer();
-
-  const result =
-    await window.mammoth.extractRawText({arrayBuffer});
-
-  return result.value || "";
-}
-
-async function extractSpreadsheet(file){
-  if(!window.XLSX){
-    throw new Error("Excel-парсер недоступен");
-  }
-
-  const buffer = await file.arrayBuffer();
-
-  const workbook = XLSX.read(buffer,{
-    type:"array",
-    cellDates:true
-  });
-
-  let output = "";
-
-  workbook.SheetNames
-    .slice(0,10)
-    .forEach(sheetName => {
-      const sheet = workbook.Sheets[sheetName];
-
-      output +=
-        `\n=== Лист: ${sheetName} ===\n`;
-
-      output +=
-        XLSX.utils.sheet_to_csv(sheet,{
-          FS:","
+      <section class="result" id="result">
+
+        <div class="result-header">
+          <div class="result-title">
+            ✦ РЕЗУЛЬТАТ AI
+          </div>
+
+          <div class="result-actions">
+            <button
+              class="small-btn"
+              id="copyBtn"
+              type="button"
+            >
+              📋 Скопировать
+            </button>
+
+            <button
+              class="small-btn"
+              id="retryBtn"
+              type="button"
+            >
+              ↻ Повторить
+            </button>
+
+            <button
+              class="small-btn"
+              id="speakBtn"
+              type="button"
+            >
+              🔊
+            </button>
+
+            <button
+              class="small-btn hidden"
+              id="stopSpeakBtn"
+              type="button"
+            >
+              ■
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="answer"
+          id="answer"
+        ></div>
+
+        <div
+          class="provider"
+          id="provider"
+        ></div>
+
+      </section>
+    </section>
+
+    <section class="section">
+      <div class="section-title">ВОЗМОЖНОСТИ</div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">⚡ Быстро</div>
+          <div class="card-text">
+            Обработка за считанные секунды.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🧠 Умно</div>
+          <div class="card-text">
+            Gemini · Groq · OpenRouter
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📎 Файлы</div>
+          <div class="card-text">
+            Текст, документы, таблицы и изображения.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="section hidden"
+      id="historySection"
+    >
+      <div class="section-title">ИСТОРИЯ</div>
+      <div
+        class="history-list"
+        id="historyList"
+      ></div>
+    </section>
+
+    <section
+      class="section hidden"
+      id="templatesSection"
+    >
+      <div class="section-title">ШАБЛОНЫ</div>
+      <div
+        class="templates-list"
+        id="templatesList"
+      ></div>
+    </section>
+
+    <footer>
+      AI Помощник · Gemini · Groq · OpenRouter
+    </footer>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    const API_URL = "/api/chat";
+
+    const MAX_FILES = 5;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const MAX_TOTAL_EXTRACTED = 8500;
+    const MAX_MESSAGE_LENGTH = 10000;
+
+    const HISTORY_KEY = "ai_helper_history_v3";
+    const TEMPLATES_KEY = "ai_helper_templates_v3";
+
+    const modeEl = document.getElementById("mode");
+    const textInput = document.getElementById("textInput");
+    const fileInput = document.getElementById("fileInput");
+    const fileZone = document.getElementById("fileZone");
+    const filesList = document.getElementById("filesList");
+    const processBtn = document.getElementById("processBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const statusEl = document.getElementById("status");
+
+    const result = document.getElementById("result");
+    const answerEl = document.getElementById("answer");
+    const providerEl = document.getElementById("provider");
+
+    const copyBtn = document.getElementById("copyBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const speakBtn = document.getElementById("speakBtn");
+    const stopSpeakBtn = document.getElementById("stopSpeakBtn");
+
+    const historySection =
+      document.getElementById("historySection");
+
+    const historyList =
+      document.getElementById("historyList");
+
+    const templatesSection =
+      document.getElementById("templatesSection");
+
+    const templatesList =
+      document.getElementById("templatesList");
+
+    let selectedFiles = [];
+    let lastRequest = null;
+    let retryTimer = null;
+
+    /*
+     * -----------------------------
+     * FILE HELPERS
+     * -----------------------------
+     */
+
+    function formatBytes(bytes) {
+      if (!Number.isFinite(bytes)) return "";
+
+      if (bytes < 1024) {
+        return `${bytes} B`;
+      }
+
+      if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+      }
+
+      return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+    }
+
+    function getExtension(name) {
+      const index = name.lastIndexOf(".");
+
+      if (index === -1) return "";
+
+      return name.slice(index + 1).toLowerCase();
+    }
+
+    function isImage(file) {
+      return [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+      ].includes(file.type);
+    }
+
+    function isTextFile(file) {
+      const ext = getExtension(file.name);
+
+      const textExtensions = new Set([
+        "txt",
+        "md",
+        "csv",
+        "tsv",
+        "json",
+        "jsonl",
+        "xml",
+        "html",
+        "htm",
+        "css",
+        "scss",
+        "less",
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "py",
+        "java",
+        "c",
+        "cpp",
+        "h",
+        "hpp",
+        "cs",
+        "go",
+        "rs",
+        "php",
+        "rb",
+        "swift",
+        "kt",
+        "kts",
+        "sql",
+        "sh",
+        "bash",
+        "bat",
+        "ps1",
+        "yaml",
+        "yml",
+        "toml",
+        "ini",
+        "cfg",
+        "log",
+        "srt",
+        "vtt",
+        "tex",
+        "svg"
+      ]);
+
+      return (
+        file.type.startsWith("text/") ||
+        textExtensions.has(ext)
+      );
+    }
+
+    function isPdf(file) {
+      return (
+        file.type === "application/pdf" ||
+        getExtension(file.name) === "pdf"
+      );
+    }
+
+    function isDocx(file) {
+      return (
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        getExtension(file.name) === "docx"
+      );
+    }
+
+    function isSpreadsheet(file) {
+      const ext = getExtension(file.name);
+
+      return [
+        "xls",
+        "xlsx",
+        "xlsm",
+        "ods"
+      ].includes(ext);
+    }
+
+    function fileIcon(file) {
+      if (isImage(file)) return "🖼️";
+      if (isPdf(file)) return "📕";
+      if (isDocx(file)) return "📘";
+      if (isSpreadsheet(file)) return "📊";
+      if (isTextFile(file)) return "📄";
+
+      return "📎";
+    }
+
+    /*
+     * -----------------------------
+     * FILE LIST
+     * -----------------------------
+     */
+
+    function renderFiles() {
+      filesList.innerHTML = "";
+
+      selectedFiles.forEach((file, index) => {
+        const item = document.createElement("div");
+        item.className = "file-item";
+
+        const icon = document.createElement("div");
+        icon.className = "file-icon";
+        icon.textContent = fileIcon(file);
+
+        const info = document.createElement("div");
+        info.className = "file-info";
+
+        const name = document.createElement("div");
+        name.className = "file-name";
+        name.textContent = file.name;
+
+        const size = document.createElement("div");
+        size.className = "file-size";
+        size.textContent =
+          `${formatBytes(file.size)} · ${file.type || "неизвестный формат"}`;
+
+        info.appendChild(name);
+        info.appendChild(size);
+
+        const remove = document.createElement("button");
+        remove.className = "remove-file";
+        remove.type = "button";
+        remove.textContent = "×";
+        remove.setAttribute(
+          "aria-label",
+          `Удалить ${file.name}`
+        );
+
+        remove.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          selectedFiles.splice(index, 1);
+
+          renderFiles();
+          updateStatus();
         });
-    });
 
-  return output.trim();
-}
+        item.appendChild(icon);
+        item.appendChild(info);
+        item.appendChild(remove);
 
-async function prepareFile(item){
-  const file = item.file;
-
-  item.status = "processing";
-  renderFiles();
-
-  try{
-    let text = "";
-
-    if(item.kind === "text"){
-      text = await extractTextFile(file);
+        filesList.appendChild(item);
+      });
     }
 
-    else if(item.kind === "pdf"){
-      text = await extractPdf(file);
-    }
+    function addFiles(files) {
+      const incoming = Array.from(files);
 
-    else if(item.kind === "docx"){
-      text = await extractDocx(file);
-    }
+      for (const file of incoming) {
+        if (selectedFiles.length >= MAX_FILES) {
+          setStatus(
+            `Можно прикрепить максимум ${MAX_FILES} файлов.`
+          );
+          break;
+        }
 
-    else if(item.kind === "spreadsheet"){
-      text = await extractSpreadsheet(file);
-    }
+        if (file.size > MAX_FILE_SIZE) {
+          setStatus(
+            `Файл "${file.name}" слишком большой. Максимум 10 MB.`
+          );
+          continue;
+        }
 
-    else if(item.kind === "image"){
-      item.status = "metadata";
-      item.note =
-        "Изображение выбрано. Текущий текстовый API не поддерживает анализ изображений.";
+        const duplicate = selectedFiles.some(
+          existing =>
+            existing.name === file.name &&
+            existing.size === file.size &&
+            existing.lastModified === file.lastModified
+        );
+
+        if (duplicate) {
+          continue;
+        }
+
+        selectedFiles.push(file);
+      }
+
       renderFiles();
-      return;
+      updateStatus();
     }
 
-    else if(item.kind === "audio"){
-      item.status = "metadata";
-      item.note =
-        "Аудиофайл выбран. Для распознавания речи нужен отдельный speech-to-text backend.";
-      renderFiles();
-      return;
+    /*
+     * -----------------------------
+     * STATUS
+     * -----------------------------
+     */
+
+    function setStatus(text) {
+      statusEl.textContent = text || "";
     }
 
-    else if(item.kind === "video"){
-      item.status = "metadata";
-      item.note =
-        "Видео выбрано. Текущий API не поддерживает мультимодальный анализ видео.";
-      renderFiles();
-      return;
+    function updateStatus() {
+      if (!selectedFiles.length) {
+        setStatus("");
+        return;
+      }
+
+      const imageCount =
+        selectedFiles.filter(isImage).length;
+
+      const textCount =
+        selectedFiles.filter(isTextFile).length;
+
+      const otherCount =
+        selectedFiles.length -
+        imageCount -
+        textCount;
+
+      const parts = [
+        `${selectedFiles.length} файл(ов) выбрано`
+      ];
+
+      if (imageCount) {
+        parts.push(`${imageCount} изображение`);
+      }
+
+      if (textCount) {
+        parts.push(`${textCount} текстовый файл`);
+      }
+
+      if (otherCount) {
+        parts.push(
+          `${otherCount} файл(ов) потребуют отдельной обработки`
+        );
+      }
+
+      setStatus(parts.join(" · "));
     }
 
-    else if(item.kind === "archive"){
-      item.status = "metadata";
-      item.note =
-        "Архив выбран, но автоматически распаковывать его небезопасно.";
-      renderFiles();
-      return;
+    /*
+     * -----------------------------
+     * TEXT EXTRACTION
+     * -----------------------------
+     */
+
+    async function extractTextFile(file) {
+      return await file.text();
     }
 
-    else{
-      item.status = "metadata";
-      item.note =
-        "Неизвестный бинарный формат. Файл выбран, но текст не извлечён.";
-      renderFiles();
-      return;
-    }
+    async function extractPdf(file) {
+      if (!window.pdfjsLib) {
+        throw new Error(
+          "PDF.js не загрузился."
+        );
+      }
 
-    item.text = String(text || "").trim();
+      const buffer =
+        await file.arrayBuffer();
 
-    if(item.text){
-      item.status = "ready";
-    }else{
-      item.status = "metadata";
-      item.note = "Текст внутри файла не найден.";
-    }
+      const pdf =
+        await window.pdfjsLib.getDocument({
+          data: buffer
+        }).promise;
 
-  }catch(error){
-    console.error("File extraction:",error);
+      let resultText = "";
 
-    item.status = "error";
-    item.note =
-      error && error.message
-        ? error.message
-        : "Не удалось прочитать файл.";
-  }
-
-  renderFiles();
-}
-
-async function addFiles(files){
-  const incoming = Array.from(files);
-
-  if(!incoming.length) return;
-
-  if(selectedFiles.length >= MAX_FILES){
-    showToast(`Можно добавить максимум ${MAX_FILES} файлов.`);
-    return;
-  }
-
-  for(const file of incoming){
-
-    if(selectedFiles.length >= MAX_FILES){
-      showToast(`Можно добавить максимум ${MAX_FILES} файлов.`);
-      break;
-    }
-
-    if(file.size > MAX_FILE_SIZE){
-      showToast(
-        `${file.name}: максимум ${formatBytes(MAX_FILE_SIZE)}`
+      const maxPages = Math.min(
+        pdf.numPages,
+        50
       );
-      continue;
+
+      for (let pageNumber = 1; pageNumber <= maxPages; pageNumber++) {
+        const page =
+          await pdf.getPage(pageNumber);
+
+        const content =
+          await page.getTextContent();
+
+        const pageText =
+          content.items
+            .map(item => item.str || "")
+            .join(" ");
+
+        resultText +=
+          `\n[Страница ${pageNumber}]\n${pageText}\n`;
+
+        if (
+          resultText.length >=
+          MAX_TOTAL_EXTRACTED
+        ) {
+          break;
+        }
+      }
+
+      return resultText;
     }
 
-    const duplicate =
-      selectedFiles.some(
-        x =>
-          x.file.name === file.name &&
-          x.file.size === file.size &&
-          x.file.lastModified === file.lastModified
+    async function extractDocx(file) {
+      if (!window.mammoth) {
+        throw new Error(
+          "Mammoth не загрузился."
+        );
+      }
+
+      const buffer =
+        await file.arrayBuffer();
+
+      const result =
+        await window.mammoth.extractRawText({
+          arrayBuffer: buffer
+        });
+
+      return result.value || "";
+    }
+
+    async function extractSpreadsheet(file) {
+      if (!window.XLSX) {
+        throw new Error(
+          "SheetJS не загрузился."
+        );
+      }
+
+      const buffer =
+        await file.arrayBuffer();
+
+      const workbook =
+        window.XLSX.read(buffer, {
+          type: "array"
+        });
+
+      let output = "";
+
+      for (const sheetName of workbook.SheetNames) {
+        const sheet =
+          workbook.Sheets[sheetName];
+
+        const csv =
+          window.XLSX.utils.sheet_to_csv(
+            sheet
+          );
+
+        output +=
+          `\n[Лист: ${sheetName}]\n${csv}\n`;
+
+        if (
+          output.length >=
+          MAX_TOTAL_EXTRACTED
+        ) {
+          break;
+        }
+      }
+
+      return output;
+    }
+
+    async function extractFileText(file) {
+      if (isTextFile(file)) {
+        return await extractTextFile(file);
+      }
+
+      if (isPdf(file)) {
+        return await extractPdf(file);
+      }
+
+      if (isDocx(file)) {
+        return await extractDocx(file);
+      }
+
+      if (isSpreadsheet(file)) {
+        return await extractSpreadsheet(file);
+      }
+
+      return "";
+    }
+
+    /*
+     * -----------------------------
+     * IMAGE → BASE64
+     * -----------------------------
+     */
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader =
+          new FileReader();
+
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+
+        reader.onerror = () => {
+          reject(
+            new Error(
+              `Не удалось прочитать ${file.name}`
+            )
+          );
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    /*
+     * -----------------------------
+     * REQUEST PREPARATION
+     * -----------------------------
+     */
+
+    async function buildRequest() {
+      const typedText =
+        textInput.value.trim();
+
+      let extractedText = "";
+      const images = [];
+
+      for (const file of selectedFiles) {
+
+        if (isImage(file)) {
+          const data =
+            await fileToDataUrl(file);
+
+          images.push({
+            name: file.name,
+            type: file.type,
+            data
+          });
+
+          continue;
+        }
+
+        const text =
+          await extractFileText(file);
+
+        if (text) {
+          extractedText +=
+            `\n\n===== ФАЙЛ: ${file.name} =====\n` +
+            text;
+        }
+      }
+
+      if (
+        extractedText.length >
+        MAX_TOTAL_EXTRACTED
+      ) {
+        extractedText =
+          extractedText.slice(
+            0,
+            MAX_TOTAL_EXTRACTED
+          ) +
+          "\n\n[Содержимое сокращено из-за ограничения размера.]";
+      }
+
+      let message = typedText;
+
+      if (extractedText) {
+        message +=
+          `${message ? "\n\n" : ""}` +
+          extractedText;
+      }
+
+      if (!message && images.length) {
+        message =
+          "Проанализируй прикреплённые изображения. " +
+          "Подробно опиши содержимое, важные детали и дай вывод.";
+      }
+
+      if (!message) {
+        throw new Error(
+          "Введите текст или прикрепите файл."
+        );
+      }
+
+      if (
+        message.length >
+        MAX_MESSAGE_LENGTH
+      ) {
+        message =
+          message.slice(
+            0,
+            MAX_MESSAGE_LENGTH
+          );
+      }
+
+      return {
+        message,
+        mode: modeEl.value,
+        attachments: images
+      };
+    }
+
+    /*
+     * -----------------------------
+     * AI REQUEST
+     * -----------------------------
+     */
+
+    async function processText() {
+      processBtn.disabled = true;
+      setStatus("⏳ AI обрабатывает запрос...");
+
+      try {
+        const request =
+          await buildRequest();
+
+        lastRequest = request;
+
+        const response =
+          await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(request)
+          });
+
+        let data = null;
+
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error(
+            "Сервер вернул некорректный ответ."
+          );
+        }
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            const retryAfter =
+              Number(
+                response.headers.get(
+                  "Retry-After"
+                )
+              ) || 60;
+
+            startRetryTimer(
+              retryAfter,
+              data.error ||
+                "Лимит временно исчерпан."
+            );
+
+            throw new Error(
+              data.error ||
+                "Лимит временно исчерпан."
+            );
+          }
+
+          throw new Error(
+            data.error ||
+              `Ошибка сервера: ${response.status}`
+          );
+        }
+
+        if (!data.answer) {
+          throw new Error(
+            "AI не вернул текстовый ответ."
+          );
+        }
+
+        answerEl.textContent =
+          data.answer;
+
+        providerEl.textContent =
+          data.provider
+            ? `✦ Провайдер: ${data.provider}`
+            : "";
+
+        result.classList.add("show");
+
+        saveHistory({
+          text: request.message,
+          answer: data.answer,
+          provider: data.provider || "",
+          files: selectedFiles.map(
+            file => file.name
+          )
+        });
+
+        setStatus(
+          "✓ Готово"
+        );
+
+        result.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      } catch (error) {
+        console.error(error);
+
+        if (
+          error?.message &&
+          !error.message.includes(
+            "Лимит AI временно исчерпан"
+          )
+        ) {
+          setStatus(
+            `❌ ${error.message}`
+          );
+        }
+
+      } finally {
+        if (!retryTimer) {
+          processBtn.disabled = false;
+        }
+      }
+    }
+
+    /*
+     * -----------------------------
+     * RETRY TIMER
+     * -----------------------------
+     */
+
+    function startRetryTimer(seconds, message) {
+      clearInterval(retryTimer);
+
+      let remaining =
+        Math.max(
+          Number(seconds) || 1,
+          1
+        );
+
+      processBtn.disabled = true;
+
+      const update = () => {
+        setStatus(
+          `⚠️ ${message} Попробуйте снова через ${remaining} сек.`
+        );
+
+        if (remaining <= 0) {
+          clearInterval(retryTimer);
+          retryTimer = null;
+          processBtn.disabled = false;
+          setStatus("");
+          return;
+        }
+
+        remaining--;
+      };
+
+      update();
+
+      retryTimer =
+        setInterval(update, 1000);
+    }
+
+    /*
+     * -----------------------------
+     * COPY
+     * -----------------------------
+     */
+
+    copyBtn.addEventListener(
+      "click",
+      async () => {
+        const text =
+          answerEl.textContent.trim();
+
+        if (!text) return;
+
+        try {
+          await navigator.clipboard.writeText(
+            text
+          );
+
+          copyBtn.textContent =
+            "✓ Скопировано";
+
+          setTimeout(() => {
+            copyBtn.textContent =
+              "📋 Скопировать";
+          }, 1500);
+
+        } catch {
+          setStatus(
+            "❌ Не удалось скопировать."
+          );
+        }
+      }
+    );
+
+    /*
+     * -----------------------------
+     * RETRY
+     * -----------------------------
+     */
+
+    retryBtn.addEventListener(
+      "click",
+      () => {
+        if (!lastRequest) {
+          processText();
+          return;
+        }
+
+        processText();
+      }
+    );
+
+    /*
+     * -----------------------------
+     * SPEECH
+     * -----------------------------
+     */
+
+    speakBtn.addEventListener(
+      "click",
+      () => {
+        const text =
+          answerEl.textContent.trim();
+
+        if (
+          !text ||
+          !("speechSynthesis" in window)
+        ) {
+          return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        const utterance =
+          new SpeechSynthesisUtterance(
+            text
+          );
+
+        utterance.lang = "ru-RU";
+        utterance.rate = 1;
+        utterance.pitch = 1;
+
+        utterance.onstart = () => {
+          speakBtn.classList.add(
+            "hidden"
+          );
+
+          stopSpeakBtn.classList.remove(
+            "hidden"
+          );
+        };
+
+        utterance.onend = () => {
+          speakBtn.classList.remove(
+            "hidden"
+          );
+
+          stopSpeakBtn.classList.add(
+            "hidden"
+          );
+        };
+
+        utterance.onerror = () => {
+          speakBtn.classList.remove(
+            "hidden"
+          );
+
+          stopSpeakBtn.classList.add(
+            "hidden"
+          );
+        };
+
+        window.speechSynthesis.speak(
+          utterance
+        );
+      }
+    );
+
+    stopSpeakBtn.addEventListener(
+      "click",
+      () => {
+        window.speechSynthesis.cancel();
+
+        speakBtn.classList.remove(
+          "hidden"
+        );
+
+        stopSpeakBtn.classList.add(
+          "hidden"
+        );
+      }
+    );
+
+    /*
+     * -----------------------------
+     * FILE PICKER
+     * -----------------------------
+     */
+
+    fileZone.addEventListener(
+      "click",
+      () => {
+        fileInput.click();
+      }
+    );
+
+    fileZone.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          fileInput.click();
+        }
+      }
+    );
+
+    fileInput.addEventListener(
+      "change",
+      () => {
+        addFiles(
+          fileInput.files
+        );
+
+        fileInput.value = "";
+      }
+    );
+
+    /*
+     * -----------------------------
+     * DRAG & DROP
+     * -----------------------------
+     */
+
+    fileZone.addEventListener(
+      "dragover",
+      event => {
+        event.preventDefault();
+        fileZone.classList.add(
+          "dragover"
+        );
+      }
+    );
+
+    fileZone.addEventListener(
+      "dragleave",
+      () => {
+        fileZone.classList.remove(
+          "dragover"
+        );
+      }
+    );
+
+    fileZone.addEventListener(
+      "drop",
+      event => {
+        event.preventDefault();
+
+        fileZone.classList.remove(
+          "dragover"
+        );
+
+        if (event.dataTransfer?.files) {
+          addFiles(
+            event.dataTransfer.files
+          );
+        }
+      }
+    );
+
+    /*
+     * -----------------------------
+     * CLEAR
+     * -----------------------------
+     */
+
+    clearBtn.addEventListener(
+      "click",
+      () => {
+        textInput.value = "";
+        selectedFiles = [];
+
+        renderFiles();
+
+        answerEl.textContent = "";
+        providerEl.textContent = "";
+
+        result.classList.remove(
+          "show"
+        );
+
+        lastRequest = null;
+
+        if (retryTimer) {
+          clearInterval(
+            retryTimer
+          );
+
+          retryTimer = null;
+        }
+
+        processBtn.disabled = false;
+
+        setStatus("");
+      }
+    );
+
+    /*
+     * -----------------------------
+     * PROCESS BUTTON
+     * -----------------------------
+     */
+
+    processBtn.addEventListener(
+      "click",
+      processText
+    );
+
+    /*
+     * -----------------------------
+     * HISTORY
+     * -----------------------------
+     */
+
+    function getHistory() {
+      try {
+        const raw =
+          localStorage.getItem(
+            HISTORY_KEY
+          );
+
+        if (!raw) return [];
+
+        const parsed =
+          JSON.parse(raw);
+
+        return Array.isArray(parsed)
+          ? parsed
+          : [];
+
+      } catch {
+        return [];
+      }
+    }
+
+    function saveHistory(item) {
+      try {
+        const history =
+          getHistory();
+
+        history.unshift({
+          ...item,
+          date:
+            new Date().toLocaleString(
+              "ru-RU"
+            )
+        });
+
+        localStorage.setItem(
+          HISTORY_KEY,
+          JSON.stringify(
+            history.slice(0, 20)
+          )
+        );
+
+        renderHistory();
+
+      } catch (error) {
+        console.error(
+          "History error:",
+          error
+        );
+      }
+    }
+
+    function renderHistory() {
+      const history =
+        getHistory();
+
+      historyList.innerHTML = "";
+
+      if (!history.length) {
+        historySection.classList.add(
+          "hidden"
+        );
+
+        return;
+      }
+
+      historySection.classList.remove(
+        "hidden"
       );
 
-    if(duplicate) continue;
+      history
+        .slice(0, 10)
+        .forEach(item => {
+          const element =
+            document.createElement(
+              "div"
+            );
 
-    const item = {
-      id:
-        `${Date.now()}_${Math.random().toString(36).slice(2)}`,
-      file,
-      kind:getFileKind(file),
-      text:"",
-      status:"processing",
-      note:""
-    };
+          element.className =
+            "history-item";
 
-    selectedFiles.push(item);
+          const text =
+            document.createElement(
+              "div"
+            );
+
+          text.className =
+            "history-text";
+
+          text.textContent =
+            item.text || "";
+
+          const meta =
+            document.createElement(
+              "div"
+            );
+
+          meta.className =
+            "history-meta";
+
+          meta.textContent =
+            [
+              item.date || "",
+              item.provider
+                ? `AI: ${item.provider}`
+                : "",
+              item.files?.length
+                ? `Файлов: ${item.files.length}`
+                : ""
+            ]
+              .filter(Boolean)
+              .join(" · ");
+
+          element.appendChild(text);
+          element.appendChild(meta);
+
+          element.addEventListener(
+            "click",
+            () => {
+              textInput.value =
+                item.text || "";
+
+              if (item.answer) {
+                answerEl.textContent =
+                  item.answer;
+
+                providerEl.textContent =
+                  item.provider
+                    ? `✦ Провайдер: ${item.provider}`
+                    : "";
+
+                result.classList.add(
+                  "show"
+                );
+              }
+
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+              });
+            }
+          );
+
+          historyList.appendChild(
+            element
+          );
+        });
+    }
+
+    /*
+     * -----------------------------
+     * TEMPLATES
+     * -----------------------------
+     */
+
+    function getTemplates() {
+      try {
+        const raw =
+          localStorage.getItem(
+            TEMPLATES_KEY
+          );
+
+        if (!raw) return [];
+
+        const parsed =
+          JSON.parse(raw);
+
+        return Array.isArray(parsed)
+          ? parsed
+          : [];
+
+      } catch {
+        return [];
+      }
+    }
+
+    function renderTemplates() {
+      const templates =
+        getTemplates();
+
+      templatesList.innerHTML = "";
+
+      if (!templates.length) {
+        templatesSection.classList.add(
+          "hidden"
+        );
+
+        return;
+      }
+
+      templatesSection.classList.remove(
+        "hidden"
+      );
+
+      templates.forEach(template => {
+        const element =
+          document.createElement(
+            "div"
+          );
+
+        element.className =
+          "template-item";
+
+        const text =
+          document.createElement(
+            "div"
+          );
+
+        text.className =
+          "template-text";
+
+        text.textContent =
+          template.text || "";
+
+        element.appendChild(text);
+
+        element.addEventListener(
+          "click",
+          () => {
+            textInput.value =
+              template.text || "";
+
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+
+            textInput.focus();
+          }
+        );
+
+        templatesList.appendChild(
+          element
+        );
+      });
+    }
+
+    /*
+     * -----------------------------
+     * INITIALIZE
+     * -----------------------------
+     */
 
     renderFiles();
-
-    await prepareFile(item);
-  }
-
-  fileInput.value = "";
-}
-
-/* =========================
-   ATTACHMENT CONTEXT
-========================= */
-
-function buildAttachmentContext(){
-  const ready =
-    selectedFiles.filter(
-      item =>
-        item.status === "ready" &&
-        item.text
-    );
-
-  if(!ready.length) return "";
-
-  let total = 0;
-  let result = "";
-
-  for(const item of ready){
-
-    if(total >= MAX_TOTAL_EXTRACTED) break;
-
-    const remaining =
-      MAX_TOTAL_EXTRACTED - total;
-
-    const content =
-      item.text.slice(0,remaining);
-
-    result +=
-      `\n\n=== ФАЙЛ: ${item.file.name} ===\n`;
-
-    result += content;
-
-    total += content.length;
-
-    if(item.text.length > content.length){
-      result +=
-        "\n[Содержимое файла сокращено из-за лимита контекста]";
-    }
-  }
-
-  return result;
-}
-
-function getFileNotes(){
-  return selectedFiles
-    .filter(item => item.status === "metadata")
-    .map(item =>
-      `${item.file.name}: ${item.note || "содержимое не извлечено"}`
-    );
-}
-
-/* =========================
-   HISTORY
-========================= */
-
-function loadHistory(){
-  try{
-    const raw =
-      localStorage.getItem(HISTORY_KEY);
-
-    const data =
-      raw ? JSON.parse(raw) : [];
-
-    return Array.isArray(data) ? data : [];
-  }catch{
-    return [];
-  }
-}
-
-function saveHistory(data){
-  try{
-    localStorage.setItem(
-      HISTORY_KEY,
-      JSON.stringify(data.slice(0,MAX_HISTORY))
-    );
-  }catch(error){
-    console.warn("History save:",error);
-  }
-}
-
-function addHistory(item){
-  const history = loadHistory();
-
-  history.unshift(item);
-
-  saveHistory(history);
-  renderHistory();
-}
-
-function renderHistory(){
-  const container =
-    document.getElementById("historyList");
-
-  container.innerHTML = "";
-
-  let history = loadHistory();
-
-  if(historyFilter === "favorite"){
-    history =
-      history.filter(item => item.favorite);
-  }
-
-  if(!history.length){
-    container.innerHTML =
-      '<div class="empty">История пока пуста</div>';
-    return;
-  }
-
-  history.forEach(item => {
-
-    const card =
-      document.createElement("div");
-
-    card.className = "history-item";
-
-    const top =
-      document.createElement("div");
-
-    top.className = "history-top";
-
-    const mode =
-      document.createElement("div");
-
-    mode.className = "history-mode";
-    mode.textContent =
-      getModeLabel(item.mode);
-
-    const date =
-      document.createElement("div");
-
-    date.className = "history-date";
-
-    date.textContent =
-      new Date(item.date).toLocaleString(
-        "ru-RU",
-        {
-          day:"2-digit",
-          month:"2-digit",
-          hour:"2-digit",
-          minute:"2-digit"
-        }
-      );
-
-    top.append(mode,date);
-
-    const preview =
-      document.createElement("div");
-
-    preview.className = "history-preview";
-
-    preview.textContent =
-      item.sourceText.slice(0,180) +
-      (item.sourceText.length > 180 ? "…" : "");
-
-    const actions =
-      document.createElement("div");
-
-    actions.className = "item-actions";
-
-    const use =
-      document.createElement("button");
-
-    use.textContent = "Использовать снова";
-
-    use.onclick = () => {
-      textInput.value = item.sourceText;
-      action.value = item.mode;
-      updateCounter();
-      updateHelp();
-      window.scrollTo({top:0,behavior:"smooth"});
-    };
-
-    const favorite =
-      document.createElement("button");
-
-    favorite.textContent =
-      item.favorite ? "★ Избранное" : "☆ Избранное";
-
-    favorite.onclick = () => {
-      const all = loadHistory();
-
-      const found =
-        all.find(x => x.id === item.id);
-
-      if(found){
-        found.favorite = !found.favorite;
-        saveHistory(all);
-        renderHistory();
-      }
-    };
-
-    const copy =
-      document.createElement("button");
-
-    copy.textContent = "📋 Копировать";
-
-    copy.onclick = () =>
-      copyText(item.answer);
-
-    const remove =
-      document.createElement("button");
-
-    remove.textContent = "Удалить";
-
-    remove.onclick = () => {
-      const all =
-        loadHistory().filter(
-          x => x.id !== item.id
-        );
-
-      saveHistory(all);
-      renderHistory();
-    };
-
-    actions.append(use,favorite,copy,remove);
-
-    card.append(top,preview,actions);
-
-    container.appendChild(card);
-  });
-}
-
-/* =========================
-   TEMPLATES
-========================= */
-
-function loadTemplates(){
-  try{
-    const raw =
-      localStorage.getItem(TEMPLATES_KEY);
-
-    const data =
-      raw ? JSON.parse(raw) : [];
-
-    return Array.isArray(data) ? data : [];
-  }catch{
-    return [];
-  }
-}
-
-function saveTemplates(data){
-  localStorage.setItem(
-    TEMPLATES_KEY,
-    JSON.stringify(data.slice(0,MAX_TEMPLATES))
-  );
-}
-
-function renderTemplates(){
-  const container =
-    document.getElementById("templateList");
-
-  container.innerHTML = "";
-
-  const templates = loadTemplates();
-
-  if(!templates.length){
-    container.innerHTML =
-      '<div class="empty">Шаблонов пока нет</div>';
-    return;
-  }
-
-  templates.forEach(item => {
-
-    const card =
-      document.createElement("div");
-
-    card.className = "template-item";
-
-    const top =
-      document.createElement("div");
-
-    top.className = "template-top";
-
-    const name =
-      document.createElement("div");
-
-    name.className = "template-name";
-    name.textContent = item.name;
-
-    top.appendChild(name);
-
-    const preview =
-      document.createElement("div");
-
-    preview.className = "template-preview";
-    preview.textContent =
-      item.text.slice(0,180);
-
-    const actions =
-      document.createElement("div");
-
-    actions.className = "item-actions";
-
-    const use =
-      document.createElement("button");
-
-    use.textContent = "Использовать";
-
-    use.onclick = () => {
-      textInput.value = item.text;
-      updateCounter();
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
-    };
-
-    const remove =
-      document.createElement("button");
-
-    remove.textContent = "Удалить";
-
-    remove.onclick = () => {
-      const all =
-        loadTemplates().filter(
-          x => x.id !== item.id
-        );
-
-      saveTemplates(all);
-      renderTemplates();
-    };
-
-    actions.append(use,remove);
-
-    card.append(top,preview,actions);
-
-    container.appendChild(card);
-  });
-}
-
-/* =========================
-   CLIPBOARD
-========================= */
-
-async function copyText(value){
-  if(!value) return;
-
-  try{
-    await navigator.clipboard.writeText(value);
-    showToast("Скопировано");
-  }catch{
-
-    const area =
-      document.createElement("textarea");
-
-    area.value = value;
-    area.style.position = "fixed";
-    area.style.opacity = "0";
-
-    document.body.appendChild(area);
-
-    area.select();
-
-    document.execCommand("copy");
-
-    area.remove();
-
-    showToast("Скопировано");
-  }
-}
-
-/* =========================
-   PROCESS AI
-========================= */
-
-async function processText(){
-
-  if(processBtn.disabled) return;
-
-  const rawText =
-    textInput.value.trim();
-
-  const attachmentContext =
-    buildAttachmentContext();
-
-  const notes =
-    getFileNotes();
-
-  let message = rawText;
-
-  if(!message && selectedFiles.length){
-    message =
-      "Проанализируй содержимое прикрепленных файлов.";
-  }
-
-  if(!message){
-    showToast("Введите текст или добавьте файл.");
-    return;
-  }
-
-  const combined =
-    `${message}${attachmentContext}`.slice(
-      0,
-      9500
-    );
-
-  const mode =
-    action.value;
-
-  lastRequest = {
-    message:combined,
-    mode
-  };
-
-  processBtn.disabled = true;
-  processBtn.textContent = "⏳ Обработка...";
-
-  resultCard.classList.add("show");
-
-  answer.textContent = "AI обрабатывает запрос...";
-  provider.textContent = "AI";
-
-  try{
-
-    const response =
-      await fetch("/api/chat",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          message:combined,
-          mode
-        })
-      });
-
-    let data = null;
-
-    try{
-      data = await response.json();
-    }catch{
-      data = {};
-    }
-
-    if(response.status === 429){
-
-      const retryAfter =
-        Number(
-          response.headers.get("Retry-After") ||
-          data.retryAfter ||
-          60
-        );
-
-      answer.textContent =
-        `⚠️ Лимит AI временно исчерпан.\n\nПопробуйте снова через ${retryAfter} сек.`;
-
-      startRetryTimer(retryAfter);
-
-      return;
-    }
-
-    if(!response.ok){
-
-      throw new Error(
-        data.error ||
-        `HTTP ${response.status}`
-      );
-    }
-
-    if(!data.answer){
-
-      throw new Error(
-        "AI не вернул текстовый ответ."
-      );
-    }
-
-    answer.textContent =
-      data.answer;
-
-    provider.textContent =
-      data.provider
-        ? `✦ ${data.provider}`
-        : "✦ AI";
-
-    addHistory({
-      id:
-        `${Date.now()}_${Math.random().toString(36).slice(2)}`,
-      date:new Date().toISOString(),
-      mode,
-      sourceText:
-        rawText ||
-        "Анализ прикреплённых файлов",
-      answer:data.answer,
-      favorite:false,
-      files:selectedFiles.map(
-        item => item.file.name
-      )
-    });
-
-    if(notes.length){
-      showToast(
-        "Готово. Некоторые файлы были добавлены только как информация о формате."
-      );
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    answer.textContent =
-      `❌ ${error.message || "Произошла ошибка."}`;
-
-    provider.textContent = "Ошибка";
-
-  }finally{
-
-    processBtn.disabled = false;
-
-    if(!retryTimer){
-      processBtn.textContent = "✨ Обработать";
-    }
-  }
-}
-
-/* =========================
-   RETRY TIMER
-========================= */
-
-function startRetryTimer(seconds){
-
-  clearInterval(retryTimer);
-
-  let left =
-    Math.max(1,Math.ceil(seconds));
-
-  processBtn.disabled = true;
-
-  const tick = () => {
-
-    processBtn.textContent =
-      `⏳ Повторить через ${left} сек.`;
-
-    left--;
-
-    if(left < 0){
-
-      clearInterval(retryTimer);
-      retryTimer = null;
-
-      processBtn.disabled = false;
-      processBtn.textContent =
-        "✨ Обработать";
-    }
-  };
-
-  tick();
-
-  retryTimer =
-    setInterval(tick,1000);
-}
-
-/* =========================
-   VOICE INPUT
-========================= */
-
-function startVoice(){
-
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-  if(!SpeechRecognition){
-    showToast(
-      "Голосовой ввод не поддерживается этим браузером."
-    );
-    return;
-  }
-
-  if(recognition){
-    recognition.stop();
-    recognition = null;
-    return;
-  }
-
-  recognition =
-    new SpeechRecognition();
-
-  recognition.lang = "ru-RU";
-  recognition.interimResults = true;
-  recognition.continuous = false;
-
-  recognition.onstart = () => {
-    showToast("Говорите...");
-    document.getElementById("voiceBtn")
-      .textContent = "⏹ Остановить";
-  };
-
-  recognition.onresult = event => {
-
-    let finalText = "";
-
-    for(
-      let i = event.resultIndex;
-      i < event.results.length;
-      i++
-    ){
-      finalText +=
-        event.results[i][0].transcript;
-    }
-
-    textInput.value =
-      `${textInput.value} ${finalText}`
-        .trim()
-        .slice(0,MAX_TEXT);
-
-    updateCounter();
-  };
-
-  recognition.onerror = event => {
-    showToast(
-      `Ошибка голосового ввода: ${event.error}`
-    );
-  };
-
-  recognition.onend = () => {
-    recognition = null;
-
-    document.getElementById("voiceBtn")
-      .textContent = "🎙 Голос";
-  };
-
-  recognition.start();
-}
-
-/* =========================
-   SPEECH
-========================= */
-
-function speakAnswer(){
-
-  const text =
-    answer.textContent.trim();
-
-  if(!text) return;
-
-  if(!("speechSynthesis" in window)){
-    showToast("Озвучивание не поддерживается.");
-    return;
-  }
-
-  speechSynthesis.cancel();
-
-  const utterance =
-    new SpeechSynthesisUtterance(text);
-
-  utterance.lang = "ru-RU";
-  utterance.rate = .95;
-
-  speechSynthesis.speak(utterance);
-}
-
-function stopSpeaking(){
-
-  if("speechSynthesis" in window){
-    speechSynthesis.cancel();
-  }
-}
-
-/* =========================
-   EVENTS
-========================= */
-
-textInput.addEventListener(
-  "input",
-  updateCounter
-);
-
-action.addEventListener(
-  "change",
-  updateHelp
-);
-
-document
-  .getElementById("pasteBtn")
-  .addEventListener("click",async () => {
-
-    try{
-
-      const value =
-        await navigator.clipboard.readText();
-
-      textInput.value =
-        value.slice(0,MAX_TEXT);
-
-      updateCounter();
-
-    }catch{
-      showToast(
-        "Не удалось получить доступ к буферу обмена."
-      );
-    }
-  });
-
-document
-  .getElementById("clearBtn")
-  .addEventListener("click",() => {
-
-    textInput.value = "";
-
-    updateCounter();
-    resetResult();
-  });
-
-document
-  .getElementById("voiceBtn")
-  .addEventListener(
-    "click",
-    startVoice
-  );
-
-document
-  .getElementById("processBtn")
-  .addEventListener(
-    "click",
-    processText
-  );
-
-document
-  .getElementById("copyBtn")
-  .addEventListener(
-    "click",
-    () => copyText(answer.textContent)
-  );
-
-document
-  .getElementById("speakBtn")
-  .addEventListener(
-    "click",
-    speakAnswer
-  );
-
-document
-  .getElementById("stopSpeakBtn")
-  .addEventListener(
-    "click",
-    stopSpeaking
-  );
-
-document
-  .getElementById("retryBtn")
-  .addEventListener("click",() => {
-
-    if(lastRequest){
-      processText();
-    }
-  });
-
-document
-  .getElementById("fileAddBtn")
-  .addEventListener(
-    "click",
-    () => fileInput.click()
-  );
-
-fileInput.addEventListener(
-  "change",
-  event => addFiles(event.target.files)
-);
-
-document
-  .getElementById("clearHistoryBtn")
-  .addEventListener("click",() => {
-
-    if(!confirm("Очистить историю?")) return;
-
-    localStorage.removeItem(HISTORY_KEY);
     renderHistory();
-  });
-
-document
-  .querySelectorAll(".tab")
-  .forEach(tab => {
-
-    tab.addEventListener("click",() => {
-
-      document
-        .querySelectorAll(".tab")
-        .forEach(x =>
-          x.classList.remove("active")
-        );
-
-      tab.classList.add("active");
-
-      historyFilter =
-        tab.dataset.filter;
-
-      renderHistory();
-    });
-  });
-
-document
-  .getElementById("newTemplateBtn")
-  .addEventListener("click",() => {
-
-    const name =
-      prompt("Название шаблона:");
-
-    if(!name) return;
-
-    const value =
-      textInput.value.trim();
-
-    if(!value){
-      showToast(
-        "Сначала введи текст шаблона."
-      );
-      return;
-    }
-
-    const templates =
-      loadTemplates();
-
-    templates.unshift({
-      id:
-        `${Date.now()}_${Math.random().toString(36).slice(2)}`,
-      name:name.trim().slice(0,80),
-      text:value
-    });
-
-    saveTemplates(templates);
     renderTemplates();
-
-    showToast("Шаблон сохранён.");
-  });
-
-/* =========================
-   DRAG & DROP
-========================= */
-
-const fileZone =
-  document.querySelector(".file-zone");
-
-fileZone.addEventListener(
-  "dragover",
-  event => {
-    event.preventDefault();
-    fileZone.style.borderColor =
-      "var(--accent)";
-  }
-);
-
-fileZone.addEventListener(
-  "dragleave",
-  () => {
-    fileZone.style.borderColor =
-      "#3a4050";
-  }
-);
-
-fileZone.addEventListener(
-  "drop",
-  event => {
-
-    event.preventDefault();
-
-    fileZone.style.borderColor =
-      "#3a4050";
-
-    if(event.dataTransfer.files){
-      addFiles(event.dataTransfer.files);
-    }
-  }
-);
-
-/* =========================
-   INIT
-========================= */
-
-updateCounter();
-updateHelp();
-renderHistory();
-renderTemplates();
-renderFiles();
-
-</script>
+  </script>
 </body>
 </html>
