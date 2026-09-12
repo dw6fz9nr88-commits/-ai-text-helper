@@ -112,9 +112,6 @@ export default async function handler(req, res) {
       typeof body.mode === "string"
         ? body.mode.trim().toLowerCase()
         : "improve";
-    /*
-     * Проверка текста
-     */
     if (!message) {
       return res.status(400).json({
         error: "Введите текст"
@@ -126,26 +123,26 @@ export default async function handler(req, res) {
           "Текст слишком длинный. Максимум — 10 000 символов."
       });
     }
-    /*
-     * Доступные режимы
-     */
     const modeAliases = {
       improve: "improve",
       polish: "polish",
       english: "english",
       tiktok: "tiktok",
       shorten: "shorten",
+      write: "write",
+      reply: "reply",
+      business: "business",
+      summarize: "summarize",
       improve_text: "improve",
       translate_polish: "polish",
       translate_english: "english",
       create_tiktok: "tiktok",
-      shorten_text: "shorten"
+      shorten_text: "shorten",
+      write_text: "write",
+      reply_message: "reply",
+      business_text: "business",
+      summary: "summarize"
     };
-    /*
-     * Проверяем именно собственные свойства объекта.
-     * Это не позволяет неизвестным значениям вроде
-     * "constructor" или "__proto__" пройти дальше.
-     */
     if (
       !Object.prototype.hasOwnProperty.call(
         modeAliases,
@@ -159,9 +156,6 @@ export default async function handler(req, res) {
     }
     const normalizedMode =
       modeAliases[mode];
-    /*
-     * Инструкции для AI
-     */
     const instructions = {
       improve:
         "Улучши этот текст. Исправь грамматические, орфографические и стилистические ошибки. Сделай текст естественным, грамотным и понятным. Сохрани исходный смысл. Не добавляй выдуманную информацию. Верни только готовый текст.",
@@ -172,14 +166,18 @@ export default async function handler(req, res) {
       tiktok:
         "Переделай этот текст в цепляющий текст для TikTok. Создай сильный первый хук, динамичную подачу и короткие фразы. Сохрани достоверность информации. Не выдумывай факты. Верни только готовый текст.",
       shorten:
-        "Сократи этот текст. Сохрани главную мысль, важные детали и факты. Удали повторы, лишние слова и ненужные предложения. Верни только сокращённую версию."
+        "Сократи этот текст. Сохрани главную мысль, важные детали и факты. Удали повторы, лишние слова и ненужные предложения. Верни только сокращённую версию.",
+      write:
+        "Напиши новый текст на основе задания пользователя. Сначала определи цель и смысл запроса, затем создай естественный, грамотный и полезный текст. Не выдумывай факты, которых нет в запросе. Если пользователь не указал стиль, используй ясный и естественный стиль. Верни только готовый текст без пояснений.",
+      reply:
+        "Напиши естественный ответ на сообщение пользователя. Сохрани подходящий тон исходного сообщения. Ответ должен звучать как сообщение реального человека, а не как объяснение от AI. Не добавляй информацию, которой нет в контексте. Верни только готовый ответ.",
+      business:
+        "Переработай текст в профессиональное деловое сообщение. Сделай его грамотным, ясным, вежливым и конкретным. Сохрани исходный смысл. Не добавляй выдуманную информацию. Верни только готовый текст.",
+      summarize:
+        "Сделай краткое и понятное резюме этого текста. Выдели главную мысль и наиболее важные факты. Удали второстепенные детали и повторы. Не добавляй информацию от себя. Верни только готовое резюме."
     };
     const instruction =
       instructions[normalizedMode];
-    /*
-     * Rate limit
-     * 10 запросов за 10 минут на IP
-     */
     const ip = getClientIp(req);
     let limit;
     try {
@@ -206,9 +204,6 @@ export default async function handler(req, res) {
           limit.retryAfter
       });
     }
-    /*
-     * API ключи
-     */
     const geminiKey =
       process.env.GEMINI_API_KEY;
     const groqKey =
@@ -216,9 +211,7 @@ export default async function handler(req, res) {
     const openRouterKey =
       process.env.OPENROUTER_API_KEY;
     /*
-     * =====================================================
      * GEMINI
-     * =====================================================
      */
     if (geminiKey) {
       try {
@@ -249,9 +242,6 @@ export default async function handler(req, res) {
         );
         if (geminiResponse.ok) {
           let answer = "";
-          /*
-           * Основной вариант ответа Gemini
-           */
           if (
             typeof geminiData?.output_text ===
             "string"
@@ -259,9 +249,6 @@ export default async function handler(req, res) {
             answer =
               geminiData.output_text.trim();
           }
-          /*
-           * Дополнительный вариант
-           */
           if (
             !answer &&
             Array.isArray(
@@ -324,9 +311,7 @@ export default async function handler(req, res) {
       }
     }
     /*
-     * =====================================================
      * GROQ
-     * =====================================================
      */
     if (groqKey) {
       try {
@@ -402,9 +387,7 @@ export default async function handler(req, res) {
       }
     }
     /*
-     * =====================================================
      * OPENROUTER
-     * =====================================================
      */
     if (openRouterKey) {
       try {
@@ -485,9 +468,6 @@ export default async function handler(req, res) {
         }
       }
     }
-    /*
-     * Все провайдеры не ответили
-     */
     return res.status(503).json({
       error:
         "Все AI-провайдеры временно недоступны."
